@@ -77,7 +77,7 @@ export default function Settings() {
               disabled={!reminderEnabled}
             />
             <p className="mt-1 text-sm text-gray-500">
-              Mỗi ngày bạn sẽ nhận được lời nhắc: "Đừng quên hành động xanh hôm nay nhé!"
+              Mỗi ngày bạn sẽ nhận được lời nhắc: 'Đừng quên hành động xanh hôm nay nhé!'
             </p>
           </div>
         </div>
