@@ -3,9 +3,8 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./node_modules/@prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
-
 datasource db {
   provider = "postgresql" // hoặc "mysql", "sqlite" tùy theo lựa chọn của bạn
   url      = env("DATABASE_URL")
