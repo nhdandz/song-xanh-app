@@ -8,7 +8,7 @@ import { useAppContext } from '@/context/AppContext';
 
 export default function Register() {
   const router = useRouter();
-  const { setUserId, initializeUser } = useAppContext();
+  const { login, isLoading } = useAppContext();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -19,7 +19,7 @@ export default function Register() {
   });
   
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [registering, setRegistering] = useState(false);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +44,7 @@ export default function Register() {
     }
     
     try {
-      setIsLoading(true);
+      setRegistering(true);
       setError('');
       
       // Gọi API đăng ký
@@ -66,21 +66,27 @@ export default function Register() {
         throw new Error(data.error || 'Đăng ký thất bại');
       }
       
-      const { user } = await response.json();
+      // Đăng nhập tự động sau khi đăng ký thành công
+      // Đăng nhập tự động sau khi đăng ký thành công
+      const loginSuccess = await login(email, password);
       
-      // Lưu userId vào Context
-      setUserId(user.id);
+      if (loginSuccess) {
+        // Chuyển hướng đến trang welcome cho người dùng mới
+        setTimeout(() => {
+          router.push('/welcome');
+        }, 0);
+      } else {
+        // Nếu đăng nhập tự động thất bại, chuyển về trang đăng nhập
+        setTimeout(() => {
+          router.push('/dang-nhap');
+        }, 0);
+      }
       
-      // Khởi tạo dữ liệu người dùng
-      await initializeUser(user.id);
-      
-      // Chuyển hướng về trang chủ
-      router.push('/');
     } catch (error) {
       console.error('Registration error:', error);
       setError(error.message || 'Đăng ký thất bại');
     } finally {
-      setIsLoading(false);
+      setRegistering(false);
     }
   };
   
@@ -224,9 +230,9 @@ export default function Register() {
             <button
               type="submit"
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              disabled={isLoading}
+              disabled={registering || isLoading}
             >
-              {isLoading ? 'Đang xử lý...' : 'Đăng ký'}
+              {registering ? 'Đang đăng ký...' : isLoading ? 'Đang xử lý...' : 'Đăng ký'}
             </button>
           </div>
         </form>

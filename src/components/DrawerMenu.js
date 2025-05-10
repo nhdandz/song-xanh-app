@@ -19,11 +19,12 @@ import {
   FaBarcode,
   FaLightbulb,
   FaWater,
-  FaTimes
+  FaTimes,
+  FaSignOutAlt
 } from 'react-icons/fa';
 
 export default function DrawerMenu({ isOpen, onClose }) {
-  const { user, points } = useAppContext();
+  const { user, points, logout } = useAppContext();
   
   // Vô hiệu hóa cuộn trang khi drawer mở
   useEffect(() => {
@@ -60,6 +61,12 @@ export default function DrawerMenu({ isOpen, onClose }) {
     { divider: true },
     { path: '/cai-dat', label: 'Cài đặt', icon: <FaCog size={20} /> },
   ];
+  
+  // Xử lý đăng xuất
+  const handleLogout = () => {
+    onClose();
+    logout();
+  };
   
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
@@ -102,6 +109,17 @@ export default function DrawerMenu({ isOpen, onClose }) {
               </Link>
             )
           )}
+          
+          {/* Nút đăng xuất */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center px-4 py-3 w-full text-left hover:bg-red-50"
+          >
+            <div className="w-8 text-red-600">
+              <FaSignOutAlt size={20} />
+            </div>
+            <span className="ml-3 text-red-600 font-medium">Đăng xuất</span>
+          </button>
         </div>
         
         {/* Footer */}

@@ -4,7 +4,8 @@ import prisma from '@/lib/prisma';
 // GET /api/users/:id - Lấy thông tin chi tiết người dùng
 export async function GET(request, { params }) {
   try {
-    const { id } = params;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
     
     const user = await prisma.user.findUnique({
       where: { id },
@@ -82,7 +83,8 @@ export async function GET(request, { params }) {
 // PUT /api/users/:id - Cập nhật thông tin người dùng
 export async function PUT(request, { params }) {
   try {
-    const { id } = params;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
     const data = await request.json();
     
     // Nếu muốn cập nhật email, kiểm tra xem email đã tồn tại chưa
@@ -140,8 +142,8 @@ export async function PUT(request, { params }) {
 // DELETE /api/users/:id - Xóa người dùng
 export async function DELETE(request, { params }) {
   try {
-    const { id } = params;
-    
+    const resolvedParams = await params;
+    const { id } = resolvedParams;    
     // Xóa người dùng - các bảng liên quan sẽ được xóa cascade theo cấu hình schema
     await prisma.user.delete({
       where: { id }
