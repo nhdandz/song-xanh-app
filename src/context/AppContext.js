@@ -1,9 +1,9 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-// Danh sách hành vi xanh mặc định
+// Danh sách hành vi xanh mặc định (dùng làm fallback khi không thể kết nối API)
 const DEFAULT_GREEN_ACTIONS = [
   { id: '1', text: 'Mang chai nước cá nhân', completed: false },
   { id: '2', text: 'Tắt điện khi ra khỏi phòng', completed: false },
@@ -23,12 +23,13 @@ const AppContext = createContext();
 
 export function AppProvider({ children }) {
   const router = useRouter();
+  const activitiesLoadedRef = useRef(false);
   
   // State cho người dùng
   const [user, setUser] = useState({ name: 'Học Sinh' });
   
   // State cho các hành vi xanh hôm nay
-  const [todayActions, setTodayActions] = useState(DEFAULT_GREEN_ACTIONS);
+  const [todayActions, setTodayActions] = useState([]);
   
   // State cho điểm số
   const [points, setPoints] = useState({
@@ -55,6 +56,96 @@ export function AppProvider({ children }) {
   
   // State cho trạng thái đăng nhập
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Hàm lấy danh sách hoạt động xanh từ API
+  const fetchGreenActivities = async () => {
+    // Kiểm tra để tránh gọi lại API nhiều lần
+    if (activitiesLoadedRef.current) return;
+    
+    try {
+      console.log('Fetching green activities...');
+      activitiesLoadedRef.current = true;
+      
+      // Truyền userId vào URL để lấy trạng thái đã hoàn thành
+      const response = await fetch(`/api/activities${userId ? `?userId=${userId}` : ''}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch green activities');
+      }
+      
+      const activities = await response.json();
+      
+      // Chuyển đổi dữ liệu về định dạng todayActions
+      // Giữ lại trạng thái completed từ server nếu có
+      const formattedActivities = activities.map(activity => ({
+        id: activity.id,
+        text: activity.name,
+        completed: activity.completed || false
+      }));
+      
+      setTodayActions(formattedActivities);
+      
+      // Cập nhật điểm của ngày hôm nay dựa trên số lượng hoạt động đã hoàn thành
+      const completedCount = formattedActivities.filter(a => a.completed).length;
+      if (completedCount > 0) {
+        setPoints(prev => ({
+          ...prev,
+          today: completedCount
+        }));
+      }
+      
+      console.log('Green activities loaded successfully.');
+    } catch (error) {
+      console.error('Error fetching green activities:', error);
+      // Fallback to default actions if fetch fails
+      setTodayActions(DEFAULT_GREEN_ACTIONS);
+      activitiesLoadedRef.current = false;
+    }
+  };
+  
+  // Xóa một hoạt động đã hoàn thành trong ngày
+  const deleteActivity = async (activityId) => {
+    if (!userId || !activityId) return false;
+    
+    try {
+      setIsLoading(true);
+      
+      const response = await fetch(`/api/user-activities?userId=${userId}&activityId=${activityId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete activity');
+      }
+      
+      const result = await response.json();
+      
+      // Cập nhật lại điểm
+      setPoints(prev => ({
+        ...prev,
+        total: result.newTotalPoints,
+        today: Math.max(0, prev.today - 1) // Giảm số hoạt động hoàn thành ngày hôm nay
+      }));
+      
+      // Cập nhật danh sách hoạt động
+      const newActions = todayActions.map(action => 
+        action.id === activityId ? { ...action, completed: false } : action
+      );
+      setTodayActions(newActions);
+      
+      // Tải lại lịch sử hoạt động
+      await fetchUserActivityHistory(userId);
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      alert('Có lỗi xảy ra khi xóa hoạt động: ' + error.message);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // Hàm khởi tạo người dùng
   const initializeUser = async (id) => {
@@ -90,12 +181,17 @@ export function AppProvider({ children }) {
         });
       }
       
+      // Đặt userId để các hàm khác có thể sử dụng
+      setUserId(id);
+      
       // Khởi tạo lịch sử hoạt động
       await fetchUserActivityHistory(id);
       
       // Đánh dấu đã đăng nhập
       setIsAuthenticated(true);
       
+      // Gọi fetchGreenActivities sau khi đã set userId và isAuthenticated
+      await fetchGreenActivities();
     } catch (error) {
       console.error('Error initializing user:', error);
       logout();
@@ -126,9 +222,6 @@ export function AppProvider({ children }) {
       
       // Lưu userId vào localStorage
       localStorage.setItem('userId', user.id);
-      
-      // Cập nhật state
-      setUserId(user.id);
       
       // Khởi tạo dữ liệu người dùng
       await initializeUser(user.id);
@@ -161,12 +254,15 @@ export function AppProvider({ children }) {
       streak: 0,
     });
     setHistory([]);
-    setTodayActions(DEFAULT_GREEN_ACTIONS);
+    setTodayActions([]);
     setSettings({
       reminder: true,
       reminderTime: '18:00',
     });
     setIsAuthenticated(false);
+    
+    // Reset flag để cho phép tải lại hoạt động ở lần đăng nhập tiếp theo
+    activitiesLoadedRef.current = false;
     
     // Chuyển hướng về trang đăng nhập
     router.push('/dang-nhap');
@@ -187,6 +283,7 @@ export function AppProvider({ children }) {
       const formattedHistory = data.activities.map(day => ({
         date: day.date,
         points: day.totalPoints,
+        activities: day.activities
       }));
       
       setHistory(formattedHistory);
@@ -288,10 +385,20 @@ export function AppProvider({ children }) {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to save activities');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save activities');
       }
       
       const result = await response.json();
+      
+      // Nếu tất cả các hoạt động đã hoàn thành trước đó, hiển thị thông báo
+      if (result.alreadyCompleted) {
+        alert('Tất cả các hoạt động này đã được hoàn thành trước đó rồi. Mỗi hoạt động chỉ được tính điểm một lần mỗi ngày.');
+        // Cập nhật lại UI để phản ánh thông tin chính xác
+        activitiesLoadedRef.current = false;
+        await fetchGreenActivities();
+        return;
+      }
       
       // Cập nhật điểm và trạng thái
       setPoints(prev => ({
@@ -304,7 +411,7 @@ export function AppProvider({ children }) {
       // Cập nhật lịch sử
       const today = new Date().toISOString().split('T')[0];
       setHistory(prev => [
-        { date: today, points: completedActions.length },
+        { date: today, points: result.pointsEarned },
         ...prev
       ]);
       
@@ -314,12 +421,25 @@ export function AppProvider({ children }) {
         streak: prev.streak + 1,
       }));
       
-      // Reset hành vi cho ngày mới
-      setTodayActions(DEFAULT_GREEN_ACTIONS);
+      // Hiển thị thông báo nếu có cả hoạt động đã thêm và đã bỏ qua
+      if (result.activitiesSkipped > 0) {
+        alert(`Đã lưu ${result.activitiesAdded} hoạt động mới. ${result.activitiesSkipped} hoạt động đã được hoàn thành trước đó và được bỏ qua.`);
+      }
+      
+      // Reset trạng thái hoàn thành của các hành động
+      setTodayActions(prev => prev.map(action => ({
+        ...action,
+        completed: false
+      })));
+      
+      // Đánh dấu là đã load activities, nhưng cho phép load lại
+      // để lấy danh sách cập nhật sau khi lưu
+      activitiesLoadedRef.current = false;
+      await fetchGreenActivities();
       
     } catch (error) {
       console.error('Error saving activities:', error);
-      alert('Có lỗi xảy ra khi lưu hoạt động. Vui lòng thử lại!');
+      alert('Có lỗi xảy ra khi lưu hoạt động: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -410,6 +530,8 @@ export function AppProvider({ children }) {
     login,
     logout,
     checkAuthentication,
+    fetchGreenActivities,
+    deleteActivity, // Thêm hàm xóa hoạt động vào context
   };
   
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
