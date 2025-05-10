@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 // Danh sách hành vi xanh mặc định
 const DEFAULT_GREEN_ACTIONS = [
@@ -21,6 +22,8 @@ const BADGES = [
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
+  const router = useRouter();
+  
   // State cho người dùng
   const [user, setUser] = useState({ name: 'Học Sinh' });
   
@@ -49,6 +52,9 @@ export function AppProvider({ children }) {
   
   // State cho ID người dùng
   const [userId, setUserId] = useState(null);
+  
+  // State cho trạng thái đăng nhập
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   // Hàm khởi tạo người dùng
   const initializeUser = async (id) => {
@@ -87,11 +93,83 @@ export function AppProvider({ children }) {
       // Khởi tạo lịch sử hoạt động
       await fetchUserActivityHistory(id);
       
+      // Đánh dấu đã đăng nhập
+      setIsAuthenticated(true);
+      
     } catch (error) {
       console.error('Error initializing user:', error);
+      logout();
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  // Hàm đăng nhập
+  const login = async (email, password) => {
+    try {
+      setIsLoading(true);
+      
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Đăng nhập thất bại');
+      }
+      
+      const { user } = await response.json();
+      
+      // Lưu userId vào localStorage
+      localStorage.setItem('userId', user.id);
+      
+      // Cập nhật state
+      setUserId(user.id);
+      
+      // Khởi tạo dữ liệu người dùng
+      await initializeUser(user.id);
+      
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Hàm đăng xuất
+  const logout = () => {
+    // Xóa thông tin người dùng khỏi localStorage
+    localStorage.removeItem('userId');
+    localStorage.removeItem('greenUser');
+    localStorage.removeItem('greenPoints');
+    localStorage.removeItem('greenHistory');
+    localStorage.removeItem('greenSettings');
+    
+    // Reset state
+    setUser({ name: 'Học Sinh' });
+    setUserId(null);
+    setPoints({
+      today: 0,
+      week: 0,
+      total: 0,
+      streak: 0,
+    });
+    setHistory([]);
+    setTodayActions(DEFAULT_GREEN_ACTIONS);
+    setSettings({
+      reminder: true,
+      reminderTime: '18:00',
+    });
+    setIsAuthenticated(false);
+    
+    // Chuyển hướng về trang đăng nhập
+    router.push('/dang-nhap');
   };
   
   // Lấy lịch sử hoạt động của người dùng
@@ -252,6 +330,35 @@ export function AppProvider({ children }) {
     return BADGES.filter(badge => points.total >= badge.points);
   };
   
+  // Kiểm tra người dùng đã đăng nhập chưa
+  const checkAuthentication = async () => {
+    const storedUserId = localStorage.getItem('userId');
+    
+    if (storedUserId) {
+      await initializeUser(storedUserId);
+      return true;
+    }
+    
+    return false;
+  };
+  
+  // Kiểm tra trạng thái đăng nhập khi khởi động ứng dụng
+  useEffect(() => {
+    const initAuth = async () => {
+      const isLoggedIn = await checkAuthentication();
+      
+      if (!isLoggedIn) {
+        // Nếu đang ở trang khác trang đăng nhập/đăng ký, chuyển về trang đăng nhập
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/dang-nhap' && currentPath !== '/dang-ky') {
+          router.push('/dang-nhap');
+        }
+      }
+    };
+    
+    initAuth();
+  }, []);
+  
   // Load dữ liệu từ localStorage khi khởi động (cho chế độ offline/demo)
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -299,6 +406,10 @@ export function AppProvider({ children }) {
     userId,
     setUserId,
     initializeUser,
+    isAuthenticated,
+    login,
+    logout,
+    checkAuthentication,
   };
   
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

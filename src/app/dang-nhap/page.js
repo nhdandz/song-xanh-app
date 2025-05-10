@@ -8,12 +8,11 @@ import { useAppContext } from '@/context/AppContext';
 
 export default function Login() {
   const router = useRouter();
-  const { setUserId, initializeUser } = useAppContext();
+  const { login, isLoading } = useAppContext();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,52 +23,40 @@ export default function Login() {
     }
     
     try {
-      setIsLoading(true);
       setError('');
       
-      // Gọi API đăng nhập
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // Gọi hàm đăng nhập từ context
+      const success = await login(email, password);
       
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Đăng nhập thất bại');
+      if (success) {
+        // Chuyển hướng về trang chủ
+         router.push('/');
+      } else {
+        setError('Email hoặc mật khẩu không đúng');
       }
-      
-      const { user } = await response.json();
-      
-      // Lưu userId vào Context
-      setUserId(user.id);
-      
-      // Khởi tạo dữ liệu người dùng
-      await initializeUser(user.id);
-      
-      // Chuyển hướng về trang chủ
-      router.push('/');
     } catch (error) {
       console.error('Login error:', error);
       setError(error.message || 'Đăng nhập thất bại');
-    } finally {
-      setIsLoading(false);
     }
   };
   
   // Mô phỏng đăng nhập demo (không cần API thực tế)
-  const handleDemoLogin = () => {
-    // ID mẫu
-    const demoUserId = '1';
-    setUserId(demoUserId);
+    const handleDemoLogin = async () => {
+    // Demo sử dụng tài khoản mẫu
+    setEmail('hocsinh@example.com');
+    setPassword('password123');
     
-    // Cập nhật thông tin người dùng demo
-    initializeUser(demoUserId);
+    // Gọi API đăng nhập với tài khoản demo
+    const success = await login('hocsinh@example.com', 'password123');
     
-    // Chuyển hướng về trang chủ
-    router.push('/');
+    if (success) {
+      // Chuyển hướng về trang chủ (sử dụng setTimeout để tránh lỗi khi render)
+      setTimeout(() => {
+        router.push('/');
+      }, 0);
+    } else {
+      setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại hoặc tạo tài khoản mới.');
+    }
   };
   
   return (
@@ -188,8 +175,9 @@ export default function Login() {
             <button
               onClick={handleDemoLogin}
               className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              disabled={isLoading}
             >
-              Đăng nhập Demo
+              {isLoading ? 'Đang xử lý...' : 'Đăng nhập Demo'}
             </button>
           </div>
         </div>
