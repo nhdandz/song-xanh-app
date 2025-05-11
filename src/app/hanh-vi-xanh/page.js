@@ -3,15 +3,20 @@
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import ActionCard from '@/components/ActionCard';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function GreenActions() {
   const router = useRouter();
   const { todayActions, updateAction, saveActions, fetchGreenActivities, isAuthenticated } = useAppContext();
+  // Thêm một ref để đảm bảo fetchGreenActivities chỉ được gọi một lần
+  const activitiesFetchedRef = useRef(false);
   
-  // Thêm useEffect để lấy danh sách hành động xanh khi component được load
+  // Sửa useEffect để ngăn gọi nhiều lần
   useEffect(() => {
-    if (isAuthenticated) {
+    // Chỉ fetch một lần khi component mount và isAuthenticated = true
+    if (isAuthenticated && !activitiesFetchedRef.current) {
+      console.log('Fetching green activities from page component');
+      activitiesFetchedRef.current = true;
       fetchGreenActivities();
     }
   }, [isAuthenticated, fetchGreenActivities]);

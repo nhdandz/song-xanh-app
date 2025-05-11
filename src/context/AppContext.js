@@ -58,18 +58,28 @@ export function AppProvider({ children }) {
   
   // State cho trạng thái đăng nhập
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
   // Hàm lấy danh sách hoạt động xanh từ API
   const fetchGreenActivities = async () => {
     // Kiểm tra để tránh gọi lại API nhiều lần
-    if (activitiesLoadedRef.current) return;
+    if (activitiesLoadedRef.current) {
+      console.log('Activities already loaded, skipping fetch');
+      return;
+    }
+    
+    // Kiểm tra userId
+    if (!userId) {
+      console.log('Cannot fetch activities, no userId available');
+      return;
+    }
     
     try {
       console.log('Fetching green activities...');
+      
+      // Đánh dấu đã bắt đầu tải để tránh gọi lại khi đang trong quá trình tải
       activitiesLoadedRef.current = true;
       
       // Truyền userId vào URL để lấy trạng thái đã hoàn thành
-      const response = await fetch(`/api/activities${userId ? `?userId=${userId}` : ''}`);
+      const response = await fetch(`/api/activities?userId=${userId}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch green activities');
@@ -82,7 +92,7 @@ export function AppProvider({ children }) {
       const formattedActivities = activities.map(activity => ({
         id: activity.id,
         text: activity.name,
-        completed: activity.completed || false
+        completed: Boolean(activity.completed)
       }));
       
       setTodayActions(formattedActivities);
@@ -101,10 +111,10 @@ export function AppProvider({ children }) {
       console.error('Error fetching green activities:', error);
       // Fallback to default actions if fetch fails
       setTodayActions(DEFAULT_GREEN_ACTIONS);
+      // Đặt lại flag để cho phép tải lại nếu có lỗi
       activitiesLoadedRef.current = false;
     }
   };
-  
   // Xóa một hoạt động đã hoàn thành trong ngày
   const deleteActivity = async (activityId) => {
     if (!userId || !activityId) return false;
@@ -149,63 +159,64 @@ export function AppProvider({ children }) {
     }
   };
   
-  // Hàm khởi tạo người dùng
-  const initializeUser = async (id) => {
-    if (!id) return false;
+ // Hàm khởi tạo người dùng
+const initializeUser = async (id) => {
+  if (!id) return false;
+  
+  try {
+    setIsLoading(true);
+    const response = await fetch(`/api/users/${id}`);
     
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/users/${id}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      
-      const userData = await response.json();
-      
-      setUser({
-        name: userData.name,
-        id: userData.id,
-        email: userData.email,
-        school: userData.school,
-        level: userData.level,
-      });
-      
-      setPoints(prev => ({
-        ...prev,
-        total: userData.points || 0,
-      }));
-      
-      if (userData.settings) {
-        setSettings({
-          reminder: userData.settings.reminderOn,
-          reminderTime: userData.settings.reminderTime,
-        });
-      }
-      
-      // Đặt userId để các hàm khác có thể sử dụng
-      setUserId(id);
-      
-      // Khởi tạo lịch sử hoạt động
-      await fetchUserActivityHistory(id);
-      
-      // Đánh dấu đã đăng nhập
-      setIsAuthenticated(true);
-      
-      // Gọi fetchGreenActivities sau khi đã set userId và isAuthenticated
-      if (!activitiesLoadedRef.current) {
-        await fetchGreenActivities();
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Error initializing user:', error);
-      logout();
-      return false;
-    } finally {
-      setIsLoading(false);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
     }
-  };
+    
+    const userData = await response.json();
+    
+    setUser({
+      name: userData.name,
+      id: userData.id,
+      email: userData.email,
+      school: userData.school,
+      level: userData.level,
+    });
+    
+    setPoints(prev => ({
+      ...prev,
+      total: userData.points || 0,
+    }));
+    
+    if (userData.settings) {
+      setSettings({
+        reminder: userData.settings.reminderOn,
+        reminderTime: userData.settings.reminderTime,
+      });
+    }
+    
+    // Đặt userId để các hàm khác có thể sử dụng
+    setUserId(id);
+    
+    // Khởi tạo lịch sử hoạt động
+    await fetchUserActivityHistory(id);
+    
+    // Đánh dấu đã đăng nhập
+    setIsAuthenticated(true);
+    
+    // Đặt lại biến activitiesLoadedRef để cho phép tải lại danh sách hoạt động
+    activitiesLoadedRef.current = false;
+    
+    // Gọi fetchGreenActivities sau khi đã set userId và isAuthenticated
+    await fetchGreenActivities();
+    
+    return true;
+  } catch (error) {
+    console.error('Error initializing user:', error);
+    logout();
+    return false;
+  } finally {
+    setIsLoading(false);
+  }
+};
   
   // Hàm đăng nhập
   const login = async (email, password) => {
@@ -376,7 +387,7 @@ export function AppProvider({ children }) {
     }));
   };
   
-  // Lưu lại hành vi xanh
+ // Lưu lại hành vi xanh
   const saveActions = async () => {
     const completedActions = todayActions.filter(a => a.completed);
     
@@ -409,9 +420,6 @@ export function AppProvider({ children }) {
       // Nếu tất cả các hoạt động đã hoàn thành trước đó, hiển thị thông báo
       if (result.alreadyCompleted) {
         alert('Tất cả các hoạt động này đã được hoàn thành trước đó rồi. Mỗi hoạt động chỉ được tính điểm một lần mỗi ngày.');
-        // Cập nhật lại UI để phản ánh thông tin chính xác
-        activitiesLoadedRef.current = false;
-        await fetchGreenActivities();
         return;
       }
       
@@ -447,10 +455,14 @@ export function AppProvider({ children }) {
         completed: false
       })));
       
-      // Đánh dấu là đã load activities, nhưng cho phép load lại
-      // để lấy danh sách cập nhật sau khi lưu
+      // Đặt lại flag để cho phép API tải lại danh sách
       activitiesLoadedRef.current = false;
-      await fetchGreenActivities();
+      
+      // Tải lại hoạt động để có thông tin mới nhất về tình trạng hoàn thành
+      // Chỉ gọi một lần và không sử dụng await để tránh trì hoãn
+      setTimeout(() => {
+        fetchGreenActivities();
+      }, 500);
       
     } catch (error) {
       console.error('Error saving activities:', error);
