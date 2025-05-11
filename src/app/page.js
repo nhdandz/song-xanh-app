@@ -3,10 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import PointDisplay from '@/components/PointDisplay';
+import { useEffect, useRef } from 'react';
 
 export default function Home() {
   const router = useRouter();
   const { user, points } = useAppContext();
+  const dataLoadedRef = useRef(false);
   
   return (
     <div className="space-y-6">

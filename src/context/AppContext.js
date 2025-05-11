@@ -24,6 +24,8 @@ const AppContext = createContext();
 export function AppProvider({ children }) {
   const router = useRouter();
   const activitiesLoadedRef = useRef(false);
+  const isRedirecting = useRef(false);
+  const authCheckedRef = useRef(false);
   
   // State cho người dùng
   const [user, setUser] = useState({ name: 'Học Sinh' });
@@ -149,7 +151,7 @@ export function AppProvider({ children }) {
   
   // Hàm khởi tạo người dùng
   const initializeUser = async (id) => {
-    if (!id) return;
+    if (!id) return false;
     
     try {
       setIsLoading(true);
@@ -191,10 +193,15 @@ export function AppProvider({ children }) {
       setIsAuthenticated(true);
       
       // Gọi fetchGreenActivities sau khi đã set userId và isAuthenticated
-      await fetchGreenActivities();
+      if (!activitiesLoadedRef.current) {
+        await fetchGreenActivities();
+      }
+      
+      return true;
     } catch (error) {
       console.error('Error initializing user:', error);
       logout();
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -202,6 +209,8 @@ export function AppProvider({ children }) {
   
   // Hàm đăng nhập
   const login = async (email, password) => {
+    if (isLoading) return false;
+    
     try {
       setIsLoading(true);
       
@@ -224,9 +233,9 @@ export function AppProvider({ children }) {
       localStorage.setItem('userId', user.id);
       
       // Khởi tạo dữ liệu người dùng
-      await initializeUser(user.id);
+      const initSuccess = await initializeUser(user.id);
       
-      return true;
+      return initSuccess;
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -237,6 +246,9 @@ export function AppProvider({ children }) {
   
   // Hàm đăng xuất
   const logout = () => {
+    // Ngăn chặn đăng xuất khi đang trong quá trình chuyển hướng
+    if (isRedirecting.current) return;
+    
     // Xóa thông tin người dùng khỏi localStorage
     localStorage.removeItem('userId');
     localStorage.removeItem('greenUser');
@@ -265,11 +277,14 @@ export function AppProvider({ children }) {
     activitiesLoadedRef.current = false;
     
     // Chuyển hướng về trang đăng nhập
-    router.push('/dang-nhap');
+    isRedirecting.current = true;
+    router.replace('/dang-nhap');
   };
   
   // Lấy lịch sử hoạt động của người dùng
   const fetchUserActivityHistory = async (id) => {
+    if (!id) return;
+    
     try {
       const response = await fetch(`/api/user-activities?userId=${id}`);
       
@@ -452,11 +467,14 @@ export function AppProvider({ children }) {
   
   // Kiểm tra người dùng đã đăng nhập chưa
   const checkAuthentication = async () => {
+    // Tránh kiểm tra lại nếu đã xác thực
+    if (isAuthenticated) return true;
+    
     const storedUserId = localStorage.getItem('userId');
     
     if (storedUserId) {
-      await initializeUser(storedUserId);
-      return true;
+      const success = await initializeUser(storedUserId);
+      return success;
     }
     
     return false;
@@ -464,24 +482,49 @@ export function AppProvider({ children }) {
   
   // Kiểm tra trạng thái đăng nhập khi khởi động ứng dụng
   useEffect(() => {
+    // Ngăn chặn chạy nhiều lần
+    if (authCheckedRef.current) return;
+    
     const initAuth = async () => {
+      authCheckedRef.current = true;
+      
+      // Nếu đang điều hướng, bỏ qua
+      if (isRedirecting.current) return;
+      
       const isLoggedIn = await checkAuthentication();
       
       if (!isLoggedIn) {
         // Nếu đang ở trang khác trang đăng nhập/đăng ký, chuyển về trang đăng nhập
         const currentPath = window.location.pathname;
         if (currentPath !== '/dang-nhap' && currentPath !== '/dang-ky') {
-          router.push('/dang-nhap');
+          isRedirecting.current = true;
+          router.replace('/dang-nhap');
+          // Reset biến isRedirecting sau khi chuyển hướng hoàn tất
+          setTimeout(() => {
+            isRedirecting.current = false;
+          }, 1000);
+        } else {
+          // Nếu đã ở trang đăng nhập/đăng ký, đánh dấu không còn chuyển hướng
+          isRedirecting.current = false;
         }
+      } else {
+        isRedirecting.current = false;
       }
     };
     
     initAuth();
-  }, []);
+  }, [router, isAuthenticated]);
+  
+  // Reset biến isRedirecting khi router thay đổi
+  useEffect(() => {
+    return () => {
+      isRedirecting.current = false;
+    };
+  }, [router]);
   
   // Load dữ liệu từ localStorage khi khởi động (cho chế độ offline/demo)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !isAuthenticated) {
       const savedUser = localStorage.getItem('greenUser');
       const savedPoints = localStorage.getItem('greenPoints');
       const savedHistory = localStorage.getItem('greenHistory');
@@ -497,17 +540,17 @@ export function AppProvider({ children }) {
       if (savedHistory) setHistory(JSON.parse(savedHistory));
       if (savedSettings) setSettings(JSON.parse(savedSettings));
     }
-  }, []);
+  }, [isAuthenticated]);
   
   // Lưu dữ liệu vào localStorage khi có thay đổi (cho chế độ offline/demo)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && isAuthenticated) {
       localStorage.setItem('greenUser', JSON.stringify(user));
       localStorage.setItem('greenPoints', JSON.stringify(points));
       localStorage.setItem('greenHistory', JSON.stringify(history));
       localStorage.setItem('greenSettings', JSON.stringify(settings));
     }
-  }, [user, points, history, settings]);
+  }, [user, points, history, settings, isAuthenticated]);
   
   const value = {
     user,
@@ -531,7 +574,8 @@ export function AppProvider({ children }) {
     logout,
     checkAuthentication,
     fetchGreenActivities,
-    deleteActivity, // Thêm hàm xóa hoạt động vào context
+    deleteActivity,
+    fetchUserActivityHistory,
   };
   
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

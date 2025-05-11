@@ -20,7 +20,7 @@ const FALLBACK_GROUPS = [
 ];
 
 export default function GroupComparison() {
-  const { user, points, userId, isAuthenticated } = useAppContext();
+  const { user, points, userId, isAuthenticated, initializeUser } = useAppContext();
   const [groups, setGroups] = useState([]);
   const [userGroup, setUserGroup] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -102,6 +102,14 @@ export default function GroupComparison() {
         throw new Error('Failed to join/leave group');
       }
       
+      // Lấy kết quả từ API
+      const result = await response.json();
+      
+      // Cập nhật thông tin người dùng để cập nhật điểm
+      if (result.newPoints !== undefined) {
+        await initializeUser(userId);
+      }
+      
       // Cập nhật UI sau khi thành công
       if (action === 'join') {
         setJoinedGroups([...joinedGroups, groupId]);
@@ -125,6 +133,26 @@ export default function GroupComparison() {
           }
         }
       }
+      
+      // Cập nhật danh sách nhóm với điểm mới
+      const fetchGroups = async () => {
+        try {
+          const response = await fetch(`/api/groups?userId=${userId}`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to refresh groups');
+          }
+          
+          const data = await response.json();
+          setGroups(data.groups || []);
+        } catch (error) {
+          console.error('Error refreshing groups:', error);
+        }
+      };
+      
+      // Tải lại danh sách nhóm để cập nhật điểm
+      fetchGroups();
+      
     } catch (error) {
       console.error('Error joining/leaving group:', error);
       alert('Có lỗi xảy ra. Vui lòng thử lại!');

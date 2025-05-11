@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaUser, FaLock, FaLeaf } from 'react-icons/fa';
@@ -9,6 +9,7 @@ import { useAppContext } from '@/context/AppContext';
 export default function Login() {
   const router = useRouter();
   const { login, isLoading } = useAppContext();
+  const isNavigating = useRef(false);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,6 +18,9 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     
+    // Ngăn chặn đăng nhập trùng lặp
+    if (isNavigating.current || isLoading) return;
+    
     if (!email || !password) {
       setError('Vui lòng nhập đầy đủ thông tin');
       return;
@@ -24,38 +28,51 @@ export default function Login() {
     
     try {
       setError('');
+      isNavigating.current = true;
       
       // Gọi hàm đăng nhập từ context
       const success = await login(email, password);
       
       if (success) {
-        // Chuyển hướng về trang chủ
-         router.push('/');
+        // Chuyển hướng về trang chủ sử dụng replace thay vì push
+        router.replace('/');
       } else {
         setError('Email hoặc mật khẩu không đúng');
+        isNavigating.current = false;
       }
     } catch (error) {
       console.error('Login error:', error);
       setError(error.message || 'Đăng nhập thất bại');
+      isNavigating.current = false;
     }
   };
   
   // Mô phỏng đăng nhập demo (không cần API thực tế)
-    const handleDemoLogin = async () => {
-    // Demo sử dụng tài khoản mẫu
-    setEmail('hocsinh@example.com');
-    setPassword('password123');
+  const handleDemoLogin = async () => {
+    // Ngăn chặn đăng nhập trùng lặp
+    if (isNavigating.current || isLoading) return;
     
-    // Gọi API đăng nhập với tài khoản demo
-    const success = await login('hocsinh@example.com', 'password123');
-    
-    if (success) {
-      // Chuyển hướng về trang chủ (sử dụng setTimeout để tránh lỗi khi render)
-      setTimeout(() => {
-        router.push('/');
-      }, 0);
-    } else {
-      setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại hoặc tạo tài khoản mới.');
+    try {
+      // Demo sử dụng tài khoản mẫu
+      setEmail('hocsinh@example.com');
+      setPassword('password123');
+      
+      isNavigating.current = true;
+      
+      // Gọi API đăng nhập với tài khoản demo
+      const success = await login('hocsinh@example.com', 'password123');
+      
+      if (success) {
+        // Chuyển hướng về trang chủ sử dụng replace
+        router.replace('/');
+      } else {
+        setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại hoặc tạo tài khoản mới.');
+        isNavigating.current = false;
+      }
+    } catch (error) {
+      console.error('Demo login error:', error);
+      setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại.');
+      isNavigating.current = false;
     }
   };
   
@@ -154,7 +171,7 @@ export default function Login() {
             <button
               type="submit"
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              disabled={isLoading}
+              disabled={isLoading || isNavigating.current}
             >
               {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
             </button>
@@ -175,7 +192,7 @@ export default function Login() {
             <button
               onClick={handleDemoLogin}
               className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              disabled={isLoading}
+              disabled={isLoading || isNavigating.current}
             >
               {isLoading ? 'Đang xử lý...' : 'Đăng nhập Demo'}
             </button>
