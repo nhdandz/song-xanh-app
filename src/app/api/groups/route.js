@@ -57,7 +57,7 @@ export async function GET(request) {
   }
 }
 
-// POST /api/groups/join - Tham gia nhóm
+// POST /api/groups - Tham gia nhóm
 export async function POST(request) {
   try {
     const data = await request.json();
@@ -66,6 +66,9 @@ export async function POST(request) {
     if (!userId || !groupId) {
       return NextResponse.json({ error: 'Missing userId or groupId' }, { status: 400 });
     }
+
+    // Số điểm thưởng/trừ khi tham gia/rời nhóm
+    const GROUP_POINTS = 5;
 
     if (action === 'join') {
       // Kiểm tra xem đã tham gia chưa
@@ -80,26 +83,104 @@ export async function POST(request) {
         return NextResponse.json({ error: 'Already a member of this group' }, { status: 400 });
       }
 
-      // Tham gia nhóm mới
-      await prisma.groupMember.create({
-        data: {
-          userId,
-          groupId,
-          role: 'member'
-        }
+      // Thực hiện giao dịch để đảm bảo tính nhất quán dữ liệu
+      const result = await prisma.$transaction(async (tx) => {
+        // Tham gia nhóm mới
+        await tx.groupMember.create({
+          data: {
+            userId,
+            groupId,
+            role: 'member'
+          }
+        });
+
+        // Lấy thông tin người dùng
+        const user = await tx.user.findUnique({
+          where: { id: userId }
+        });
+
+        // Cộng điểm cho người dùng
+        const updatedUser = await tx.user.update({
+          where: { id: userId },
+          data: {
+            points: {
+              increment: GROUP_POINTS
+            }
+          }
+        });
+
+        // Cập nhật tổng điểm của nhóm
+        await tx.group.update({
+          where: { id: groupId },
+          data: {
+            totalPoints: {
+              increment: user.points + GROUP_POINTS  // Cộng toàn bộ điểm của người dùng (bao gồm GROUP_POINTS mới thêm)
+            }
+          }
+        });
+
+        return {
+          message: 'Successfully joined the group',
+          newPoints: updatedUser.points
+        };
       });
 
-      return NextResponse.json({ message: 'Successfully joined the group' });
+      return NextResponse.json(result);
     } else if (action === 'leave') {
-      // Rời nhóm
-      await prisma.groupMember.deleteMany({
+      // Tìm thông tin nhóm và thành viên
+      const membership = await prisma.groupMember.findFirst({
         where: {
           userId,
           groupId
         }
       });
 
-      return NextResponse.json({ message: 'Successfully left the group' });
+      if (!membership) {
+        return NextResponse.json({ error: 'Not a member of this group' }, { status: 400 });
+      }
+
+      // Lấy thông tin người dùng
+      const user = await prisma.user.findUnique({
+        where: { id: userId }
+      });
+
+      // Thực hiện giao dịch
+      const result = await prisma.$transaction(async (tx) => {
+        // Rời nhóm
+        await tx.groupMember.deleteMany({
+          where: {
+            userId,
+            groupId
+          }
+        });
+
+        // Trừ điểm của người dùng
+        const updatedUser = await tx.user.update({
+          where: { id: userId },
+          data: {
+            points: {
+              decrement: GROUP_POINTS
+            }
+          }
+        });
+
+        // Cập nhật tổng điểm của nhóm
+        await tx.group.update({
+          where: { id: groupId },
+          data: {
+            totalPoints: {
+              decrement: user.points  // Trừ toàn bộ điểm của người dùng trước khi trừ GROUP_POINTS
+            }
+          }
+        });
+
+        return {
+          message: 'Successfully left the group',
+          newPoints: updatedUser.points
+        };
+      });
+
+      return NextResponse.json(result);
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
