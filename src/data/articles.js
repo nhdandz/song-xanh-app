@@ -1,0 +1,43 @@
+// Dữ liệu mẫu cho các bài viết
+const ARTICLES = [
+  {
+    id: 1,
+    title: 'Cách giảm thiểu rác thải nhựa trong sinh hoạt hàng ngày',
+    excerpt: 'Với những thói quen đơn giản, bạn có thể giảm đáng kể lượng rác thải nhựa và góp phần bảo vệ môi trường.',
+    image: '/images/reduce-plastic.jpg',
+    date: '05/05/2025',
+    category: 'Mẹo hay',
+    readTime: '5 phút',
+    saved: true,
+  },
+  {
+    id: 2,
+    title: 'Thế hệ Z và cuộc chiến chống biến đổi khí hậu',
+    excerpt: 'Thanh niên trên toàn cầu đang đứng lên để đòi hỏi hành động quyết liệt từ các nhà lãnh đạo.',
+    image: '/images/gen-z-climate.jpg',
+    date: '02/05/2025',
+    category: 'Xu hướng',
+    readTime: '8 phút',
+    saved: false,
+  },
+  {
+    id: 3,
+    title: 'Loài cây bản địa phù hợp cho vườn trường học',
+    excerpt: 'Khám phá các loài cây bản địa dễ trồng, ít chăm sóc và mang lại nhiều lợi ích cho môi trường học đường.',
+    image: '/images/native-plants.jpg',
+    date: '28/04/2025',
+    category: 'Hướng dẫn',
+    readTime: '6 phút',
+    saved: false,
+  },
+  {
+    id: 4,
+    title: 'Năng lượng tái tạo: Giải pháp cho tương lai xanh',
+    excerpt: 'Tìm hiểu về các nguồn năng lượng tái tạo và vai trò của chúng trong việc giảm phát thải khí nhà kính.',
+    image: '/images/renewable-energy.jpg',
+    date: '25/04/2025',
+    category: 'Kiến thức',
+    readTime: '10 phút',
+    saved: true,
+  },
+];

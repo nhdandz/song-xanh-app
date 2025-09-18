@@ -318,3 +318,16 @@ model DeviceUsage {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Bài viết tin tức
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  excerpt   String?    // tóm tắt
+  category  String?    // danh mục: "Môi trường", "Sống xanh"...
+  image     String?    // link ảnh
+  readTime  String?    // ví dụ: "5 phút"
+  cards     Json?
+  createdAt DateTime @default(now())
+}
