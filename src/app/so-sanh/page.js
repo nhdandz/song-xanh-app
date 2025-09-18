@@ -17,6 +17,20 @@ const RANK_COLORS = {
 const FALLBACK_GROUPS = [
   { id: '1', name: 'Lớp 10A1', totalPoints: 1250, memberCount: 35, rank: 1, type: 'class' },
   { id: '2', name: 'CLB Môi trường', totalPoints: 1520, memberCount: 15, rank: 0, type: 'club' },
+
+   // Các lớp chuyên k36
+  // { id: '3', name: 'Chuyên Tin - K36', totalPoints: 1100, memberCount: 40, rank: 2, type: 'class' },
+  // { id: '4', name: 'Chuyên Anh1 - K36', totalPoints: 980, memberCount: 38, rank: 3, type: 'class' },
+  // { id: '5', name: 'Chuyên Anh2 - K36', totalPoints: 950, memberCount: 37, rank: 4, type: 'class' },
+  // { id: '6', name: 'Chuyên Văn - K36', totalPoints: 870, memberCount: 35, rank: 5, type: 'class' },
+  // { id: '7', name: 'Chuyên Sử - K36', totalPoints: 820, memberCount: 32, rank: 6, type: 'class' },
+  // { id: '8', name: 'Chuyên Địa - K36', totalPoints: 790, memberCount: 33, rank: 7, type: 'class' },
+  // { id: '9', name: 'Chuyên Nga - K36', totalPoints: 770, memberCount: 30, rank: 8, type: 'class' },
+  // { id: '10', name: 'Chuyên Pháp - K36', totalPoints: 760, memberCount: 28, rank: 9, type: 'class' },
+  // { id: '11', name: 'Chuyên Trung - K36', totalPoints: 740, memberCount: 29, rank: 10, type: 'class' },
+  // { id: '12', name: 'Chuyên Toán - K36', totalPoints: 1300, memberCount: 45, rank: 1, type: 'class' },
+  // { id: '13', name: 'Chuyên Lý - K36', totalPoints: 1150, memberCount: 42, rank: 2, type: 'class' },
+  // { id: '14', name: 'Chuyên Hóa - K36', totalPoints: 1120, memberCount: 41, rank: 3, type: 'class' },
 ];
 
 export default function GroupComparison() {
