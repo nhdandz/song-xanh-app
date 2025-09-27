@@ -29,3 +29,24 @@ body {
 .animate-slide-left {
   animation: slide-left 0.3s ease-out;
 }
+
+/* Ghi đè rule toàn cục: đặt kích thước rõ ràng cho heading trong khu vực nội dung bài viết */
+.ql-editor h1 {
+  font-size: 1.9rem;    /* tương đương ~30px nếu root font-size = 16px */
+  line-height: 1.15;
+  font-weight: 700;
+  margin: 0.6em 0;
+}
+
+.ql-editor h2 {
+  font-size: 1.5rem;    /* nhỏ hơn h1 */
+  line-height: 1.2;
+  font-weight: 600;
+  margin: 0.55em 0;
+}
+
+.ql-editor h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.5em 0;
+}
