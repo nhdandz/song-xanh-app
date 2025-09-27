@@ -182,7 +182,7 @@ const sendMessage = async () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-6">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <header className="flex items-center gap-4 mb-6">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -253,10 +253,6 @@ const sendMessage = async () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5l7 7-7 7M5 12h14" />
                 </svg>
               </button>
-            </div>
-
-            <div className="mt-2 text-xs text-green-600/80">
-              <span>Ghi chú: </span>Ứng dụng lưu lịch sử trên **localStorage** (chỉ trên trình duyệt này). Để gọi Gemini an toàn, hãy đảm bảo bạn đã cấu hình `GEMINI_API_KEY` trong server env và dùng proxy `/api/chat` (mình đã chuẩn bị route server phía dưới).
             </div>
           </div>
         </main>

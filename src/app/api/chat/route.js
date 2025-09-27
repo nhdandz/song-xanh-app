@@ -39,7 +39,7 @@ export async function POST(req) {
     }
 
     // Gọi Gemini bằng query param key (không đặt header x-goog-api-key)
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(key)}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`;
 
     const resp = await fetch(url, {
       method: "POST",
