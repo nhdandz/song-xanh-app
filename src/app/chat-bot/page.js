@@ -86,19 +86,10 @@ const sendMessage = async () => {
   setLoading(true);
 
   try {
-    const systemInstruction = {
-      parts: [
-        {
-          text: "Bạn là trợ lý AI. Trả lời mọi câu hỏi bằng tiếng Việt, ngắn gọn, rõ ràng và thân thiện.",
-        },
-      ],
-    };
-
     // build contents từ newMessages (không cần push trimmed nữa vì newMessages đã có)
     const contents = buildContentsFromMessages(newMessages, null); // sửa hàm để nếu currentUserText = null thì không append
 
     const payload = {
-      systemInstruction,
       contents,
       generation_config: { temperature: 0.2, maxOutputTokens: 512 },
     };
@@ -191,8 +182,7 @@ const sendMessage = async () => {
           </div>
 
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-green-800">Sống Xanh — Trợ lý</h1>
-            <p className="text-sm text-green-700/80">Trả lời tiếng Việt. Hỏi về sống xanh, hoạt động, mẹo tiết kiệm năng lượng...</p>
+            <h1 className="text-2xl font-bold text-green-800">Sống Xanh — Trợ lý AI</h1>
           </div>
 
           <div className="flex items-center gap-2">
