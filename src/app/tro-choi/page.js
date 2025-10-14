@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { FaGamepad, FaQuestionCircle, FaClock, FaTrophy, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaGamepad, FaQuestionCircle, FaClock, FaTrophy, FaCheck, FaTimes, FaTree } from 'react-icons/fa';
 
 // Dữ liệu mẫu cho câu hỏi
 const QUESTIONS = [
@@ -202,6 +202,15 @@ const GAMES = [
   },
   {
     id: 2,
+    title: 'Trồng cây',
+    description: 'Hóa thân thành người làm vườn, chăm cây mỗi ngày để cây lớn lên và cùng lan tỏa lối sống xanh',
+    icon: <FaTree className="text-yellow-500" size={24} />,
+    points: 10,
+    timeLimit: '2 phút',
+    type: 'plant',
+  },
+  {
+    id: 3,
     title: 'Phân loại rác thải',
     description: 'Phân loại các loại rác thải vào đúng thùng rác',
     icon: <FaGamepad className="text-blue-500" size={24} />,
@@ -211,7 +220,7 @@ const GAMES = [
     comingSoon: true,
   },
   {
-    id: 3,
+    id: 4,
     title: 'Xây dựng thành phố xanh',
     description: 'Xây dựng một thành phố thân thiện với môi trường',
     icon: <FaGamepad className="text-purple-500" size={24} />,
