@@ -14,10 +14,35 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
+
+  // === CẤU HÌNH ADMIN NGAY Ở ĐÂY (THAY BẰNG EMAIL + PASS BẠN MUỐN) ===
+  // CẢNH BÁO: KHÔNG AN TOÀN CHO PRODUCTION — CHỈ DÙNG CHO DEMO/TẠM THỜI
+  const ADMIN_EMAIL = 'test123@gmail.com';
+  const ADMIN_PASS = '12345678';
+  // ==================================================================
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+    // --- KIỂM TRA NHANH ADMIN CHỈ TRÊN CLIENT (SIÊU NHANH) ---
+    if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
+    try {
+    // nếu muốn gọi login để backend set session thì giữ dòng này
+    await login(email, password);
+    } catch (err) {
+    console.warn('Admin quick login: backend login error (ignored)', err);
+    }
+
+    // --- SET COOKIE isAdmin = '1' (không httpOnly) ---
+    // đặt path=/ để cookie có hiệu lực toàn site, max-age tính bằng giây
+    document.cookie = 'isAdmin=1; path=/; max-age=' + 8 * 60 * 60 + ';';
+    // --------------------------------------------------
+
+    router.replace('/admin');
+  return;
+}
+
+    // ---------------------------------------------------------
+
     // Ngăn chặn đăng nhập trùng lặp
     if (isNavigating.current || isLoading) return;
     
