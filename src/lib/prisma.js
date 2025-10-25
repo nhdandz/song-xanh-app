@@ -1,11 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 
-// Tạo một instance của PrismaClient
-const globalForPrisma = global;
+const globalForPrisma = globalThis;
 
-// Tránh tạo nhiều kết nối trong chế độ development
-export const prisma = globalForPrisma.prisma || new PrismaClient();
+const prisma = globalForPrisma.prisma || new PrismaClient({
+  log: ['error', 'warn'], // bật log lỗi để dễ debug
+});
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
 
 export default prisma;
