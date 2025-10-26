@@ -1,16 +1,13 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
 }
+
 datasource db {
-  provider = "postgresql" // hoặc "mysql", "sqlite" tùy theo lựa chọn của bạn
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = "postgresql://song_xanh_db_2fdq_user:WjHiVEwGAhtEQzKQroAlv0LukPsPOduD@dpg-d3u9622li9vc73btth1g-a.singapore-postgres.render.com/song_xanh_db_2fdq?sslmode=require"
 }
 
-// Người dùng
 model User {
   id              String          @id @default(cuid())
   name            String
@@ -21,35 +18,33 @@ model User {
   school          String?
   points          Int             @default(0)
   level           String?         @default("Người khởi đầu xanh")
-  greenActivities GreenActivity[]
-  userActivities  UserActivity[] // Thêm trường này
-  badges          UserBadge[]
-  posts           Post[]
   comments        Comment[]
-  challenges      UserChallenge[]
-  groups          GroupMember[]
-  likes           Like[]
-  reports         Report[]
-  ideas           Idea[]
-  friendsAsUser   Friend[]        @relation("UserFriends")
-  friendsAsFriend Friend[]        @relation("FriendUsers")
-  scanHistories   ScanHistory[]
   deviceUsages    DeviceUsage[]
+  friendsAsFriend Friend[]        @relation("FriendUsers")
+  friendsAsUser   Friend[]        @relation("UserFriends")
+  groups          GroupMember[]
+  ideas           Idea[]
+  likes           Like[]
+  posts           Post[]
+  reports         Report[]
+  scanHistories   ScanHistory[]
   settings        Settings?
+  userActivities  UserActivity[]
+  badges          UserBadge[]
+  challenges      UserChallenge[]
+  greenActivities GreenActivity[] @relation("GreenActivityToUser")
 }
 
-// Hồ sơ thiết lập người dùng
 model Settings {
   id           String   @id @default(cuid())
   userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   reminderOn   Boolean  @default(true)
   reminderTime String   @default("18:00")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Hành động xanh
 model GreenActivity {
   id             String         @id @default(cuid())
   name           String
@@ -59,21 +54,19 @@ model GreenActivity {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   userActivities UserActivity[]
-  users          User[] // Thêm trường này
+  users          User[]         @relation("GreenActivityToUser")
 }
 
-// Hành động xanh của người dùng
 model UserActivity {
   id         String        @id @default(cuid())
   userId     String
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   activityId String
-  activity   GreenActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   date       DateTime      @default(now())
   createdAt  DateTime      @default(now())
+  activity   GreenActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Huy hiệu
 model Badge {
   id          String      @id @default(cuid())
   title       String
@@ -85,24 +78,22 @@ model Badge {
   userBadges  UserBadge[]
 }
 
-// Huy hiệu của người dùng
 model UserBadge {
   id       String   @id @default(cuid())
   userId   String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   badgeId  String
-  badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
   earnedAt DateTime @default(now())
+  badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Thách thức
 model Challenge {
   id             String          @id @default(cuid())
   title          String
   description    String
   points         Int
   days           Int
-  difficulty     String          @default("Trung bình") // Dễ, Trung bình, Khó
+  difficulty     String          @default("Trung bình")
   category       String
   requiredPoints Int?
   createdAt      DateTime        @default(now())
@@ -110,63 +101,57 @@ model Challenge {
   userChallenges UserChallenge[]
 }
 
-// Thách thức của người dùng
 model UserChallenge {
   id          String    @id @default(cuid())
   userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   challengeId String
-  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  status      String    @default("in-progress") // in-progress, completed, locked
+  status      String    @default("in-progress")
   progress    Int       @default(0)
   startedAt   DateTime  @default(now())
   completedAt DateTime?
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Nhóm
 model Group {
   id          String        @id @default(cuid())
   name        String
   description String?
   logoImage   String?
-  type        String        @default("class") // class, club, school
+  type        String        @default("class")
   totalPoints Int           @default(0)
-  members     GroupMember[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  members     GroupMember[]
 }
 
-// Thành viên nhóm
 model GroupMember {
   id       String   @id @default(cuid())
   userId   String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   groupId  String
-  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  role     String   @default("member") // admin, member
+  role     String   @default("member")
   joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, groupId])
 }
 
-// Mối quan hệ bạn bè
 model Friend {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
   friendId  String
-  friend    User     @relation("FriendUsers", fields: [friendId], references: [id], onDelete: Cascade)
-  status    String   @default("pending") // pending, accepted
+  status    String   @default("pending")
   createdAt DateTime @default(now())
+  friend    User     @relation("FriendUsers", fields: [friendId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, friendId])
 }
 
-// Bài đăng
 model Post {
   id        String    @id @default(cuid())
   userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   content   String
   images    String?
   activity  String?
@@ -174,45 +159,42 @@ model Post {
   updatedAt DateTime  @updatedAt
   comments  Comment[]
   likes     Like[]
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Bình luận
 model Comment {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId    String?
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   ideaId    String?
-  idea      Idea?    @relation(fields: [ideaId], references: [id], onDelete: Cascade)
   reportId  String?
-  report    Report?  @relation(fields: [reportId], references: [id], onDelete: Cascade)
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  idea      Idea?    @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  report    Report?  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Lượt thích
 model Like {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId    String?
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   ideaId    String?
-  idea      Idea?    @relation(fields: [ideaId], references: [id], onDelete: Cascade)
   reportId  String?
-  report    Report?  @relation(fields: [reportId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  idea      Idea?    @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  report    Report?  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId, ideaId, reportId])
 }
 
-// Ý tưởng
 model Idea {
   id          String    @id @default(cuid())
   userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   description String
   category    String
@@ -222,14 +204,13 @@ model Idea {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   comments    Comment[]
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes       Like[]
 }
 
-// Báo cáo vấn đề
 model Report {
   id          String    @id @default(cuid())
   userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   location    String
   description String
@@ -240,9 +221,9 @@ model Report {
   updatedAt   DateTime  @updatedAt
   comments    Comment[]
   likes       Like[]
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Sự kiện
 model Event {
   id              String             @id @default(cuid())
   title           String
@@ -255,18 +236,16 @@ model Event {
   participants    EventParticipant[]
 }
 
-// Người tham gia sự kiện
 model EventParticipant {
   id       String   @id @default(cuid())
   userId   String
   eventId  String
-  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade) // Thêm trường này
   joinedAt DateTime @default(now())
+  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId])
 }
 
-// Sản phẩm (cho tính năng quét mã)
 model Product {
   id             String        @id @default(cuid())
   barcode        String        @unique
@@ -284,50 +263,34 @@ model Product {
   scanHistories  ScanHistory[]
 }
 
-// Lịch sử quét sản phẩm
 model ScanHistory {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   timestamp DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Thiết bị (cho tính năng theo dõi sử dụng tài nguyên)
 model Device {
   id            String        @id @default(cuid())
   name          String
-  type          String // electricity, water
-  wattage       Float? // cho thiết bị điện
-  litersPerHour Float? // cho thiết bị nước
-  deviceUsages  DeviceUsage[]
+  type          String
+  wattage       Float?
+  litersPerHour Float?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  deviceUsages  DeviceUsage[]
 }
 
-// Dữ liệu sử dụng thiết bị
 model DeviceUsage {
   id          String   @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   deviceId    String
-  device      Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   hoursPerDay Float
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-}
-
-// Bài viết tin tức
-model Article {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  excerpt   String?    // tóm tắt
-  category  String?    // danh mục: "Môi trường", "Sống xanh"...
-  image     String?    // link ảnh
-  readTime  String?    // ví dụ: "5 phút"
-  cards     Json?
-  createdAt DateTime @default(now())
+  device      Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
