@@ -47,14 +47,42 @@ export async function GET(req) {
 }
 
 // =========================
-// POST /api/articles
+// POST /api/articles (robust + defensive)
 // =========================
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const contentType = (req.headers.get("content-type") || "").toLowerCase();
+    console.log("POST /api/articles - content-type:", contentType);
 
-    if (!body.title || !body.content) {
-      return NextResponse.json({ error: "Thiếu title hoặc content" }, { status: 400 });
+    // Nếu client gửi form-data (upload ảnh + fields), ta không parse JSON ở đây
+    if (contentType.includes("multipart/form-data")) {
+      console.log("POST /api/articles - received multipart/form-data; this route expects JSON.");
+      return NextResponse.json(
+        { error: "multipart/form-data not supported. Send JSON or use a dedicated upload endpoint." },
+        { status: 400 }
+      );
+    }
+
+    // Nếu là JSON (normal case)
+    let body;
+    try {
+      body = await req.json();
+    } catch (err) {
+      console.error("POST /api/articles - req.json() failed:", err);
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    console.log("POST /api/articles - parsed body:", JSON.stringify(body));
+
+    // Hỗ trợ trường hợp frontend gói payload trong { article: { ... } }
+    if (body && body.article && typeof body.article === "object") {
+      body = body.article;
+      console.log("POST /api/articles - using body.article as payload");
+    }
+
+    // Kiểm tra bắt buộc
+    if (!body || !body.title || !body.content) {
+      return NextResponse.json({ error: "Thiếu field bắt buộc: title và content" }, { status: 400 });
     }
 
     // Normalize cards: accept array or JSON string
