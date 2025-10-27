@@ -2,14 +2,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Article IDs are cuid strings, not numbers
 function parseId(params) {
-  const id = Number(params.id);
-  return Number.isFinite(id) ? id : NaN;
+  const id = params?.id;
+  if (!id || typeof id !== "string" || id.trim() === "") {
+    return null;
+  }
+  return id.trim();
 }
 
 export async function GET(req, { params }) {
   const id = parseId(params);
-  if (Number.isNaN(id)) {
+  if (!id) {
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   }
 
@@ -25,7 +29,7 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   const id = parseId(params);
-  if (Number.isNaN(id)) {
+  if (!id) {
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   }
 
@@ -71,7 +75,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
   const id = parseId(params);
-  if (Number.isNaN(id)) {
+  if (!id) {
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   }
 

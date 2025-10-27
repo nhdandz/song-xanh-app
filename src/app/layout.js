@@ -17,20 +17,21 @@ const noNavPaths = ['/dang-nhap', '/dang-ky'];
 export default function RootLayout({ children }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const pathname = usePathname();
-  
+
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
-  
-  const showNavigation = !noNavPaths.includes(pathname);
+
+  const isAdminPath = pathname?.startsWith('/admin');
+  const showNavigation = !noNavPaths.includes(pathname) && !isAdminPath;
   
   return (
     <html lang="vi">
       <body className={inter.className}>
         <AppProvider>
           <AuthGuard>
-            <div className="min-h-screen bg-green-50">
-              <main className="container mx-auto px-4 py-8 max-w-md">
+            <div className={`min-h-screen ${isAdminPath ? 'bg-gray-100' : 'bg-green-50'}`}>
+              <main className={isAdminPath ? '' : 'container mx-auto px-4 py-8 max-w-md'}>
                 {children}
               </main>
               {showNavigation && <Navigation onMenuClick={toggleDrawer} />}
