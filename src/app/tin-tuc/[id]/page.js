@@ -395,7 +395,7 @@ export default function ArticleDetail() {
 
           {/* Article header */}
           <div className="p-8 md:p-12">
-            <h1 className="w-fit text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="mx-auto text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
               {article.title}
             </h1>
 
