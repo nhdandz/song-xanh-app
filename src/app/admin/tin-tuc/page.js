@@ -1,10 +1,11 @@
-// File: src/components/AdminTinTuc.jsx
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeftIcon, NewspaperIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -63,8 +64,8 @@ export default function AdminTinTuc() {
       setLoadingArticles(true);
       const res = await fetch("/api/articles");
       const data = await res.json();
-      // API returns { items, total, ... } or an array
-      const list = Array.isArray(data) ? data : data.items || [];
+      // API returns { ok, data, meta } format
+      const list = data.ok ? data.data : (Array.isArray(data) ? data : data.items || []);
       setArticles(list);
     } catch (err) {
       console.error(err);
@@ -165,14 +166,17 @@ export default function AdminTinTuc() {
         console.error("API error:", err);
         throw new Error("Lỗi khi tạo bài");
       }
-      const created = await res.json();
+      const response = await res.json();
+      const created = response.ok ? response.data : response;
       alert("Đăng bài thành công");
       setTitle("");
       setExcerpt("");
       setContent("");
       setImage("");
+      setCategory("");
       clearCards();
-      router.push(`/tin-tuc/${created.id}`);
+      fetchArticles(); // Refresh list
+      // router.push(`/tin-tuc/${created.id}`);
     } catch (err) {
       console.error(err);
       alert("Đăng thất bại");
@@ -196,27 +200,69 @@ export default function AdminTinTuc() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Quản lý Tin Tức — Đăng mới</h1>
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="mb-6">
+        <Link href="/admin" className="inline-flex items-center text-green-600 hover:text-green-700 mb-4">
+          <ArrowLeftIcon className="w-5 h-5 mr-2" />
+          Quay lại Dashboard
+        </Link>
+        <div className="flex items-center gap-3">
+          <NewspaperIcon className="w-10 h-10 text-green-600" />
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Quản lý Tin Tức</h1>
+            <p className="text-gray-600 mt-1">Tạo, chỉnh sửa và xóa bài viết</p>
+          </div>
+        </div>
+      </div>
 
-      <section className="mb-6">
-        <h2 className="font-semibold mb-2">Danh sách bài (Admin)</h2>
+      <section className="mb-8 bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Danh sách bài viết ({articles.length})</h2>
         {loadingArticles ? (
-          <div>Đang tải...</div>
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-green-500 border-t-transparent"></div>
+            <p className="mt-2 text-gray-600">Đang tải...</p>
+          </div>
         ) : (
-          <div className="space-y-2">
-            {articles.length === 0 && <div>Chưa có bài nào</div>}
+          <div className="space-y-3">
+            {articles.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <NewspaperIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                Chưa có bài viết nào
+              </div>
+            )}
             {articles.map((a) => (
-              <div key={a.id} className="flex items-center gap-3 border p-3 rounded">
-                <div className="flex-1">
-                  <div className="font-medium">{a.title}</div>
-                  <div className="text-sm text-gray-500">{a.excerpt}</div>
+              <div key={a.id} className="flex items-center gap-4 border border-gray-200 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                {a.image && (
+                  <img src={a.image} alt={a.title} className="w-20 h-20 object-cover rounded" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-gray-900 truncate">{a.title}</div>
+                  <div className="text-sm text-gray-500 line-clamp-2">{a.excerpt || "Không có tóm tắt"}</div>
+                  <div className="flex gap-2 mt-1">
+                    {a.category && (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">{a.category}</span>
+                    )}
+                    <span className="text-xs text-gray-400">
+                      {new Date(a.createdAt).toLocaleDateString("vi-VN")}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => router.push(`/admin/tin-tuc/edit/${a.id}`)} className="px-3 py-1 border rounded">
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/admin/tin-tuc/edit/${a.id}`)}
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <PencilIcon className="w-4 h-4 mr-1" />
                     Sửa
                   </button>
-                  <button type="button" onClick={() => deleteArticle(a.id)} className="px-3 py-1 bg-red-600 text-white rounded" disabled={String(deletingId) === String(a.id)}>
+                  <button
+                    type="button"
+                    onClick={() => deleteArticle(a.id)}
+                    className="inline-flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                    disabled={String(deletingId) === String(a.id)}
+                  >
+                    <TrashIcon className="w-4 h-4 mr-1" />
                     {String(deletingId) === String(a.id) ? "Đang xóa..." : "Xóa"}
                   </button>
                 </div>
@@ -226,70 +272,191 @@ export default function AdminTinTuc() {
         )}
       </section>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Tiêu đề" className="w-full border rounded p-2" />
-        <input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Tóm tắt (excerpt)" className="w-full border rounded p-2" />
-
-        <input value={image} onChange={(e) => setImage(e.target.value)} placeholder="Link ảnh (ví dụ /images/xxx.jpg)" className="w-full border rounded p-2" />
-
-        <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Danh mục" className="w-full border rounded p-2" />
-
-        <div>
-          <label className="font-semibold">Nội dung</label>
-          <div className="mt-2 mb-3 flex gap-2">
-            <button type="button" onClick={insertCardsIntoEditor} className="px-3 py-1 bg-blue-600 text-white rounded">
-              Chèn cards vào vị trí con trỏ
-            </button>
-            <button type="button" onClick={appendCardsToContent} className="px-3 py-1 border rounded">
-              (Fallback) Chèn cards vào cuối nội dung
-            </button>
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Tạo bài viết mới</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Nhập tiêu đề bài viết"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+            />
           </div>
 
-          <ReactQuill ref={quillRef} theme="snow" value={content} onChange={(v) => setContent(v)} modules={quillModules} formats={quillFormats} />
-        </div>
-
-        <div className="mt-4 border p-3 rounded bg-white">
-          <h3 className="font-semibold mb-2">Tạo bộ thẻ (cards)</h3>
-          <input ref={cardTitleRef} placeholder="Tiêu đề card" className="w-full border rounded p-2 mb-2" />
-          <textarea ref={cardBulletsRef} placeholder="Mỗi dòng 1 bullet" className="w-full border rounded p-2 mb-2" rows={4} />
-
-          <div className="flex gap-2">
-            <button type="button" onClick={addCard} className="bg-green-600 text-white px-3 py-1 rounded">
-              Thêm card
-            </button>
-            <button type="button" onClick={insertCardsIntoEditor} className="bg-blue-600 text-white px-3 py-1 rounded">
-              Chèn cards vào editor
-            </button>
-            <button type="button" onClick={() => { if(confirm('Xoá tất cả card preview?')) clearCards(); }} className="px-3 py-1 border rounded">
-              Xoá tất cả
-            </button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tóm tắt</label>
+            <textarea
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              placeholder="Nhập tóm tắt ngắn gọn về bài viết"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              rows="3"
+            />
           </div>
 
-          <div className="mt-3">
-            <h4 className="font-medium">Preview cards</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-              {cards.map((c, i) => (
-                <div key={c.id} className="border p-3 rounded bg-green-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">{i + 1}</div>
-                    <div className="font-semibold text-green-700">{c.title}</div>
-                    <button type="button" onClick={() => removeCard(c.id)} className="ml-auto text-red-600">
-                      Xóa
-                    </button>
-                  </div>
-                  <ul className="mt-2 list-disc ml-6 text-sm">{c.bullets.map((b, idx) => <li key={idx}>{b}</li>)}</ul>
-                </div>
-              ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Link ảnh đại diện</label>
+              <input
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                placeholder="/images/article.jpg"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+              <input
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Môi trường, Tái chế, ..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
             </div>
           </div>
-        </div>
 
-        <div className="flex gap-2">
-          <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded">
-            Đăng bài
-          </button>
-        </div>
-      </form>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Nội dung bài viết *</label>
+            <div className="mb-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={insertCardsIntoEditor}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                Chèn cards vào vị trí con trỏ
+              </button>
+              <button
+                type="button"
+                onClick={appendCardsToContent}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              >
+                Chèn cards vào cuối nội dung
+              </button>
+            </div>
+            <div className="border border-gray-300 rounded-lg overflow-hidden">
+              <ReactQuill
+                ref={quillRef}
+                theme="snow"
+                value={content}
+                onChange={(v) => setContent(v)}
+                modules={quillModules}
+                formats={quillFormats}
+                className="bg-white"
+              />
+            </div>
+          </div>
+
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tạo bộ thẻ thông tin (Cards)</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề card</label>
+                <input
+                  ref={cardTitleRef}
+                  placeholder="Ví dụ: Lợi ích của tái chế"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nội dung (mỗi dòng một bullet point)</label>
+                <textarea
+                  ref={cardBulletsRef}
+                  placeholder="Giảm lượng rác thải&#10;Tiết kiệm tài nguyên thiên nhiên&#10;Bảo vệ môi trường"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  rows={4}
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={addCard}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Thêm card
+                </button>
+                <button
+                  type="button"
+                  onClick={insertCardsIntoEditor}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Chèn tất cả cards vào editor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm("Xoá tất cả card preview?")) clearCards();
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Xoá tất cả
+                </button>
+              </div>
+
+              {cards.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Preview Cards ({cards.length})</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {cards.map((c, i) => (
+                      <div key={c.id} className="border-2 border-green-200 p-4 rounded-lg bg-green-50">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+                            {i + 1}
+                          </div>
+                          <div className="flex-1 font-semibold text-green-900">{c.title}</div>
+                          <button
+                            type="button"
+                            onClick={() => removeCard(c.id)}
+                            className="text-red-600 hover:text-red-800 font-medium text-sm"
+                          >
+                            Xóa
+                          </button>
+                        </div>
+                        <ul className="space-y-1 ml-11">
+                          {c.bullets.map((b, idx) => (
+                            <li key={idx} className="text-sm text-gray-700 flex items-start">
+                              <span className="text-green-600 mr-2">•</span>
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-6 border-t">
+            <button
+              type="submit"
+              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-lg"
+            >
+              Đăng bài viết
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm("Bạn có chắc muốn xóa tất cả và làm mới?")) {
+                  setTitle("");
+                  setExcerpt("");
+                  setContent("");
+                  setImage("");
+                  setCategory("");
+                  clearCards();
+                }
+              }}
+              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Làm mới
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

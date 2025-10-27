@@ -295,46 +295,35 @@ export default function ArticleDetail() {
     }
   };
 
-  // --- RenderCards giống style admin ---
+  // --- RenderCards với style đẹp hơn ---
   function RenderCards({ cards }) {
     if (!cards || !Array.isArray(cards) || cards.length === 0) return null;
     return (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 18, margin: "12px 0" }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-12">
         {cards.map((c, idx) => (
           <div
             key={idx}
-            style={{
-              border: "1px solid #d8f0e6",
-              background: "#f7fff9",
-              padding: 18,
-              borderRadius: 10,
-              boxShadow: "0 2px 6px rgba(0,0,0,0.03)",
-            }}
+            className="relative bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-              <div
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: "50%",
-                  background: "#0b9d4f",
-                  color: "#fff",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: 700,
-                }}
-              >
-                {idx + 1}
-              </div>
-              <div style={{ fontWeight: 700, color: "#0f7b44" }}>{c.title}</div>
+            {/* Card number badge */}
+            <div className="absolute -top-4 -left-4 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+              {idx + 1}
             </div>
 
-            <ul style={{ margin: "8px 0 0 18px", color: "#214e37", paddingLeft: 0 }}>
+            {/* Card title */}
+            <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2 pl-8">
+              {c.title}
+            </h3>
+
+            {/* Card bullets */}
+            <ul className="space-y-2.5">
               {Array.isArray(c.bullets)
                 ? c.bullets.map((b, i) => (
-                    <li key={i} style={{ marginBottom: 6 }}>
-                      {b}
+                    <li key={i} className="flex items-start gap-3 text-gray-700">
+                      <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="flex-1 leading-relaxed">{b}</span>
                     </li>
                   ))
                 : null}
@@ -354,51 +343,130 @@ export default function ArticleDetail() {
     }
   }, [article, sanitizedHtml, parsedCards]);
 
-  if (loading) return <div className="p-6">Đang tải...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent mb-4"></div>
+          <p className="text-gray-600 font-medium">Đang tải bài viết...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!article) return null;
 
   const cards = getCards();
 
   return (
-    <div style={{ maxWidth: 840, margin: "0 auto", padding: "1.5rem" }}>
-      <Link href="/tin-tuc" className="text-green-600 mb-4 inline-block">
-        ← Quay lại
-      </Link>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Back button */}
+        <Link
+          href="/tin-tuc"
+          className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-semibold mb-8 transition-colors group"
+        >
+          <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Quay lại danh sách
+        </Link>
 
-      <h1 style={{ fontSize: "1.9rem", fontWeight: 700, color: "#0f7b44", marginBottom: 8 }}>{article.title}</h1>
+        {/* Article container */}
+        <article className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Article image */}
+          {article.image && (
+            <div className="relative h-96 overflow-hidden">
+              <img
+                src={article.image}
+                alt={article.title}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+              {article.category && (
+                <div className="absolute top-6 right-6">
+                  <span className="inline-block bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-full shadow-lg">
+                    {article.category}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
 
-      <div style={{ fontSize: "0.9rem", color: "#6b7280", marginBottom: 16 }}>
-        {article.createdAt ? new Date(article.createdAt).toLocaleString("vi-VN") : ""}
-        {" • "}
-        {article.readTime ?? ""}
+          {/* Article header */}
+          <div className="p-8 md:p-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              {article.title}
+            </h1>
+
+            {/* Meta information */}
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-8 pb-8 border-b border-gray-200">
+              {article.createdAt && (
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="font-medium">
+                    {new Date(article.createdAt).toLocaleDateString("vi-VN", {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
+              )}
+              {article.readTime && (
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="font-medium">{article.readTime}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Excerpt */}
+            {article.excerpt && (
+              <div className="bg-green-50 border-l-4 border-green-600 p-6 mb-8 rounded-r-lg">
+                <p className="text-lg text-gray-700 leading-relaxed italic">
+                  {article.excerpt}
+                </p>
+              </div>
+            )}
+
+            {/* Cards section */}
+            {cards && <RenderCards cards={cards} />}
+
+            {/* Article content */}
+            {contentWithoutCards ? (
+              <div
+                className="ql-editor prose prose-lg max-w-none"
+                style={{ lineHeight: 1.8, fontSize: 17, color: "#1f2937" }}
+                dangerouslySetInnerHTML={{ __html: contentWithoutCards }}
+              />
+            ) : sanitizedHtml ? (
+              <div
+                className="ql-editor prose prose-lg max-w-none"
+                style={{ lineHeight: 1.8, fontSize: 17, color: "#1f2937" }}
+                dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+              />
+            ) : null}
+          </div>
+        </article>
+
+        {/* Back to list button at bottom */}
+        <div className="mt-12 text-center">
+          <Link
+            href="/tin-tuc"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 hover:shadow-xl transition-all duration-200"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Quay lại danh sách bài viết
+          </Link>
+        </div>
       </div>
-
-      {article.image && (
-        <img
-          src={article.image}
-          alt={article.title}
-          loading="lazy"
-          style={{ width: "100%", borderRadius: 8, marginBottom: 18, maxHeight: 480, objectFit: "cover" }}
-        />
-      )}
-
-      {/* Nếu có cards (từ article.cards hoặc parse từ content) thì render bằng component */}
-      {cards && <RenderCards cards={cards} />}
-
-      {/* Hiển thị phần nội dung còn lại (đã sanitize và đã remove phần cards nếu được parse) */}
-      {contentWithoutCards ? (
-        <div
-          className="ql-editor" // dùng class ql-editor để hưởng style của quill.snow.css
-          style={{ lineHeight: 1.7, fontSize: 16, color: "#0f2d1f" }}
-          dangerouslySetInnerHTML={{ __html: contentWithoutCards }}
-        />
-      ) : sanitizedHtml ? (
-        <div
-          className="ql-editor"
-          style={{ lineHeight: 1.7, fontSize: 16, color: "#0f2d1f" }}
-          dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
-        />
-      ) : null}
     </div>
   );
 }
