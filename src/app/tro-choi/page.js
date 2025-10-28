@@ -208,6 +208,7 @@ const GAMES = [
     points: 10,
     timeLimit: '2 phút',
     type: 'plant',
+    comingSoon: true,
   },
   {
     id: 3,
@@ -590,3 +591,4 @@ export default function Games() {
     </div>
   );
 }
+
