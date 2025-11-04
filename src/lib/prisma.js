@@ -9,7 +9,7 @@ const prisma = globalForPrisma.prisma || new PrismaClient({
 });
 
 if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+  globalForPrisma.__prismaClient = prisma;
 }
 
 // export both default and named to be safe
