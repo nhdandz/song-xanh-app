@@ -8,19 +8,19 @@ import { FaGamepad, FaQuestionCircle, FaClock, FaTrophy, FaCheck, FaTimes, FaTre
 const QUESTIONS = [
   {
     id: 1,
-    question: 'Loại rác nào dưới đây mất thời gian phân hủy lâu nhất?',
-    options: [
-      'Vỏ chuối',
-      'Hộp giấy',
-      'Chai nhựa',
-      'Túi ni-lông',
-    ],
-    correctAnswer: 3,
-    explanation: 'Túi ni-lông có thể mất tới 500-1000 năm để phân hủy hoàn toàn trong tự nhiên.',
+  question: 'Loại rác nào dưới đây mất thời gian phân hủy lâu nhất?',
+  options: ['Vỏ chuối', 'Hộp giấy', 'Chai nhựa', 'Túi ni-lông'],
+  correctAnswer: 3,
+  explanation: `
+      • Vỏ chuối: phân hủy rất nhanh, chỉ mất vài ngày đến vài tuần.
+      • Hộp giấy: phân hủy trong vài tháng.
+      • Chai nhựa: mất hàng trăm năm để phân hủy.
+      • Túi ni-lông: có thể mất từ 500 đến 1.000 năm, thậm chí không phân hủy hoàn toàn, mà chỉ vỡ thành vi nhựa gây ô nhiễm lâu dài.
+      👉 Vì vậy, Túi ni-lông là loại rác mất thời gian phân hủy lâu nhất.`
   },
   {
     id: 2,
-    question: 'Nguyên nhân chính gây ra hiệu ứng nhà kính là gì?',
+    question: 'Khí nào là nguyên nhân chính gây ra hiệu ứng nhà kính trên Trái Đất?',
     options: [
       'CO2',
       'Ozone',
@@ -28,23 +28,26 @@ const QUESTIONS = [
       'Nitơ',
     ],
     correctAnswer: 0,
-    explanation: 'CO2 (khí cacbonic) là một trong những khí nhà kính chính, được thải ra từ việc đốt nhiên liệu hóa thạch.',
+    explanation: `
+      •	CO₂ là khí nhà kính chủ yếu do con người thải ra từ việc đốt nhiên liệu hóa thạch (than, dầu, khí đốt), phá rừng, sản xuất công nghiệp...
+      •	Các khí nhà kính khác như CH₄ (mêtan), N₂O (nitơ oxit), và hơi nước (H₂O) cũng góp phần, nhưng CO₂ là nguyên nhân chính và ổn định lâu dài nhất trong khí quyển.
+      •	Ozone (O₃) và Nitơ (N₂) không phải là nguyên nhân chính gây ra hiệu ứng nhà kính.`,
   },
   {
     id: 3,
-    question: 'Lượng nước uống tối thiểu mỗi người cần mỗi ngày là bao nhiêu?',
+    question: 'Lượng nước uống tối thiểu mà mỗi người trưởng thành cần cung cấp cho cơ thể một ngày là bao nhiêu?',
     options: [
+      '0,5 lít',
       '1 lít',
-      '2 lít',
-      '3 lít',
-      '4 lít',
+      '1,5-2 lít',
+      '3-4 lít',
     ],
-    correctAnswer: 1,
-    explanation: 'Theo WHO, một người trưởng thành cần uống khoảng 2 lít nước mỗi ngày để duy trì sức khỏe tốt.',
+    correctAnswer: 2,
+    explanation: `Theo WHO, một người trưởng thành cần uống khoảng 1,5 đến 2 lít nước mỗi ngày (tương đương 6–8 ly) để duy trì hoạt động trao đổi chất, điều hòa thân nhiệt và loại bỏ chất thải.`,
   },
   {
     id: 4,
-    question: 'Chất thải nào không nên được xả vào bồn cầu?',
+    question: 'Chất thải nào sau đây không nên xả vào bồn cầu để tránh gây tắc nghẽn và ô nhiễm môi trường?',
     options: [
       'Giấy vệ sinh',
       'Dầu ăn đã qua sử dụng',
@@ -52,7 +55,9 @@ const QUESTIONS = [
       'Nước thải tắm gội',
     ],
     correctAnswer: 1,
-    explanation: 'Dầu ăn có thể gây tắc nghẽn ống cống và gây ô nhiễm nguồn nước.',
+    explanation: `
+      •	Dầu ăn cũ có thể đông đặc, bám vào thành ống thoát nước, gây tắc nghẽn đường ống và ô nhiễm nguồn nước.
+      •	Giấy vệ sinh, nước tiểu và nước tắm gội đều có thể xả được vì chúng dễ phân hủy hoặc được xử lý trong hệ thống nước thải.`,
   },
   {
     id: 5,
@@ -64,7 +69,9 @@ const QUESTIONS = [
       'Khí đốt tự nhiên',
     ],
     correctAnswer: 2,
-    explanation: 'Năng lượng mặt trời là năng lượng tái tạo vì nó không bao giờ cạn kiệt và tái tạo liên tục.',
+    explanation: `
+      •	Năng lượng mặt trời là nguồn năng lượng tái tạo, vì có thể khai thác liên tục và không cạn kiệt theo thời gian.
+      •	Trong khi đó, than đá, dầu mỏ và khí đốt tự nhiên đều là nhiên liệu hóa thạch, hình thành trong hàng triệu năm và sẽ cạn kiệt nếu khai thác quá mức.`,
   },
   // bạn có thể thêm nhiều câu hơn ở đây
   {
@@ -487,7 +494,7 @@ export default function Games() {
           {isAnswered && (
             <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
               <h3 className="font-semibold text-gray-700 mb-1">Giải thích:</h3>
-              <p className="text-sm text-gray-600">{currentQ.explanation}</p>
+              <p className="text-sm text-gray-600 whitespace-pre-line">{currentQ.explanation}</p>
             </div>
           )}
         </div>
