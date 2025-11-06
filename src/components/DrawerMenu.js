@@ -71,66 +71,72 @@ export default function DrawerMenu({ isOpen, onClose }) {
   };
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
-      <div className="w-4/5 bg-white h-full overflow-y-auto animate-slide-left">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-sm lg:max-w-md bg-white h-full overflow-y-auto animate-slide-left"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="p-4 bg-green-50 flex justify-between items-center">
+        <div className="p-6 bg-white border-b border-gray-200 flex justify-between items-center">
           <div className="flex items-center">
-            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-3">
-              <FaLeaf className="text-green-600" />
+            <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+              <FaLeaf className="text-green-700" size={24} />
             </div>
             <div>
-              <h2 className="font-bold text-green-800">{user.name}</h2>
-              <p className="text-sm text-green-600">{points.total} điểm xanh</p>
+              <h2 className="font-semibold text-gray-900">{user.name}</h2>
+              <p className="text-sm text-gray-600">{points.total} điểm</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white flex items-center justify-center"
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
           >
-            <FaTimes />
+            <FaTimes className="text-gray-600" />
           </button>
         </div>
-        
+
         {/* Menu Items */}
         <div className="py-2">
-          {menuItems.map((item, index) => 
+          {menuItems.map((item, index) =>
             item.divider ? (
               <div key={index} className="border-t border-gray-200 my-2"></div>
             ) : (
-              <Link 
+              <Link
                 key={index}
                 href={item.path}
                 onClick={onClose}
-                className="flex items-center px-4 py-3 hover:bg-green-50"
+                className="flex items-center px-6 py-3 hover:bg-gray-50 transition-colors"
               >
-                <div className="w-8 text-gray-600">
+                <div className="w-6 text-gray-600">
                   {item.icon}
                 </div>
-                <span className="ml-3 text-gray-800">{item.label}</span>
+                <span className="ml-4 text-gray-800">{item.label}</span>
               </Link>
             )
           )}
-          
+
           {/* Nút đăng xuất */}
           <button
             onClick={handleLogout}
-            className="flex items-center px-4 py-3 w-full text-left hover:bg-red-50"
+            className="flex items-center px-6 py-3 w-full text-left hover:bg-red-50 transition-colors"
           >
-            <div className="w-8 text-red-600">
+            <div className="w-6 text-red-600">
               <FaSignOutAlt size={20} />
             </div>
-            <span className="ml-3 text-red-600 font-medium">Đăng xuất</span>
+            <span className="ml-4 text-red-600 font-medium">Đăng xuất</span>
           </button>
         </div>
-        
+
         {/* Footer */}
-        <div className="mt-auto p-4 border-t border-gray-200 bg-gray-50">
-          <div className="text-xs text-gray-500 mb-2">
+        <div className="mt-auto p-6 border-t border-gray-200 bg-gray-50">
+          <div className="text-xs text-gray-500 mb-2 font-medium">
             Phiên bản 1.0.0
           </div>
-          <p className="text-xs text-gray-500">
-            © 2025 Ứng dụng Sống Xanh - Một sáng kiến của học sinh vì môi trường bền vững.
+          <p className="text-xs text-gray-500 leading-relaxed">
+            © 2025 Ứng dụng Sống Xanh
           </p>
         </div>
       </div>

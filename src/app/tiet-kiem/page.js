@@ -505,7 +505,7 @@ export default function ResourceManagement() {
   );
   
   return (
-    <div className="space-y-6 pb-16">
+    <div className="max-w-6xl mx-auto px-4 py-8 pb-24 space-y-6">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-green-800">
           Tiết kiệm tài nguyên

@@ -195,128 +195,133 @@ export default function GroupComparison() {
   }
 
   return (
-    <div className="space-y-6 pb-16">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-green-800">
-          So sánh nhóm
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 pb-20">
+      {/* Header */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h1 className="text-2xl font-semibold text-gray-900">
+          So sánh cộng đồng
         </h1>
-        <p className="text-gray-600 mt-1">
-          So sánh điểm xanh giữa các lớp và nhóm
+        <p className="text-sm text-gray-600 mt-1">
+          Theo dõi và so sánh thành tích giữa các nhóm
         </p>
       </div>
-      
-      {/* Nhóm của người dùng */}
+
+      {/* User's Group Card */}
       {userGroup ? (
-        <div className="bg-green-50 p-4 rounded-lg shadow-md border-2 border-green-500">
-          <div className="flex items-center mb-3">
-            <div className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center mr-3">
-              <FaUsers className="text-green-700" size={20} />
+        <div className="bg-white rounded-lg shadow-sm border-2 border-green-600 p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+                <FaUsers className="text-green-700" size={20} />
+              </div>
+              <div>
+                <h2 className="font-semibold text-gray-900">{userGroup.name}</h2>
+                <p className="text-sm text-gray-600">
+                  {userGroup.memberCount} thành viên
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="font-bold text-green-800">{userGroup.name}</h2>
-              <p className="text-sm text-green-700">
-                Nhóm của bạn • {userGroup.memberCount} thành viên
-              </p>
-            </div>
-            <div className="ml-auto">
-              <div className="text-xs text-green-700">Hạng</div>
-              <div className="text-2xl font-bold text-green-700">#{userGroup.rank}</div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div className="bg-white rounded p-2 text-center">
-              <div className="text-sm text-gray-500">Tổng điểm</div>
-              <div className="text-xl font-bold text-green-600">{userGroup.totalPoints}</div>
-            </div>
-            <div className="bg-white rounded p-2 text-center">
-              <div className="text-sm text-gray-500">Điểm/thành viên</div>
-              <div className="text-xl font-bold text-green-600">{getAveragePoints(userGroup)}</div>
+            <div className="text-right">
+              <div className="text-xs text-gray-500">Xếp hạng</div>
+              <div className="text-2xl font-semibold text-gray-900">#{userGroup.rank}</div>
             </div>
           </div>
-          
-          <div className="text-sm text-gray-600">
-            <span className="font-semibold text-green-700">Bạn đóng góp: </span> 
-            {points.total} điểm ({calculateContribution()}% tổng điểm)
+
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="text-sm text-gray-600 mb-1">Tổng điểm</div>
+              <div className="text-xl font-semibold text-gray-900">{userGroup.totalPoints}</div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div className="text-sm text-gray-600 mb-1">TB/thành viên</div>
+              <div className="text-xl font-semibold text-gray-900">{getAveragePoints(userGroup)}</div>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-gray-200">
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Đóng góp của bạn:</span>{' '}
+              {points.total} điểm ({calculateContribution()}%)
+            </div>
           </div>
         </div>
       ) : (
-        <div className="bg-yellow-50 p-4 rounded-lg shadow-md border-2 border-yellow-400">
-          <p className="text-center text-yellow-700">
-            Bạn chưa tham gia nhóm nào. Hãy tham gia một nhóm để theo dõi thành tích của nhóm!
+        <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-200 p-6">
+          <p className="text-center text-amber-900">
+            Bạn chưa tham gia nhóm nào. Tham gia nhóm để theo dõi thành tích cùng mọi người!
           </p>
         </div>
       )}
-      
-      {/* Tìm kiếm nhóm */}
+
+      {/* Search Bar */}
       <div className="relative">
         <input
           type="text"
-          placeholder="Tìm lớp hoặc nhóm..."
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="Tìm kiếm nhóm..."
+          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div className="absolute left-3 top-2.5 text-gray-400">
+        <div className="absolute left-3 top-3.5 text-gray-400">
           <FaSearch />
         </div>
       </div>
-      
-      {/* Bảng xếp hạng */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h2 className="font-bold text-green-800 mb-4 flex items-center">
-          <FaTrophy className="text-yellow-500 mr-2" />
+
+      {/* Leaderboard */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+          <FaTrophy className="text-amber-500 mr-2" />
           Bảng xếp hạng
         </h2>
-        
-        {filteredGroups.length === 0 && (
-          <p className="text-center text-gray-500 py-4">
-            Không tìm thấy nhóm nào phù hợp với từ khóa tìm kiếm
+
+        {filteredGroups.length === 0 ? (
+          <p className="text-center text-gray-500 py-8">
+            Không tìm thấy nhóm nào
           </p>
+        ) : (
+          <div className="space-y-3">
+            {filteredGroups.map(group => (
+              <div key={group.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-sm transition-shadow">
+                <div className="flex items-center p-4">
+                  <div className={`w-10 h-10 rounded-lg ${RANK_COLORS[group.rank] || RANK_COLORS.default} flex items-center justify-center text-white font-semibold mr-3 flex-shrink-0`}>
+                    {group.rank === 0 ? <FaUsers size={16} /> : `#${group.rank}`}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-gray-900 truncate">{group.name}</h3>
+                    <p className="text-xs text-gray-500">
+                      {group.memberCount} thành viên · TB {getAveragePoints(group)} điểm
+                    </p>
+                  </div>
+                  <div className="text-right ml-3">
+                    <div className="text-lg font-semibold text-gray-900">{group.totalPoints}</div>
+                    <div className="text-xs text-gray-500">điểm</div>
+                  </div>
+                </div>
+
+                <div className="px-4 pb-4">
+                  <button
+                    onClick={() => toggleJoinGroup(group.id)}
+                    className={`w-full py-2 rounded-md text-sm font-medium transition-colors ${
+                      joinedGroups.includes(group.id)
+                        ? 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
+                        : 'bg-green-600 text-white hover:bg-green-700'
+                    }`}
+                  >
+                    {joinedGroups.includes(group.id) ? 'Đã tham gia' : 'Tham gia'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
-        
-        <div className="space-y-3">
-          {filteredGroups.map(group => (
-            <div key={group.id} className="border rounded-lg overflow-hidden">
-              <div className="flex items-center p-3">
-                <div className={`w-8 h-8 rounded-full ${RANK_COLORS[group.rank] || RANK_COLORS.default} flex items-center justify-center text-white font-bold mr-3`}>
-                  {group.rank === 0 ? <FaUsers size={14} /> : group.rank}
-                </div>
-                <div>
-                  <h3 className="font-semibold">{group.name}</h3>
-                  <p className="text-xs text-gray-500">
-                    {group.memberCount} thành viên • {getAveragePoints(group)} điểm/thành viên
-                  </p>
-                </div>
-                <div className="ml-auto">
-                  <div className="text-lg font-bold text-green-600">{group.totalPoints}</div>
-                  <div className="text-xs text-gray-500">tổng điểm</div>
-                </div>
-              </div>
-              
-              <div className="px-3 pb-3">
-                <button
-                  onClick={() => toggleJoinGroup(group.id)}
-                  className={`w-full py-1.5 rounded text-sm font-medium ${
-                    joinedGroups.includes(group.id)
-                      ? 'bg-red-50 text-red-600 border border-red-200'
-                      : 'bg-green-50 text-green-600 border border-green-200'
-                  }`}
-                >
-                  {joinedGroups.includes(group.id) ? 'Đã tham gia' : 'Tham gia nhóm'}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
-      
-      {/* Thông tin thêm */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h3 className="font-semibold text-blue-800 mb-2">Điểm xanh nhóm hoạt động như thế nào?</h3>
-        <p className="text-sm text-blue-700">
-          Mỗi thành viên trong nhóm sống xanh sẽ đóng góp điểm vào tổng điểm của nhóm. 
-          Hãy mời bạn bè cùng tham gia để nâng hạng nhóm của bạn!
+
+      {/* Info Section */}
+      <div className="bg-blue-50 rounded-lg border border-blue-200 p-5">
+        <h3 className="font-medium text-blue-900 mb-2">Cách hoạt động</h3>
+        <p className="text-sm text-blue-800 leading-relaxed">
+          Điểm của mỗi thành viên sẽ được cộng vào tổng điểm nhóm.
+          Mời thêm bạn bè tham gia để nâng cao thứ hạng!
         </p>
       </div>
     </div>

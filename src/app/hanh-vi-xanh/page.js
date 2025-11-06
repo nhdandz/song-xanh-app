@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import ActionCard from '@/components/ActionCard';
 import { useEffect, useRef } from 'react';
+import { FaLeaf } from 'react-icons/fa';
 
 export default function GreenActions() {
   const router = useRouter();
@@ -27,24 +28,35 @@ export default function GreenActions() {
   };
   
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-green-800">
-          Hành vi xanh hôm nay
-        </h1>
-        <p className="text-gray-600 mt-1">
-          Hãy tích chọn những hành vi bạn đã thực hiện
-        </p>
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400 to-emerald-400 opacity-10 rounded-full blur-2xl"></div>
+        <div className="relative flex items-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center mr-4">
+            <FaLeaf className="text-green-600 text-xl" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Hành động xanh hôm nay
+            </h1>
+            <p className="text-sm text-gray-600 mt-1">
+              Đánh dấu những hành động bạn đã thực hiện trong ngày
+            </p>
+          </div>
+        </div>
       </div>
-      
+
       {todayActions.length === 0 ? (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Đang tải danh sách hành động...</p>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
+          <div className="flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600 mb-4"></div>
+            <p className="text-gray-600">Đang tải danh sách hành động...</p>
+          </div>
         </div>
       ) : (
         <>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {todayActions.map(action => (
               <ActionCard
                 key={action.id}
@@ -53,13 +65,15 @@ export default function GreenActions() {
               />
             ))}
           </div>
-          
-          <button
-            onClick={handleSave}
-            className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
-          >
-            Lưu lại
-          </button>
+
+          <div className="sticky bottom-20 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 p-4">
+            <button
+              onClick={handleSave}
+              className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+            >
+              Lưu hành động
+            </button>
+          </div>
         </>
       )}
     </div>

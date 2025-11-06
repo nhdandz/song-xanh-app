@@ -226,14 +226,14 @@ export default function GreenMap() {
   return (
     <div className="pb-16 relative min-h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="text-center pt-6 px-4">
+      <div className="max-w-6xl mx-auto w-full text-center pt-6 px-4">
         <h1 className="text-2xl font-bold text-green-800">Bản đồ xanh</h1>
         <p className="text-gray-600 mt-1">Tìm điểm tái chế và không gian xanh gần bạn</p>
       </div>
 
       {/* Danh mục: đặt ngoài vùng bản đồ (không che header) */}
-      <div className="mx-4 mt-4 mb-3">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-3xl mx-auto">
+      <div className="max-w-6xl mx-auto w-full px-4 mt-4 mb-3">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="grid grid-cols-4 divide-x divide-gray-200">
             {CATEGORIES.map(category => (
               <button
