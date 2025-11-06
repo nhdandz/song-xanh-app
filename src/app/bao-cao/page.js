@@ -502,7 +502,7 @@ export default function ReportIssue() {
   };
   
   return (
-    <div className="pb-16">
+    <div className="max-w-6xl mx-auto px-4 py-8 pb-24">
       {renderContent()}
     </div>
   );

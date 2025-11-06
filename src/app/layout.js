@@ -24,17 +24,26 @@ export default function RootLayout({ children }) {
 
   const isAdminPath = pathname?.startsWith('/admin');
   const showNavigation = !noNavPaths.includes(pathname) && !isAdminPath;
-  
+
   return (
     <html lang="vi">
       <body className={inter.className}>
         <AppProvider>
           <AuthGuard>
-            <div className={`min-h-screen ${isAdminPath ? 'bg-gray-100' : 'bg-green-50'}`}>
-              <main className={isAdminPath ? '' : 'container mx-auto px-4 py-8 max-w-md'}>
-                {children}
-              </main>
+            <div className={`min-h-screen ${isAdminPath ? 'bg-gray-100' : 'bg-gradient-to-br from-gray-50 via-green-50/30 to-emerald-50/30'}`}>
               {showNavigation && <Navigation onMenuClick={toggleDrawer} />}
+              <main className={`${isAdminPath ? '' : 'lg:ml-64'} min-h-screen`}>
+                {/* Decorative background elements */}
+                {!isAdminPath && showNavigation && (
+                  <>
+                    <div className="fixed top-20 right-10 w-72 h-72 bg-green-200 rounded-full opacity-10 blur-3xl pointer-events-none z-0"></div>
+                    <div className="fixed bottom-40 left-20 lg:left-80 w-96 h-96 bg-emerald-200 rounded-full opacity-10 blur-3xl pointer-events-none z-0"></div>
+                  </>
+                )}
+                <div className="relative z-10">
+                  {children}
+                </div>
+              </main>
               {showNavigation && <DrawerMenu isOpen={isDrawerOpen} onClose={toggleDrawer} />}
             </div>
           </AuthGuard>

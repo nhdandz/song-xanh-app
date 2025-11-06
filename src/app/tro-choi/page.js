@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { FaGamepad, FaQuestionCircle, FaClock, FaTrophy, FaCheck, FaTimes, FaTree } from 'react-icons/fa';
+import { FaGamepad, FaQuestionCircle, FaClock, FaTrophy, FaCheck, FaTimes, FaTree, FaRecycle, FaCity } from 'react-icons/fa';
+import TreeGrowthGame from '@/components/TreeGrowthGame';
+import WasteSortingGame from '@/components/WasteSortingGame';
+import GreenCityGame from '@/components/GreenCityGame';
 
 // Dữ liệu mẫu cho câu hỏi
 const QUESTIONS = [
@@ -211,31 +214,31 @@ const GAMES = [
     id: 2,
     title: 'Trồng cây',
     description: 'Hóa thân thành người làm vườn, chăm cây mỗi ngày để cây lớn lên và cùng lan tỏa lối sống xanh',
-    icon: <FaTree className="text-yellow-500" size={24} />,
+    icon: <FaTree className="text-green-500" size={24} />,
     points: 10,
-    timeLimit: '2 phút',
+    timeLimit: '3-5 phút',
     type: 'plant',
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: 3,
     title: 'Phân loại rác thải',
     description: 'Phân loại các loại rác thải vào đúng thùng rác',
-    icon: <FaGamepad className="text-blue-500" size={24} />,
+    icon: <FaRecycle className="text-blue-500" size={24} />,
     points: 15,
     timeLimit: '3 phút',
     type: 'sorting',
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: 4,
     title: 'Xây dựng thành phố xanh',
     description: 'Xây dựng một thành phố thân thiện với môi trường',
-    icon: <FaGamepad className="text-purple-500" size={24} />,
+    icon: <FaCity className="text-purple-500" size={24} />,
     points: 20,
     timeLimit: '5 phút',
-    type: 'building',
-    comingSoon: true,
+    type: 'city',
+    comingSoon: false,
   },
 ];
 
@@ -297,15 +300,18 @@ export default function Games() {
     if (game.comingSoon) return;
 
     setSelectedGame(game);
-    // tạo bộ câu hỏi ngẫu nhiên 5 câu
-    const picked = buildRandomQuiz(5);
-    setQuizQuestions(picked);
-    setCurrentQuestion(0);
-    setScore(0);
-    setTimeLeft(120);
-    setQuizCompleted(false);
-    setSelectedAnswer(null);
-    setIsAnswered(false);
+
+    if (game.type === 'quiz') {
+      // tạo bộ câu hỏi ngẫu nhiên 5 câu
+      const picked = buildRandomQuiz(5);
+      setQuizQuestions(picked);
+      setCurrentQuestion(0);
+      setScore(0);
+      setTimeLeft(120);
+      setQuizCompleted(false);
+      setSelectedAnswer(null);
+      setIsAnswered(false);
+    }
   };
 
   // Xử lý chọn câu trả lời
@@ -577,6 +583,15 @@ export default function Games() {
     );
   };
 
+  // Xử lý hoàn thành game trồng cây
+  const handleTreeGameComplete = (earnedPoints) => {
+    // Thưởng điểm
+    setPoints(prev => ({
+      ...prev,
+      total: (prev.total || 0) + earnedPoints
+    }));
+  };
+
   // Render trò chơi theo loại
   const renderGame = () => {
     if (!selectedGame) return renderGamesList();
@@ -589,11 +604,38 @@ export default function Games() {
       }
     }
 
+    if (selectedGame.type === 'plant') {
+      return (
+        <TreeGrowthGame
+          onComplete={handleTreeGameComplete}
+          onBack={handleBackToGames}
+        />
+      );
+    }
+
+    if (selectedGame.type === 'sorting') {
+      return (
+        <WasteSortingGame
+          onComplete={handleTreeGameComplete}
+          onBack={handleBackToGames}
+        />
+      );
+    }
+
+    if (selectedGame.type === 'city') {
+      return (
+        <GreenCityGame
+          onComplete={handleTreeGameComplete}
+          onBack={handleBackToGames}
+        />
+      );
+    }
+
     return null;
   };
 
   return (
-    <div className="pb-16">
+    <div className="max-w-4xl mx-auto px-4 py-8 pb-24">
       {renderGame()}
     </div>
   );
