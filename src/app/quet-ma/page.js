@@ -1,22 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  FaBarcode,
-  FaCamera,
-  FaLeaf,
-  FaRecycle,
-  FaExclamationTriangle,
-  FaHistory,
-  FaSearch,
-  FaArrowLeft,
-  FaImage,
-  FaTimes,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaInfoCircle,
-  FaLightbulb
-} from 'react-icons/fa';
+import { FaBarcode,FaCamera,FaLeaf,FaRecycle,FaExclamationTriangle,FaHistory,FaSearch,FaArrowLeft,FaImage,FaTimes,FaCheckCircle,FaTimesCircle,FaInfoCircle,FaLightbulb} from 'react-icons/fa';
 
 // Dữ liệu mẫu cho sản phẩm
 const PRODUCTS = [

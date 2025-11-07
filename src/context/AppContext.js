@@ -571,6 +571,7 @@ const initializeUser = async (id) => {
     setTodayActions,
     updateAction,
     points,
+    setPoints,
     history,
     settings,
     setSettings,
