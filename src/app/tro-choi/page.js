@@ -79,7 +79,7 @@ const QUESTIONS = [
   // bạn có thể thêm nhiều câu hơn ở đây
   {
     id: 6,
-    question: 'Ký hiệu vòng đồi (Mobius loop) trên sản phẩm có nghĩa là gì?',
+    question: 'Ký hiệu vòng đồi (Mobius loop) trên bao bì sản phẩm có nghĩa là gì?',
     options: [
       'Sản phẩm có thể được tái chế',
       'Sản phẩm có thể phân hủy nhanh',
@@ -87,11 +87,13 @@ const QUESTIONS = [
       'Sản phẩm dùng một lần',
     ],
     correctAnswer: 0,
-    explanation: 'Mobius loop là ký hiệu biểu thị sản phẩm/hộp có thể đưa vào quy trình tái chế.',
+    explanation: `
+        Vòng đồi Möbius (Mobius loop) là biểu tượng gồm ba mũi tên xoay vòng, tượng trưng cho quá trình tái chế liên tục: thu gom → tái chế → tái sử dụng.
+        Dấu này không có nghĩa là sản phẩm đã được tái chế, mà là sản phẩm có thể tái chế sau khi sử dụng.`,
   },
   {
     id: 7,
-    question: 'Loại chất thải nào phù hợp nhất để ủ phân (compost)?',
+    question: 'Loại chất thải nào sau đây phù hợp nhất để ủ phân (compost)?',
     options: [
       'Vỏ rau củ, lá cây',
       'Thịt, dầu mỡ',
@@ -99,43 +101,51 @@ const QUESTIONS = [
       'Pin, ắc quy',
     ],
     correctAnswer: 0,
-    explanation: 'Vỏ rau củ và lá cây là chất hữu cơ dễ phân hủy, phù hợp để ủ compost.',
+    explanation: `
+        Vỏ rau củ, lá cây, bã trà, vỏ trái cây là chất thải hữu cơ dễ phân hủy, rất thích hợp để ủ thành phân compost, giúp cải tạo đất và giảm rác thải sinh hoạt.
+        Các loại như thịt, dầu mỡ gây mùi hôi, thu hút côn trùng;
+        Nhựa, túi ni-lông là rác vô cơ, không phân hủy;
+        Pin, ắc quy chứa kim loại nặng độc hại, tuyệt đối không được ủ phân.`,
   },
   {
     id: 8,
-    question: 'Nguyên nhân chính dẫn đến phá rừng trên diện rộng là gì?',
+    question: 'Ở nước ta, nguyên nhân chính dẫn đến tình trạng phá rừng trên diện rộng là gì?',
     options: [
-      'Mở rộng diện tích nông nghiệp và chăn nuôi',
-      'Sự thay đổi khí hậu tự nhiên',
-      'Sóng thần và động đất',
-      'Du lịch',
+      'Khai thác gỗ và chuyển đổi đất rừng sang sản xuất nông nghiệp',
+      'Sự thay đổi khí hậu và các hiện tượng tự nhiên bất thường',
+      'Thiên tai như sóng thần, động đất và sạt lở đất nghiêm trọng',
+      'Phát triển du lịch và xây dựng các khu nghỉ dưỡng trong rừng',
     ],
     correctAnswer: 0,
-    explanation: 'Mở rộng canh tác nông nghiệp và chăn nuôi là nguyên nhân phổ biến nhất gây mất rừng.',
+    explanation: `Tại Việt Nam, nhiều khu rừng bị tàn phá do chuyển đổi đất rừng sang trồng cây công nghiệp (cao su, cà phê, hồ tiêu...), làm nương rẫy, khai thác gỗ trái phép. Đây là nguyên nhân chính và lâu dài gây mất rừng và suy giảm đa dạng sinh học.`,
   },
   {
     id: 9,
-    question: 'Nguồn năng lượng nào dưới đây hầu như không tạo trực tiếp khí CO₂ khi phát điện?',
+    question: 'Nguồn năng lượng nào sau đây hầu như không tạo ra khí CO₂ trực tiếp khi phát điện?',
     options: [
       'Đốt than',
       'Khí tự nhiên',
       'Năng lượng gió',
-      'Dầu mỏ',
+      'Dầu mỏ và các sản phẩm dầu',
     ],
     correctAnswer: 2,
-    explanation: 'Tua-bin gió không đốt nhiên liệu nên không thải CO₂ trực tiếp khi phát điện.',
+    explanation: `
+        Năng lượng gió là nguồn năng lượng tái tạo sạch, chuyển đổi động năng của gió thành điện năng mà không cần đốt nhiên liệu hóa thạch, nên không sinh ra CO₂ trực tiếp.
+        Ngược lại, than, dầu mỏ và khí tự nhiên đều là nhiên liệu hóa thạch, khi đốt sẽ phát thải CO₂, gây hiệu ứng nhà kính và biến đổi khí hậu.`,
   },
   {
     id: 10,
     question: '“Bảo tồn đa dạng sinh học” nghĩa là gì?',
     options: [
-      'Bảo vệ sự đa dạng về loài, hệ sinh thái và nguồn gen',
-      'Tăng số lượng cây trồng thương mại',
-      'Xây dựng nhiều khu công nghiệp hơn',
-      'Chỉ bảo vệ các loài động vật to lớn',
+      'Bảo vệ sự đa dạng về loài sinh vật, hệ sinh thái và nguồn gen',
+      'Tăng cường trồng thêm các loại cây có giá trị kinh tế cao',
+      'Xây dựng thêm nhiều khu công nghiệp và khu dân cư mới',
+      'Chỉ tập trung bảo vệ các loài động vật to lớn, quý hiếm',
     ],
     correctAnswer: 0,
-    explanation: 'Bảo tồn đa dạng sinh học là bảo vệ nhiều dạng sống và hệ sinh thái khác nhau.',
+    explanation: `
+        “Bảo tồn đa dạng sinh học” là việc duy trì và phát triển sự phong phú của các loài sinh vật, các kiểu hệ sinh thái và các nguồn gen trong tự nhiên.
+        Hoạt động này giúp giữ cân bằng sinh thái, bảo vệ môi trường sống, và đảm bảo nguồn tài nguyên sinh học cho các thế hệ mai sau.`,
   },
   {
     id: 11,
@@ -151,7 +161,7 @@ const QUESTIONS = [
   },
   {
     id: 12,
-    question: 'Khí nào sau đây có tiềm năng gây hiệu ứng nhà kính (GWP) lớn hơn CO₂ trên mỗi đơn vị khối lượng?',
+    question: 'Khí nào sau đây gây hiệu ứng nhà kính (GWP) lớn hơn CO₂ trên mỗi đơn vị khối lượng?',
     options: [
       'O₂ (oxy)',
       'CH₄ (methane)',
@@ -159,7 +169,9 @@ const QUESTIONS = [
       'He (heli)',
     ],
     correctAnswer: 1,
-    explanation: 'Methane (CH₄) có GWP lớn hơn CO₂ trên cùng khối lượng trong khoảng thời gian ngắn hạn.',
+    explanation: `
+        CH₄ (Metan) có chỉ số tiềm năng gây hiệu ứng nhà kính (GWP) cao gấp khoảng 25–30 lần CO₂ trong cùng một khối lượng, dù tồn tại trong khí quyển thời gian ngắn hơn.
+        Các khí như O₂, N₂, và He không hấp thụ bức xạ hồng ngoại, nên không góp phần gây hiệu ứng nhà kính.`,
   },
   {
     id: 13,
@@ -171,7 +183,9 @@ const QUESTIONS = [
       '1 năm',
     ],
     correctAnswer: 1,
-    explanation: 'Lon nhôm có thể tồn tại hàng trăm năm nếu không được tái chế.',
+    explanation: `
+        Lon nhôm (như lon nước ngọt, bia) có khả năng chống ăn mòn rất cao, nên khi bị thải ra môi trường tự nhiên, chúng phải mất từ 200 đến 500 năm mới có thể phân hủy hoàn toàn.
+        Vì vậy, tái chế nhôm là một biện pháp rất quan trọng giúp tiết kiệm năng lượng và giảm ô nhiễm môi trường.`,
   },
   {
     id: 14,
@@ -183,19 +197,23 @@ const QUESTIONS = [
       'Dùng bao nilon miễn phí ở cửa hàng',
     ],
     correctAnswer: 0,
-    explanation: 'Mang túi vải/túi tái sử dụng giảm nhu cầu dùng túi nhựa mới mỗi lần mua sắm.',
+    explanation: `
+        Túi vải và túi tái sử dụng có thể dùng nhiều lần, giúp giảm đáng kể lượng túi nhựa thải ra môi trường.
+        Các lựa chọn còn lại đều làm tăng hoặc duy trì lượng rác nhựa dùng một lần, gây ô nhiễm và lãng phí tài nguyên.`,
   },
   {
     id: 15,
-    question: 'Khái niệm “kinh tế tuần hoàn” (circular economy) nhấn mạnh điều gì?',
+    question: 'Khái niệm “kinh tế tuần hoàn” (circular economy) nhấn mạnh nội dung nào sau đây?',
     options: [
-      'Tăng tiêu dùng để phát triển kinh tế',
-      'Giảm, tái sử dụng và tái chế để giữ nguyên giá trị tài nguyên',
-      'Tập trung khai thác tài nguyên tự nhiên nhiều hơn',
-      'Sử dụng càng nhiều đồ dùng một lần càng tốt',
+      'Tăng tiêu dùng để thúc đẩy phát triển kinh tế nhanh hơn',
+      'Giảm tiêu thụ, tái sử dụng và tái chế để giữ nguyên giá trị của tài nguyên',
+      'Tập trung khai thác nhiều hơn các nguồn tài nguyên tự nhiên',
+      'Ưu tiên sử dụng các sản phẩm và đồ dùng một lần cho tiện lợi',
     ],
     correctAnswer: 1,
-    explanation: 'Kinh tế tuần hoàn hướng đến giảm rác thải bằng cách giữ tài nguyên trong sử dụng lâu hơn (reduce-reuse-recycle).',
+    explanation: `
+        Kinh tế tuần hoàn là mô hình kinh tế giảm thiểu lãng phí và ô nhiễm bằng cách duy trì vật liệu, sản phẩm và tài nguyên trong vòng tuần hoàn sử dụng lâu nhất có thể.
+        Nguyên tắc cốt lõi là 3R: Reduce – Reuse – Recycle (Giảm – Tái sử dụng – Tái chế), giúp bảo vệ môi trường và phát triển bền vững.`,
   },
 ];
 
