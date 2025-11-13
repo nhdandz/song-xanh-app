@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { FaBarcode,FaCamera,FaLeaf,FaRecycle,FaExclamationTriangle,FaHistory,FaSearch,FaArrowLeft,FaImage,FaTimes,FaCheckCircle,FaTimesCircle,FaInfoCircle,FaLightbulb} from 'react-icons/fa';
+import { FaBarcode, FaCamera, FaLeaf, FaRecycle, FaExclamationTriangle, FaHistory, FaSearch, FaArrowLeft, FaImage, FaTimes, FaCheckCircle, FaTimesCircle, FaLightbulb } from 'react-icons/fa';
 
 // Dữ liệu mẫu cho sản phẩm
 const PRODUCTS = [
@@ -58,8 +58,13 @@ export default function BarcodeScan() {
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [scannerAvailable, setScannerAvailable] = useState(true);
+
   const html5QrCodeRef = useRef(null);
   const lastScanRef = useRef({ text: null, time: 0 });
+
+  // locks để tránh race
+  const isStartingRef = useRef(false);
+  const isStoppingRef = useRef(false);
 
   const [evaluating, setEvaluating] = useState(false);
 
@@ -72,7 +77,16 @@ export default function BarcodeScan() {
       console.warn('Không thể đọc history', e);
       setScanHistory([]);
     }
-    return () => stopScanner();
+
+    return () => {
+      (async () => {
+        try {
+          await stopScanner();
+        } catch (e) {
+          console.warn('Cleanup stopScanner error', e);
+        }
+      })();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -197,11 +211,16 @@ export default function BarcodeScan() {
     }
   };
 
+  // START safe
   const startScanner = async () => {
     if (scanning) return;
+    if (isStartingRef.current) return;
+    isStartingRef.current = true;
+
     const readerEl = document.getElementById('reader');
     if (!readerEl) {
       alert('Phần tử camera chưa sẵn sàng. Hãy thử reload trang.');
+      isStartingRef.current = false;
       return;
     }
 
@@ -219,16 +238,18 @@ export default function BarcodeScan() {
             setCameras(devices);
             setSelectedCamera(prev => prev || devices[0].id);
           }
-        } catch (er) { }
+        } catch (er) {
+          console.warn('Không lấy được devices', er);
+        }
       }
 
-      const cameraId = selectedCamera || (cameras[0] && cameras[0].id) || undefined;
+      const cameraIdOrConfig = selectedCamera || (cameras[0] && cameras[0].id) || { facingMode: 'environment' };
 
       await instance.start(
-        cameraId,
+        cameraIdOrConfig,
         { fps: 10, qrbox: { width: 250, height: 150 }, verbose: false },
         (decodedText) => onScanResult(decodedText),
-        () => { }
+        (error) => { /* optional failure callback */ }
       );
 
       setScanning(true);
@@ -237,29 +258,98 @@ export default function BarcodeScan() {
       console.error('Lỗi khi mở camera:', err);
       setScannerAvailable(false);
       alert(`Không thể mở camera — ${err?.message || String(err)}`);
+    } finally {
+      isStartingRef.current = false;
     }
   };
 
-  const stopScanner = async () => {
+  // Thay thế hoàn toàn stopScanner hiện tại bằng đoạn này
+const stopScanner = async () => {
+  if (isStoppingRef.current) return;
+  isStoppingRef.current = true;
+
+  try {
+    const instance = html5QrCodeRef.current;
+
+    // Nếu không có instance, vẫn đặt trạng thái false và exit
+    if (!instance) {
+      setScanning(false);
+      isStoppingRef.current = false;
+      return;
+    }
+
+    // 1) try instance.stop() — nếu throw ta vẫn tiếp tục xử lý
     try {
-      const instance = html5QrCodeRef.current;
-      if (instance) {
-        await instance.stop();
-        try { await instance.clear(); } catch (e) { }
-        html5QrCodeRef.current = null;
+      await instance.stop();
+    } catch (err) {
+      console.warn('instance.stop() lỗi (có thể đã dừng hoặc state lạ):', err);
+    }
+
+    // 2) Buộc dừng bất kỳ MediaStream nào còn đang attach trên #reader
+    try {
+      const readerEl = document.getElementById('reader');
+      if (readerEl) {
+        // tìm video hoặc video tag được tạo bởi html5-qrcode
+        const videos = readerEl.getElementsByTagName('video');
+        for (let i = 0; i < videos.length; i++) {
+          const v = videos[i];
+          try {
+            // stop all tracks
+            const stream = v.srcObject;
+            if (stream && stream.getTracks) {
+              stream.getTracks().forEach(t => {
+                try { t.stop(); } catch (e) { /* ignore */ }
+              });
+            }
+            // remove srcObject to help browser release
+            try { v.srcObject = null; } catch (e) { /* ignore */ }
+          } catch (e) {
+            console.warn('Lỗi khi cố dừng video stream:', e);
+          }
+        }
+
+        // cũng dọn các element con do thư viện tạo ra nhưng an toàn (check parent)
+        try {
+          // remove children safely
+          // we don't remove #reader itself, chỉ dọn child nodes
+          while (readerEl.firstChild) {
+            if (readerEl.firstChild.parentNode === readerEl) {
+              readerEl.removeChild(readerEl.firstChild);
+            } else break;
+          }
+        } catch (e) {
+          console.warn('Lỗi khi dọn child #reader:', e);
+        }
       }
     } catch (e) {
-      console.warn('Lỗi dừng scanner', e);
-    } finally {
-      setScanning(false);
+      console.warn('Lỗi dừng MediaStream thủ công:', e);
     }
-  };
+
+    // 3) Now try clear() — library may still throw, so catch it
+    try {
+      await instance.clear();
+    } catch (err) {
+      console.warn('instance.clear() lỗi (tiếp tục nhưng ignore):', err);
+      // nếu clear() lỗi, đã dọn thủ công ở trên; tiếp tục
+    }
+
+    // cuối cùng null ref
+    html5QrCodeRef.current = null;
+  } catch (e) {
+    console.warn('Lỗi dừng scanner (toàn cục):', e);
+  } finally {
+    setScanning(false);
+    isStoppingRef.current = false;
+  }
+};
+
 
   const handleCameraButton = async () => {
     if (scanning) {
       await stopScanner();
     } else {
       await prepareCameras();
+      await new Promise(res => setTimeout(res, 80));
       await startScanner();
     }
   };
@@ -303,21 +393,39 @@ export default function BarcodeScan() {
       }
     }
 
+    const tmpId = `reader-temp-${Date.now()}`;
+    const tmpDiv = document.createElement('div');
+    tmpDiv.id = tmpId;
+    tmpDiv.style.position = 'fixed';
+    tmpDiv.style.left = '-9999px';
+    tmpDiv.style.width = '320px';
+    tmpDiv.style.height = '240px';
+    document.body.appendChild(tmpDiv);
+
     try {
       const mod = await import('html5-qrcode');
       const { Html5Qrcode } = mod;
-      const tmp = new Html5Qrcode('reader-temp');
+      const tmp = new Html5Qrcode(tmpId);
       if (typeof tmp.scanFile === 'function') {
         const result = await tmp.scanFile(file, true);
         if (result && result.length && result[0].decodedText) {
           onScanResult(result[0].decodedText);
-          try { await tmp.clear(); } catch (e) {}
+          try { await tmp.clear(); } catch (e) { console.warn('tmp.clear() lỗi:', e); }
           e.target.value = '';
+          if (tmpDiv.parentNode === document.body) document.body.removeChild(tmpDiv);
           return;
         }
-        try { await tmp.clear(); } catch (e) {}
+        try { await tmp.clear(); } catch (e) { console.warn('tmp.clear() lỗi:', e); }
       }
-    } catch (err) { }
+    } catch (err) {
+      console.warn('scanFile lỗi:', err);
+    } finally {
+      try {
+        if (tmpDiv.parentNode === document.body) document.body.removeChild(tmpDiv);
+      } catch (err) {
+        console.warn('Không thể remove tmpDiv:', err);
+      }
+    }
 
     alert('Không thể quét từ ảnh. Hãy dùng Chrome/Edge hoặc bật camera.');
     e.target.value = '';
@@ -354,6 +462,21 @@ export default function BarcodeScan() {
     return 'bg-red-50';
   };
 
+  const handleCameraSelectChange = async (e) => {
+    const newId = e.target.value;
+    setSelectedCamera(newId);
+
+    if (scanning && html5QrCodeRef.current) {
+      try {
+        await stopScanner();
+        await new Promise(res => setTimeout(res, 120));
+        await startScanner();
+      } catch (err) {
+        console.error('Không thể chuyển camera:', err);
+      }
+    }
+  };
+
   // ========== RENDER VIEWS ==========
 
   const renderScanView = () => (
@@ -380,7 +503,7 @@ export default function BarcodeScan() {
           <div className="mt-3 flex items-center gap-2">
             <select
               value={selectedCamera || ''}
-              onChange={(e) => setSelectedCamera(e.target.value)}
+              onChange={handleCameraSelectChange}
               className="flex-1 border rounded px-2 py-1.5 text-sm"
             >
               {cameras.map(c => (

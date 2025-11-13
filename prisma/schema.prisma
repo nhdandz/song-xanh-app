@@ -296,15 +296,15 @@ model DeviceUsage {
 }
 
 model Article {
-  id        String   @id @default(cuid())
   title     String
-  content   String   @db.Text
-  excerpt   String?  @db.Text
-  category  String   @default("Khác")
+  content   String
   image     String?
+  createdAt DateTime  @default(now())
+  category  String    @default("Khác")
+  excerpt   String?
   readTime  String?
+  id        String    @id @default(cuid())
   cards     Json?
   date      DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime  @updatedAt
 }
