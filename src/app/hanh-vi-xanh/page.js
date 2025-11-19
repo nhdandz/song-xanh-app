@@ -30,7 +30,8 @@ export default function GreenActions() {
     "/videos/Animation002.mp4",
     "/videos/Animation003.mp4",
     "/videos/Animation004.mp4",
-
+    "https://youtu.be/nLCBnLuBGqU?si=UveCWLY3IraqUg-c",
+    "https://youtu.be/rPcy-QSCf54?si=Iy9f47PzEFB__j7x",
   ];
 
   // utility: pick random element

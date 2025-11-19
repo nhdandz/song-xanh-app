@@ -39,6 +39,7 @@ export async function POST(req) {
     }
 
     // Gọi Gemini bằng query param key (không đặt header x-goog-api-key)
+    // Lưu ý: Để phân tích ảnh, model này (gemini-2.0-flash) hỗ trợ image understanding. Nếu bạn muốn dùng model preview cho generation, thay bằng 'gemini-2.0-flash-preview-image-generation'
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`;
 
     const resp = await fetch(url, {
