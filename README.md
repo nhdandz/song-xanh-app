@@ -1,261 +1,261 @@
-# Song Xanh App (Green Life)
+# Song Xanh App (Cuộc Sống Xanh)
 
-A comprehensive environmental sustainability platform built with Next.js, empowering users to track green activities, reduce their carbon footprint, and connect with an eco-conscious community.
+Nền tảng bảo vệ môi trường toàn diện được xây dựng bằng Next.js, giúp người dùng theo dõi các hoạt động xanh, giảm lượng khí thải carbon và kết nối với cộng đồng yêu môi trường.
 
-## Overview
+## Tổng Quan
 
-Song Xanh (Green Life) is a full-stack web application designed to promote environmental awareness and sustainable living. Users can track their eco-friendly activities, earn points and badges, participate in challenges, scan products for environmental impact, monitor resource usage, and connect with like-minded individuals.
+Song Xanh (Cuộc Sống Xanh) là ứng dụng web full-stack được thiết kế để nâng cao nhận thức về môi trường và cuộc sống bền vững. Người dùng có thể theo dõi các hoạt động thân thiện với môi trường, kiếm điểm và huy hiệu, tham gia thử thách, quét sản phẩm để xem tác động môi trường, giám sát sử dụng tài nguyên và kết nối với những người cùng chí hướng.
 
-## Key Features
+## Tính Năng Chính
 
-### User Engagement
-- **Points & Leveling System**: Earn points for completing green activities and unlock new levels
-- **Badges & Achievements**: Collect badges as rewards for reaching milestones
-- **Challenges**: Participate in daily and weekly environmental challenges
-- **Leaderboards**: Compare your environmental impact with friends and groups
+### Tương Tác Người Dùng
+- **Hệ Thống Điểm & Cấp Độ**: Kiếm điểm khi hoàn thành các hoạt động xanh và mở khóa cấp độ mới
+- **Huy Hiệu & Thành Tích**: Thu thập huy hiệu làm phần thưởng khi đạt các mốc quan trọng
+- **Thử Thách**: Tham gia các thử thách môi trường hàng ngày và hàng tuần
+- **Bảng Xếp Hạng**: So sánh tác động môi trường của bạn với bạn bè và nhóm
 
-### Green Activity Tracking
-- **Activity Logging**: Record and track eco-friendly actions (recycling, using public transport, etc.)
-- **Personal Statistics**: Visualize your environmental impact over time with charts
-- **Resource Monitoring**: Track electricity and water usage through connected devices
-- **Carbon Footprint**: Monitor your carbon and water footprint
+### Theo Dõi Hoạt Động Xanh
+- **Ghi Nhận Hoạt Động**: Ghi lại và theo dõi các hành động thân thiện với môi trường (tái chế, sử dụng phương tiện công cộng, v.v.)
+- **Thống Kê Cá Nhân**: Trực quan hóa tác động môi trường của bạn theo thời gian bằng biểu đồ
+- **Giám Sát Tài Nguyên**: Theo dõi mức sử dụng điện và nước thông qua các thiết bị được kết nối
+- **Dấu Chân Carbon**: Giám sát lượng phát thải carbon và sử dụng nước của bạn
 
-### Product Sustainability
-- **Barcode/QR Scanner**: Scan products to view their environmental ratings
-- **Green Score**: See sustainability metrics including recyclability, biodegradability, and plastic-free status
-- **Recommendations**: Get suggestions for more sustainable alternatives
+### Tính Bền Vững Sản Phẩm
+- **Quét Mã Vạch/QR**: Quét sản phẩm để xem đánh giá môi trường của chúng
+- **Điểm Xanh**: Xem các chỉ số bền vững bao gồm khả năng tái chế, phân hủy sinh học và không chứa nhựa
+- **Đề Xuất**: Nhận gợi ý cho các sản phẩm thay thế bền vững hơn
 
-### Community Features
-- **Social Feed**: Share your green activities and connect with the community
-- **Groups**: Join or create groups (schools, clubs, classes)
-- **Friends**: Add friends and see their environmental activities
-- **Comments & Likes**: Engage with community posts and ideas
+### Tính Năng Cộng Đồng
+- **Bảng Tin Xã Hội**: Chia sẻ hoạt động xanh của bạn và kết nối với cộng đồng
+- **Nhóm**: Tham gia hoặc tạo nhóm (trường học, câu lạc bộ, lớp học)
+- **Bạn Bè**: Thêm bạn bè và xem hoạt động môi trường của họ
+- **Bình Luận & Thích**: Tương tác với các bài đăng và ý tưởng của cộng đồng
 
-### Environmental Action
-- **Report Issues**: Report environmental problems in your area with photos and location
-- **Submit Ideas**: Propose and vote on environmental initiatives
-- **Interactive Map**: View reported issues and events on a map
-- **Events**: Discover and join local environmental events
+### Hành Động Môi Trường
+- **Báo Cáo Vấn Đề**: Báo cáo các vấn đề môi trường trong khu vực của bạn với ảnh và vị trí
+- **Đề Xuất Ý Tưởng**: Đề xuất và bình chọn các sáng kiến môi trường
+- **Bản Đồ Tương Tác**: Xem các vấn đề được báo cáo và sự kiện trên bản đồ
+- **Sự Kiện**: Khám phá và tham gia các sự kiện môi trường địa phương
 
-### Gamification
-- **Mini Games**: Learn about sustainability through interactive games
-- **Progress Tracking**: Monitor challenge completion and activity streaks
+### Trò Chơi Hóa
+- **Trò Chơi Mini**: Tìm hiểu về tính bền vững thông qua các trò chơi tương tác
+- **Theo Dõi Tiến Độ**: Giám sát việc hoàn thành thử thách và chuỗi hoạt động
 
-### Admin Panel
-- **Dashboard**: Manage users, activities, challenges, and content
-- **Analytics**: View platform-wide statistics and user engagement metrics
+### Bảng Quản Trị
+- **Trang Tổng Quan**: Quản lý người dùng, hoạt động, thử thách và nội dung
+- **Phân Tích**: Xem số liệu thống kê và mức độ tương tác của người dùng trên toàn nền tảng
 
-## Tech Stack
+## Công Nghệ Sử Dụng
 
 ### Frontend
 - **Framework**: Next.js 15.3.2
-- **UI Library**: React 19
+- **Thư Viện UI**: React 19
 - **Styling**: Tailwind CSS 4
-- **Charts**: Chart.js + react-chartjs-2
+- **Biểu Đồ**: Chart.js + react-chartjs-2
 - **Icons**: React Icons
-- **QR Scanner**: html5-qrcode
+- **Quét QR**: html5-qrcode
 
 ### Backend
 - **Runtime**: Node.js
-- **Database**: PostgreSQL
+- **Cơ Sở Dữ Liệu**: PostgreSQL
 - **ORM**: Prisma
 - **API**: Next.js API Routes
 
-### Development Tools
-- **Language**: TypeScript
+### Công Cụ Phát Triển
+- **Ngôn Ngữ**: TypeScript
 - **Linting**: ESLint
-- **Package Manager**: npm
+- **Quản Lý Package**: npm
 
-## Getting Started
+## Bắt Đầu
 
-### Prerequisites
+### Yêu Cầu
 
-- Node.js 18+ installed
-- PostgreSQL database
-- npm or yarn package manager
+- Node.js 18+ đã được cài đặt
+- Cơ sở dữ liệu PostgreSQL
+- Trình quản lý package npm hoặc yarn
 
-### Installation
+### Cài Đặt
 
-1. Clone the repository:
+1. Clone repository:
 ```bash
 git clone <repository-url>
 cd song-xanh-app
 ```
 
-2. Install dependencies:
+2. Cài đặt dependencies:
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
+3. Thiết lập biến môi trường:
 
-Create a `.env` file in the root directory:
+Tạo file `.env` trong thư mục gốc:
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/songxanh"
 ```
 
-4. Set up the database:
+4. Thiết lập cơ sở dữ liệu:
 ```bash
-# Generate Prisma client
+# Tạo Prisma client
 npm run prisma:generate
 
-# Run migrations
+# Chạy migrations
 npm run prisma:migrate
 
-# Seed the database (optional)
+# Seed database (tùy chọn)
 npm run prisma:seed
 ```
 
-5. Run the development server:
+5. Chạy máy chủ phát triển:
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Mở [http://localhost:3000](http://localhost:3000) để xem ứng dụng.
 
-## Available Scripts
+## Các Lệnh Khả Dụng
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build production application
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run prisma:generate` - Generate Prisma client
-- `npm run prisma:migrate` - Run database migrations
-- `npm run prisma:seed` - Seed the database
-- `npm run prisma:studio` - Open Prisma Studio
+- `npm run dev` - Khởi động máy chủ phát triển với Turbopack
+- `npm run build` - Build ứng dụng production
+- `npm start` - Khởi động máy chủ production
+- `npm run lint` - Chạy ESLint
+- `npm run prisma:generate` - Tạo Prisma client
+- `npm run prisma:migrate` - Chạy database migrations
+- `npm run prisma:seed` - Seed database
+- `npm run prisma:studio` - Mở Prisma Studio
 
-## Database Schema
+## Schema Cơ Sở Dữ Liệu
 
-The application uses a comprehensive database schema including:
+Ứng dụng sử dụng schema cơ sở dữ liệu toàn diện bao gồm:
 
-- **User Management**: Users, Settings, Friends
-- **Green Activities**: GreenActivity, UserActivity
-- **Gamification**: Badges, UserBadge, Challenges, UserChallenge
-- **Social**: Posts, Comments, Likes
-- **Community**: Groups, GroupMembers
-- **Environmental**: Reports, Ideas, Events
-- **Products**: Product, ScanHistory
-- **Resources**: Device, DeviceUsage
+- **Quản Lý Người Dùng**: Users, Settings, Friends
+- **Hoạt Động Xanh**: GreenActivity, UserActivity
+- **Trò Chơi Hóa**: Badges, UserBadge, Challenges, UserChallenge
+- **Xã Hội**: Posts, Comments, Likes
+- **Cộng Đồng**: Groups, GroupMembers
+- **Môi Trường**: Reports, Ideas, Events
+- **Sản Phẩm**: Product, ScanHistory
+- **Tài Nguyên**: Device, DeviceUsage
 
-For detailed schema information, see `prisma/schema.prisma`.
+Để biết thông tin chi tiết về schema, xem `prisma/schema.prisma`.
 
-## Project Structure
+## Cấu Trúc Dự Án
 
 ```
 song-xanh-app/
 ├── src/
-│   ├── app/                 # Next.js app directory
-│   │   ├── admin/          # Admin panel pages
+│   ├── app/                 # Thư mục app Next.js
+│   │   ├── admin/          # Trang quản trị
 │   │   ├── api/            # API routes
-│   │   ├── ban-do/         # Map feature
-│   │   ├── bao-cao/        # Report issues
-│   │   ├── cai-dat/        # Settings
-│   │   ├── dang-ky/        # Registration
-│   │   ├── dang-nhap/      # Login
-│   │   ├── du-an/          # Ideas/projects
-│   │   ├── hanh-vi-xanh/   # Green activities
-│   │   ├── huy-hieu/       # Badges
-│   │   ├── quet-ma/        # QR/barcode scanner
-│   │   ├── so-sanh/        # Leaderboards
-│   │   ├── thach-thuc/     # Challenges
-│   │   ├── thong-ke/       # Statistics
-│   │   ├── tiet-kiem/      # Resource savings
-│   │   ├── tin-tuc/        # News feed
-│   │   ├── tro-choi/       # Games
-│   │   └── welcome/        # Welcome page
-│   ├── components/         # Reusable React components
+│   │   ├── ban-do/         # Tính năng bản đồ
+│   │   ├── bao-cao/        # Báo cáo vấn đề
+│   │   ├── cai-dat/        # Cài đặt
+│   │   ├── dang-ky/        # Đăng ký
+│   │   ├── dang-nhap/      # Đăng nhập
+│   │   ├── du-an/          # Ý tưởng/dự án
+│   │   ├── hanh-vi-xanh/   # Hoạt động xanh
+│   │   ├── huy-hieu/       # Huy hiệu
+│   │   ├── quet-ma/        # Quét mã QR/vạch
+│   │   ├── so-sanh/        # Bảng xếp hạng
+│   │   ├── thach-thuc/     # Thử thách
+│   │   ├── thong-ke/       # Thống kê
+│   │   ├── tiet-kiem/      # Tiết kiệm tài nguyên
+│   │   ├── tin-tuc/        # Bảng tin
+│   │   ├── tro-choi/       # Trò chơi
+│   │   └── welcome/        # Trang chào mừng
+│   ├── components/         # Các component React có thể tái sử dụng
 │   ├── context/            # React context providers
-│   ├── lib/                # Utility functions
+│   ├── lib/                # Các hàm tiện ích
 │   └── middleware/         # Next.js middleware
 ├── prisma/
 │   ├── schema.prisma       # Database schema
 │   └── seed.js             # Database seeder
-└── public/                 # Static assets
+└── public/                 # Tài nguyên tĩnh
 ```
 
-## Features in Detail
+## Chi Tiết Tính Năng
 
-### Authentication & User Management
-- Secure user registration and login
-- Role-based access control (user, admin)
-- User profiles with customizable settings
-- Reminder notifications for daily activities
+### Xác Thực & Quản Lý Người Dùng
+- Đăng ký và đăng nhập người dùng an toàn
+- Kiểm soát truy cập dựa trên vai trò (người dùng, quản trị viên)
+- Hồ sơ người dùng với cài đặt có thể tùy chỉnh
+- Thông báo nhắc nhở cho các hoạt động hàng ngày
 
-### Activity Tracking
-- Pre-defined green activities with point values
-- Custom activity creation
-- Activity history and streaks
-- Impact visualization with charts
+### Theo Dõi Hoạt Động
+- Các hoạt động xanh được xác định trước với giá trị điểm
+- Tạo hoạt động tùy chỉnh
+- Lịch sử hoạt động và chuỗi liên tiếp
+- Trực quan hóa tác động bằng biểu đồ
 
-### Challenge System
-- Multiple difficulty levels (Easy, Medium, Hard)
-- Category-based challenges
-- Progress tracking
-- Automatic point rewards upon completion
+### Hệ Thống Thử Thách
+- Nhiều cấp độ khó (Dễ, Trung bình, Khó)
+- Thử thách theo danh mục
+- Theo dõi tiến độ
+- Phần thưởng điểm tự động khi hoàn thành
 
-### Product Scanner
-- Real-time barcode scanning
-- Comprehensive environmental metrics
-- Alternative product suggestions
-- Scan history for future reference
+### Quét Sản Phẩm
+- Quét mã vạch theo thời gian thực
+- Các chỉ số môi trường toàn diện
+- Đề xuất sản phẩm thay thế
+- Lịch sử quét để tham khảo trong tương lai
 
-### Resource Monitoring
-- Electricity usage tracking by device
-- Water consumption monitoring
-- Usage patterns and recommendations
-- Carbon and water footprint calculations
+### Giám Sát Tài Nguyên
+- Theo dõi mức sử dụng điện theo thiết bị
+- Giám sát tiêu thụ nước
+- Mẫu sử dụng và đề xuất
+- Tính toán dấu chân carbon và nước
 
-## Contributing
+## Đóng Góp
 
-Contributions are welcome! Please follow these steps:
+Chúng tôi hoan nghênh mọi đóng góp! Vui lòng làm theo các bước sau:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork repository
+2. Tạo nhánh tính năng (`git checkout -b feature/tinh-nang-tuyet-voi`)
+3. Commit các thay đổi của bạn (`git commit -m 'Thêm tính năng tuyệt vời'`)
+4. Push lên nhánh (`git push origin feature/tinh-nang-tuyet-voi`)
+5. Mở Pull Request
 
-## Environment Variables
+## Biến Môi Trường
 
-Required environment variables:
+Các biến môi trường bắt buộc:
 
-- `DATABASE_URL` - PostgreSQL connection string
+- `DATABASE_URL` - Chuỗi kết nối PostgreSQL
 
-## Deployment
+## Triển Khai
 
-### Vercel (Recommended)
+### Vercel (Khuyến Nghị)
 
-The easiest way to deploy is using [Vercel](https://vercel.com):
+Cách dễ nhất để triển khai là sử dụng [Vercel](https://vercel.com):
 
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Configure environment variables
-4. Deploy
+1. Đẩy code của bạn lên GitHub
+2. Import dự án trong Vercel
+3. Cấu hình biến môi trường
+4. Triển khai
 
-### Manual Deployment
+### Triển Khai Thủ Công
 
-1. Build the application:
+1. Build ứng dụng:
 ```bash
 npm run build
 ```
 
-2. Start the production server:
+2. Khởi động máy chủ production:
 ```bash
 npm start
 ```
 
-## License
+## Giấy Phép
 
-This project is private and proprietary.
+Dự án này là riêng tư và độc quyền.
 
-## Support
+## Hỗ Trợ
 
-For issues, questions, or contributions, please open an issue in the repository.
+Đối với các vấn đề, câu hỏi hoặc đóng góp, vui lòng mở một issue trong repository.
 
-## Acknowledgments
+## Lời Cảm Ơn
 
-Built with Next.js, Prisma, and the latest web technologies to create a sustainable future.
+Được xây dựng bằng Next.js, Prisma và các công nghệ web mới nhất để tạo ra một tương lai bền vững.
 
 ---
 
-**Note**: This application is primarily in Vietnamese (Tiếng Việt) to serve the Vietnamese community in their environmental sustainability journey.
+**Lưu ý**: Ứng dụng này chủ yếu bằng tiếng Việt để phục vụ cộng đồng Việt Nam trong hành trình bảo vệ môi trường bền vững.
