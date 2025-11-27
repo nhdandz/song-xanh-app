@@ -179,8 +179,9 @@ const initializeUser = async (id) => {
       email: userData.email,
       school: userData.school,
       level: userData.level,
+      points: userData.points || 0,
     });
-    
+
     setPoints(prev => ({
       ...prev,
       total: userData.points || 0,
@@ -571,6 +572,7 @@ const initializeUser = async (id) => {
     setTodayActions,
     updateAction,
     points,
+    setPoints,
     history,
     settings,
     setSettings,

@@ -101,7 +101,124 @@ async function main() {
   }
   
   console.log(`Đã tạo ${challenges.length} thách thức`);
-  
+
+  // Khởi tạo các nhiệm vụ hàng ngày
+  const dailyMissions = [
+    {
+      title: 'Hôm nay ăn chay',
+      description: 'Bữa trưa hoặc tối ăn chay để giảm khí thải carbon',
+      points: 10,
+      icon: '🥗',
+      category: 'Ăn uống',
+    },
+    {
+      title: 'Dọn dẹp khu vực xung quanh',
+      description: 'Dọn rác quanh nhà hoặc trường học',
+      points: 15,
+      icon: '🧹',
+      category: 'Hành động',
+    },
+    {
+      title: 'Tuyên truyền sống xanh với 2 bạn',
+      description: 'Chia sẻ về bảo vệ môi trường với ít nhất 2 người',
+      points: 20,
+      icon: '💬',
+      category: 'Truyền thông',
+    },
+    {
+      title: 'Sử dụng bình nước cá nhân',
+      description: 'Mang theo bình nước riêng thay vì mua chai nhựa',
+      points: 5,
+      icon: '🚰',
+      category: 'Giảm rác thải',
+    },
+    {
+      title: 'Tắt thiết bị điện không dùng',
+      description: 'Kiểm tra và tắt các thiết bị điện không sử dụng',
+      points: 5,
+      icon: '💡',
+      category: 'Tiết kiệm năng lượng',
+    },
+  ];
+
+  for (const mission of dailyMissions) {
+    const createdMission = await prisma.dailyMission.create({
+      data: mission,
+    });
+    console.log(`Đã tạo nhiệm vụ: ${createdMission.title}`);
+  }
+
+  console.log(`Đã tạo ${dailyMissions.length} nhiệm vụ hàng ngày`);
+
+  // Khởi tạo các phần quà
+  const rewards = [
+    {
+      title: 'Bút bi xanh',
+      description: 'Bút bi thân thiện môi trường',
+      points: 20,
+      image: '/rewards/pen.png',
+      category: 'Văn phòng phẩm',
+      stock: 50,
+    },
+    {
+      title: 'Sổ tay tái chế',
+      description: 'Sổ tay làm từ giấy tái chế',
+      points: 30,
+      image: '/rewards/notebook.png',
+      category: 'Văn phòng phẩm',
+      stock: 30,
+    },
+    {
+      title: 'Túi vải canvas',
+      description: 'Túi vải có thể tái sử dụng',
+      points: 50,
+      image: '/rewards/bag.png',
+      category: 'Đồ dùng',
+      stock: 20,
+    },
+    {
+      title: 'Bình nước inox',
+      description: 'Bình nước giữ nhiệt 500ml',
+      points: 100,
+      image: '/rewards/bottle.png',
+      category: 'Đồ dùng',
+      stock: 15,
+    },
+    {
+      title: 'Hộp cơm tre',
+      description: 'Hộp đựng thực phẩm làm từ tre tự nhiên',
+      points: 80,
+      image: '/rewards/lunchbox.png',
+      category: 'Đồ dùng',
+      stock: 10,
+    },
+    {
+      title: 'Cây xanh mini',
+      description: 'Cây sen đá nhỏ trong chậu',
+      points: 40,
+      image: '/rewards/plant.png',
+      category: 'Cây xanh',
+      stock: 25,
+    },
+    {
+      title: 'Voucher nhà sách 50k',
+      description: 'Phiếu mua sách trị giá 50.000đ',
+      points: 150,
+      image: '/rewards/voucher.png',
+      category: 'Voucher',
+      stock: 10,
+    },
+  ];
+
+  for (const reward of rewards) {
+    const createdReward = await prisma.reward.create({
+      data: reward,
+    });
+    console.log(`Đã tạo phần quà: ${createdReward.title}`);
+  }
+
+  console.log(`Đã tạo ${rewards.length} phần quà`);
+
   // Khởi tạo các nhóm
   const groups = [
     {

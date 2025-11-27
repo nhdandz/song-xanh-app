@@ -253,7 +253,7 @@ function shuffleArray(arr) {
 }
 
 export default function Games() {
-  const { points, setPoints } = useAppContext();
+  const { points, setPoints, userId } = useAppContext();
   const [selectedGame, setSelectedGame] = useState(null);
 
   // bộ câu hỏi hiện tại (5 câu random)
@@ -264,6 +264,8 @@ export default function Games() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(120); // 2 phút
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [canPlayQuizToday, setCanPlayQuizToday] = useState(true);
+  const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
 
   // Xử lý đếm ngược thời gian
   useEffect(() => {
@@ -295,13 +297,62 @@ export default function Games() {
     return shuffled.slice(0, N);
   };
 
+  // Kiểm tra xem quiz đã chơi hôm nay chưa
+  const checkQuizPlayedToday = async () => {
+    if (!userId) return false;
+
+    setIsLoadingQuiz(true);
+    try {
+      const response = await fetch(`/api/game-progress?userId=${userId}&gameType=quiz`);
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const progress = await response.json();
+
+      if (progress && progress.data) {
+        const lastPlayDate = progress.data.lastPlayDate;
+
+        if (lastPlayDate) {
+          const today = new Date();
+          const last = new Date(lastPlayDate);
+
+          today.setHours(0, 0, 0, 0);
+          last.setHours(0, 0, 0, 0);
+
+          // Nếu cùng ngày
+          if (today.getTime() === last.getTime()) {
+            return true; // Đã chơi hôm nay
+          }
+        }
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Error checking quiz status:', error);
+      return false;
+    } finally {
+      setIsLoadingQuiz(false);
+    }
+  };
+
   // Xử lý chọn trò chơi
-  const handleGameSelect = (game) => {
+  const handleGameSelect = async (game) => {
     if (game.comingSoon) return;
 
     setSelectedGame(game);
 
     if (game.type === 'quiz') {
+      // Kiểm tra xem đã chơi hôm nay chưa
+      const hasPlayedToday = await checkQuizPlayedToday();
+
+      if (hasPlayedToday) {
+        setCanPlayQuizToday(false);
+        setQuizCompleted(true);
+        return;
+      }
+
       // tạo bộ câu hỏi ngẫu nhiên 5 câu
       const picked = buildRandomQuiz(5);
       setQuizQuestions(picked);
@@ -309,6 +360,7 @@ export default function Games() {
       setScore(0);
       setTimeLeft(120);
       setQuizCompleted(false);
+      setCanPlayQuizToday(true);
       setSelectedAnswer(null);
       setIsAnswered(false);
     }
@@ -331,7 +383,7 @@ export default function Games() {
   };
 
   // Xử lý chuyển câu hỏi tiếp theo
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     if (currentQuestion < quizQuestions.length - 1) {
       setCurrentQuestion(prev => prev + 1);
       setSelectedAnswer(null);
@@ -341,11 +393,48 @@ export default function Games() {
 
       // Thưởng điểm khi hoàn thành câu đố
       const earnedPoints = Math.round((score / quizQuestions.length) * (selectedGame?.points || 0));
-      if (earnedPoints > 0) {
-        setPoints(prev => ({
-          ...prev,
-          total: (prev.total || 0) + earnedPoints
-        }));
+
+      if (earnedPoints > 0 && userId) {
+        try {
+          const playDate = new Date().toISOString();
+
+          // Lưu điểm vào database
+          const response = await fetch('/api/game-progress', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId,
+              gameType: 'quiz',
+              pointsEarned: earnedPoints,
+              data: {
+                score,
+                totalQuestions: quizQuestions.length,
+                percentage: Math.round((score / quizQuestions.length) * 100),
+                lastPlayDate: playDate,
+              },
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Cập nhật điểm trong context
+            setPoints(prev => ({
+              ...prev,
+              total: data.points
+            }));
+
+            // Đánh dấu đã chơi hôm nay
+            setCanPlayQuizToday(false);
+          }
+        } catch (error) {
+          console.error('Error saving quiz result:', error);
+          // Vẫn cộng điểm local nếu lỗi
+          setPoints(prev => ({
+            ...prev,
+            total: (prev.total || 0) + earnedPoints
+          }));
+        }
       }
     }
   };
@@ -522,6 +611,57 @@ export default function Games() {
     const earnedPoints = Math.round((score / quizQuestions.length) * (selectedGame?.points || 0));
     const percentage = Math.round((score / quizQuestions.length) * 100);
 
+    // Nếu đã chơi hôm nay rồi
+    if (!canPlayQuizToday) {
+      return (
+        <div className="space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-green-800 mb-2">
+              Câu đố môi trường
+            </h1>
+            <p className="text-gray-600">
+              Kết quả của bạn
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md text-center">
+            <div className="mb-4">
+              <div className="inline-block p-4 rounded-full bg-green-100">
+                <FaTrophy className="text-yellow-500 text-4xl" />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-green-800 mb-2">
+              {percentage}%
+            </h2>
+
+            <p className="text-gray-600 mb-4">
+              Bạn đã trả lời đúng {score}/{quizQuestions.length} câu hỏi
+            </p>
+
+            <div className="p-3 bg-green-50 rounded-lg text-green-800 mb-4">
+              <p className="font-semibold">
+                +{earnedPoints} điểm xanh
+              </p>
+            </div>
+
+            <div className="bg-amber-50 rounded-lg border border-amber-200 p-4 mb-4">
+              <p className="text-sm text-amber-800">
+                🎯 Bạn đã hoàn thành câu đố hôm nay! Hãy quay lại vào ngày mai để chơi tiếp nhé.
+              </p>
+            </div>
+
+            <button
+              onClick={handleBackToGames}
+              className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
+            >
+              Quay lại danh sách trò chơi
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-6">
         <div className="text-center">
@@ -560,22 +700,6 @@ export default function Games() {
               className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
             >
               Quay lại danh sách trò chơi
-            </button>
-            <button
-              onClick={() => {
-                // chơi lại: random lại câu hỏi
-                const picked = buildRandomQuiz(5);
-                setQuizQuestions(picked);
-                setCurrentQuestion(0);
-                setScore(0);
-                setTimeLeft(120);
-                setQuizCompleted(false);
-                setSelectedAnswer(null);
-                setIsAnswered(false);
-              }}
-              className="w-full py-3 bg-green-50 text-green-700 rounded-lg font-semibold hover:bg-green-100"
-            >
-              Chơi lại
             </button>
           </div>
         </div>
