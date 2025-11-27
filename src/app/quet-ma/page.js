@@ -73,10 +73,12 @@ export default function BarcodeScan() {
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [scannerAvailable, setScannerAvailable] = useState(true);
-  const html5QrCodeRef = useRef(null);
+  const codeReaderRef = useRef(null);
+  const videoRef = useRef(null);
   const lastScanRef = useRef({ text: null, time: 0 });
 
   const [evaluating, setEvaluating] = useState(false);
+  const [processingImage, setProcessingImage] = useState(false);
 
   useEffect(() => {
     try {
@@ -198,74 +200,112 @@ export default function BarcodeScan() {
 
   const prepareCameras = async () => {
     try {
-      const mod = await import('html5-qrcode');
-      const { Html5Qrcode } = mod;
-      const devices = await Html5Qrcode.getCameras();
-      if (devices && devices.length) {
-        setCameras(devices);
-        setSelectedCamera(prev => prev || devices[0].id);
+      // Yêu cầu quyền truy cập camera
+      await navigator.mediaDevices.getUserMedia({ video: true });
+
+      // Lấy danh sách thiết bị
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+      if (videoDevices && videoDevices.length) {
+        setCameras(videoDevices);
+        setSelectedCamera(prev => prev || videoDevices[0].deviceId);
+        setScannerAvailable(true);
+      } else {
+        throw new Error('Không tìm thấy camera nào');
       }
-      setScannerAvailable(true);
     } catch (e) {
       console.warn('Không thể lấy camera', e);
       setScannerAvailable(false);
+      alert(`Không thể truy cập camera: ${e.message || 'Vui lòng cấp quyền truy cập camera'}`);
     }
   };
 
   const startScanner = async () => {
     if (scanning) return;
-    const readerEl = document.getElementById('reader');
-    if (!readerEl) {
-      alert('Phần tử camera chưa sẵn sàng. Hãy thử reload trang.');
-      return;
-    }
 
     try {
-      const mod = await import('html5-qrcode');
-      const { Html5Qrcode } = mod;
+      // Lấy danh sách camera
+      let availableCameras = cameras;
+      if (availableCameras.length === 0) {
+        // Lấy camera trực tiếp thay vì dùng state
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        availableCameras = devices.filter(device => device.kind === 'videoinput');
 
-      if (!html5QrCodeRef.current) html5QrCodeRef.current = new Html5Qrcode('reader');
-      const instance = html5QrCodeRef.current;
-
-      if (cameras.length === 0) {
-        try {
-          const devices = await Html5Qrcode.getCameras();
-          if (devices && devices.length) {
-            setCameras(devices);
-            setSelectedCamera(prev => prev || devices[0].id);
+        if (availableCameras.length > 0) {
+          setCameras(availableCameras);
+          if (!selectedCamera) {
+            setSelectedCamera(availableCameras[0].deviceId);
           }
-        } catch (er) { }
+        }
       }
 
-      const cameraId = selectedCamera || (cameras[0] && cameras[0].id) || undefined;
+      const cameraId = selectedCamera || (availableCameras[0] && availableCameras[0].deviceId);
+      if (!cameraId) {
+        throw new Error('Không tìm thấy camera nào. Vui lòng kiểm tra quyền truy cập camera.');
+      }
 
-      await instance.start(
+      // Set scanning trước để render video element
+      setScanning(true);
+
+      // Đợi một chút để DOM được render
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Import ZXing library
+      const { BrowserMultiFormatReader } = await import('@zxing/browser');
+
+      // Tạo reader instance
+      if (!codeReaderRef.current) {
+        codeReaderRef.current = new BrowserMultiFormatReader();
+      }
+
+      // Lấy video element đã được render bởi React
+      const video = videoRef.current;
+      if (!video) {
+        throw new Error('Video element không tồn tại');
+      }
+
+      // Bắt đầu decode
+      await codeReaderRef.current.decodeFromVideoDevice(
         cameraId,
-        { fps: 10, qrbox: { width: 250, height: 150 }, verbose: false },
-        (decodedText) => onScanResult(decodedText),
-        () => { }
+        video,
+        (result, error) => {
+          if (result) {
+            onScanResult(result.getText());
+          }
+          // Không log error vì nó sẽ log liên tục khi không tìm thấy mã
+        }
       );
 
-      setScanning(true);
       setScannerAvailable(true);
     } catch (err) {
       console.error('Lỗi khi mở camera:', err);
       setScannerAvailable(false);
+      setScanning(false);
       alert(`Không thể mở camera — ${err?.message || String(err)}`);
     }
   };
 
   const stopScanner = async () => {
     try {
-      const instance = html5QrCodeRef.current;
-      if (instance) {
-        await instance.stop();
-        try { await instance.clear(); } catch (e) { }
-        html5QrCodeRef.current = null;
+      // Dừng ZXing reader
+      if (codeReaderRef.current) {
+        codeReaderRef.current.reset();
+      }
+
+      // Dọn dẹp video element
+      if (videoRef.current) {
+        const stream = videoRef.current.srcObject;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+        videoRef.current.srcObject = null;
       }
     } catch (e) {
       console.warn('Lỗi dừng scanner', e);
     } finally {
+      // Set scanning = false để React tự xóa video element
       setScanning(false);
     }
   };
@@ -294,47 +334,82 @@ export default function BarcodeScan() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Kiểm tra file type
+    if (!file.type.startsWith('image/')) {
+      alert('Vui lòng chọn file ảnh hợp lệ (JPG, PNG, v.v.)');
+      e.target.value = '';
+      return;
+    }
+
+    setProcessingImage(true);
+    let detectionSuccess = false;
+
+    // Thử phương pháp 1: BarcodeDetector API (nếu có)
     if ('BarcodeDetector' in window) {
       try {
-        const formats = ['ean_13', 'ean_8', 'code_128', 'qr_code'];
+        const formats = ['ean_13', 'ean_8', 'code_128', 'qr_code', 'code_39', 'code_93', 'codabar', 'itf', 'upc_a', 'upc_e'];
         const detector = new window.BarcodeDetector({ formats });
+
         let imageBitmap;
         try {
-          imageBitmap = await createImageBitmap(file, { resizeWidth: 1000, resizeHeight: 1000, resizeQuality: 'high' });
-        } catch (err) {
           imageBitmap = await createImageBitmap(file);
+        } catch (bitmapErr) {
+          console.warn('Không thể tạo imageBitmap:', bitmapErr);
+          throw bitmapErr;
         }
+
         const results = await detector.detect(imageBitmap);
         imageBitmap.close?.();
-        if (results && results.length) {
+
+        if (results && results.length > 0) {
+          if (scanning) await stopScanner();
           onScanResult(results[0].rawValue);
-        } else {
-          alert('Không phát hiện mã trong ảnh.');
+          e.target.value = '';
+          setProcessingImage(false);
+          detectionSuccess = true;
+          return;
         }
-        e.target.value = '';
-        return;
       } catch (err) {
-        console.warn('BarcodeDetector lỗi:', err);
+        console.warn('BarcodeDetector không hoạt động:', err);
       }
     }
 
-    try {
-      const mod = await import('html5-qrcode');
-      const { Html5Qrcode } = mod;
-      const tmp = new Html5Qrcode('reader-temp');
-      if (typeof tmp.scanFile === 'function') {
-        const result = await tmp.scanFile(file, true);
-        if (result && result.length && result[0].decodedText) {
-          onScanResult(result[0].decodedText);
-          try { await tmp.clear(); } catch (e) {}
-          e.target.value = '';
-          return;
-        }
-        try { await tmp.clear(); } catch (e) {}
-      }
-    } catch (err) { }
+    // Thử phương pháp 2: ZXing library
+    if (!detectionSuccess) {
+      try {
+        const { BrowserMultiFormatReader } = await import('@zxing/browser');
+        const reader = new BrowserMultiFormatReader();
 
-    alert('Không thể quét từ ảnh. Hãy dùng Chrome/Edge hoặc bật camera.');
+        // Đọc file thành URL
+        const imageUrl = URL.createObjectURL(file);
+
+        try {
+          const result = await reader.decodeFromImageUrl(imageUrl);
+          URL.revokeObjectURL(imageUrl);
+
+          if (result) {
+            if (scanning) await stopScanner();
+            onScanResult(result.getText());
+            e.target.value = '';
+            setProcessingImage(false);
+            detectionSuccess = true;
+            return;
+          }
+        } catch (decodeErr) {
+          URL.revokeObjectURL(imageUrl);
+          console.warn('ZXing không thể decode:', decodeErr);
+        }
+      } catch (err) {
+        console.warn('ZXing import error:', err);
+      }
+    }
+
+    // Nếu không tìm thấy mã nào
+    if (!detectionSuccess) {
+      alert('Không tìm thấy mã vạch/QR code trong ảnh này.\n\nGợi ý:\n- Đảm bảo ảnh rõ nét và mã dễ nhìn\n- Thử chụp lại với ánh sáng tốt hơn\n- Hoặc sử dụng camera để quét trực tiếp');
+    }
+
+    setProcessingImage(false);
     e.target.value = '';
   };
 
@@ -381,8 +456,14 @@ export default function BarcodeScan() {
       {/* Camera Scanner */}
       <div className="bg-white p-4 rounded-lg shadow-md">
         <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-900">
-          <div id="reader" className={`w-full ${scanning ? 'min-h-[280px]' : 'h-48'} flex items-center justify-center`}>
-            {!scanning && (
+          <div id="reader" className={`w-full ${scanning ? 'min-h-[280px]' : 'h-48'} flex items-center justify-center relative`}>
+            {scanning ? (
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                style={{ minHeight: '280px' }}
+              />
+            ) : (
               <div className="text-center p-6">
                 <FaCamera className="text-gray-400 text-4xl mx-auto mb-3" />
                 <p className="text-gray-400 text-sm">Nhấn nút bên dưới để quét</p>
@@ -391,15 +472,19 @@ export default function BarcodeScan() {
           </div>
         </div>
 
-        {scanning && (
+        {scanning && cameras.length > 1 && (
           <div className="mt-3 flex items-center gap-2">
             <select
               value={selectedCamera || ''}
-              onChange={(e) => setSelectedCamera(e.target.value)}
+              onChange={async (e) => {
+                await stopScanner();
+                setSelectedCamera(e.target.value);
+                setTimeout(() => startScanner(), 100);
+              }}
               className="flex-1 border rounded px-2 py-1.5 text-sm"
             >
               {cameras.map(c => (
-                <option key={c.id} value={c.id}>{c.label || c.id}</option>
+                <option key={c.deviceId} value={c.deviceId}>{c.label || `Camera ${c.deviceId.slice(0, 8)}...`}</option>
               ))}
             </select>
             <button onClick={handleCameraButton} className="px-3 py-1.5 bg-red-500 text-white rounded text-sm">
@@ -427,18 +512,36 @@ export default function BarcodeScan() {
             </button>
           )}
 
-          <label className="col-span-2 cursor-pointer">
+          <label className={`col-span-2 ${processingImage ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
             <div className="flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
-              <FaImage />
-              Chọn ảnh từ máy
+              {processingImage ? (
+                <>
+                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
+                    <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                  Đang xử lý ảnh...
+                </>
+              ) : (
+                <>
+                  <FaImage />
+                  Chọn ảnh từ máy
+                </>
+              )}
             </div>
-            <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+              disabled={processingImage}
+            />
           </label>
         </div>
 
         {!scannerAvailable && (
           <div className="mt-3 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-sm text-yellow-800">
-            <strong>Cần cài đặt:</strong> Chạy <code className="bg-yellow-100 px-1 rounded">npm install html5-qrcode</code>
+            <strong>Lưu ý:</strong> Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập hoặc thử chọn ảnh từ máy.
           </div>
         )}
       </div>

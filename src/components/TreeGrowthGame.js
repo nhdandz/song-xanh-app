@@ -56,7 +56,7 @@ const GROWTH_STAGES = [
 
 const FERTILIZER_COST = 5; // 5 điểm xanh = 1 phân bón
 
-export default function TreeGrowthGame({ onComplete, onBack }) {
+export default function TreeGrowthGame({ onBack }) {
   const { userId, points, setPoints } = useAppContext();
 
   // Game state
@@ -66,31 +66,83 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
   const [fertilizer, setFertilizer] = useState(3);
   const [dayCount, setDayCount] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
+  const [rewardClaimed, setRewardClaimed] = useState(false);
+  const [lastClaimDate, setLastClaimDate] = useState(null);
+  const [canPlayToday, setCanPlayToday] = useState(true);
   const [message, setMessage] = useState('');
   const [lastAction, setLastAction] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load tiến trình game từ localStorage khi mount
+  // Kiểm tra xem có phải ngày mới không
+  const isNewDay = (lastDate) => {
+    if (!lastDate) return true;
+
+    const today = new Date();
+    const last = new Date(lastDate);
+
+    today.setHours(0, 0, 0, 0);
+    last.setHours(0, 0, 0, 0);
+
+    return today.getTime() > last.getTime();
+  };
+
+  // Load tiến trình game từ database khi mount
   useEffect(() => {
     if (!userId) return;
 
-    try {
-      const savedGame = localStorage.getItem(`tree_game_${userId}`);
-      if (savedGame) {
-        const data = JSON.parse(savedGame);
-        setTreeHealth(data.treeHealth || 0);
-        setWaterLevel(data.waterLevel || 50);
-        setSunLevel(data.sunLevel || 50);
-        setFertilizer(data.fertilizer || 3);
-        setDayCount(data.dayCount || 0);
-        setGameCompleted(data.completed || false);
+    const loadGameProgress = async () => {
+      try {
+        const response = await fetch(`/api/game-progress?userId=${userId}&gameType=tree-growth`);
+
+        if (!response.ok) {
+          throw new Error('Failed to load game progress');
+        }
+
+        const progress = await response.json();
+
+        if (progress && progress.data) {
+          const data = progress.data;
+          const lastClaim = data.lastClaimDate;
+
+          // Kiểm tra xem đã qua ngày mới chưa
+          if (lastClaim && isNewDay(lastClaim)) {
+            // Ngày mới - reset game
+            setTreeHealth(0);
+            setWaterLevel(50);
+            setSunLevel(50);
+            setFertilizer(3);
+            setDayCount(0);
+            setGameCompleted(false);
+            setRewardClaimed(false);
+            setCanPlayToday(true);
+            setLastClaimDate(null);
+          } else {
+            // Cùng ngày - load dữ liệu đã lưu
+            setTreeHealth(data.treeHealth || 0);
+            setWaterLevel(data.waterLevel || 50);
+            setSunLevel(data.sunLevel || 50);
+            setFertilizer(data.fertilizer || 3);
+            setDayCount(data.dayCount || 0);
+            setGameCompleted(data.completed || false);
+            setRewardClaimed(data.rewardClaimed || false);
+            setLastClaimDate(lastClaim);
+
+            // Nếu đã claim reward hôm nay thì không cho chơi nữa
+            if (data.rewardClaimed && lastClaim) {
+              setCanPlayToday(false);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading game:', error);
+        // Nếu lỗi, sử dụng giá trị mặc định
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error loading game:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    loadGameProgress();
   }, [userId]);
 
   // Tự động lưu game mỗi 5 giây
@@ -132,8 +184,8 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
     return () => clearInterval(interval);
   }, [waterLevel, sunLevel, gameCompleted, isLoading]);
 
-  // Lưu game vào localStorage
-  const saveGame = (completed = gameCompleted) => {
+  // Lưu game vào database
+  const saveGame = async (completed = gameCompleted) => {
     if (!userId || isSaving) return;
 
     setIsSaving(true);
@@ -145,9 +197,25 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
         fertilizer,
         dayCount,
         completed,
+        rewardClaimed,
+        lastClaimDate,
         lastSaved: new Date().toISOString()
       };
-      localStorage.setItem(`tree_game_${userId}`, JSON.stringify(gameData));
+
+      const response = await fetch('/api/game-progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          gameType: 'tree-growth',
+          data: gameData,
+          pointsEarned: 0, // Không cộng điểm khi lưu, chỉ cộng khi claim reward
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save game progress');
+      }
     } catch (error) {
       console.error('Error saving game:', error);
     } finally {
@@ -156,21 +224,55 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
   };
 
   // Mua phân bón bằng điểm
-  const handleBuyFertilizer = () => {
+  const handleBuyFertilizer = async () => {
     if (points.total < FERTILIZER_COST) {
       setMessage(`⚠️ Bạn cần ${FERTILIZER_COST} điểm xanh để mua phân bón!`);
       setTimeout(() => setMessage(''), 3000);
       return;
     }
 
-    // Trừ điểm và cộng phân bón
-    setPoints(prev => ({ ...prev, total: prev.total - FERTILIZER_COST }));
-    setFertilizer(prev => prev + 1);
-    setMessage(`✅ Đã mua 1 phân bón! (-${FERTILIZER_COST} điểm)`);
-    setTimeout(() => setMessage(''), 2000);
+    setIsSaving(true);
 
-    // Lưu lại
-    saveGame();
+    try {
+      // Trừ điểm trong database
+      const response = await fetch('/api/game-progress', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          gameType: 'tree-growth-fertilizer',
+          pointsEarned: -FERTILIZER_COST, // Số âm để trừ điểm
+          data: {
+            action: 'buy-fertilizer',
+            timestamp: new Date().toISOString()
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to buy fertilizer');
+      }
+
+      // Cập nhật điểm trong context
+      setPoints(prev => ({ ...prev, total: data.points }));
+
+      // Cộng phân bón
+      setFertilizer(prev => prev + 1);
+
+      setMessage(`✅ Đã mua 1 phân bón! (-${FERTILIZER_COST} điểm)`);
+      setTimeout(() => setMessage(''), 2000);
+
+      // Lưu lại state game
+      await saveGame();
+    } catch (error) {
+      console.error('Error buying fertilizer:', error);
+      setMessage('❌ Có lỗi xảy ra khi mua phân bón!');
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Lấy giai đoạn hiện tại của cây
@@ -223,16 +325,88 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
     }
   };
 
+  // Claim reward và lưu điểm vào database
+  const handleClaimReward = async () => {
+    if (!userId) {
+      alert('Vui lòng đăng nhập để nhận thưởng');
+      return;
+    }
+
+    if (rewardClaimed) {
+      alert('Bạn đã nhận thưởng rồi!');
+      return;
+    }
+
+    if (!canPlayToday) {
+      alert('Bạn đã nhận thưởng hôm nay rồi! Quay lại vào ngày mai nhé.');
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const claimDate = new Date().toISOString();
+
+      const response = await fetch('/api/game-progress', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          gameType: 'tree-growth',
+          pointsEarned: 10,
+          data: {
+            treeHealth,
+            waterLevel,
+            sunLevel,
+            fertilizer,
+            dayCount,
+            completed: true,
+            rewardClaimed: true,
+            lastClaimDate: claimDate,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to claim reward');
+      }
+
+      // Cập nhật state local
+      setRewardClaimed(true);
+      setCanPlayToday(false);
+      setLastClaimDate(claimDate);
+
+      // Cập nhật điểm trong context
+      setPoints(prev => ({
+        ...prev,
+        total: data.points
+      }));
+
+      alert('Chúc mừng! Bạn đã nhận 10 điểm xanh. Bạn có thể chơi lại vào ngày mai!');
+    } catch (error) {
+      console.error('Error claiming reward:', error);
+      alert('Có lỗi xảy ra khi nhận thưởng: ' + error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // Reset game
-  const handleReset = () => {
+  const handleReset = async () => {
     setTreeHealth(0);
     setWaterLevel(50);
     setSunLevel(50);
     setFertilizer(3);
     setDayCount(0);
     setGameCompleted(false);
+    setRewardClaimed(false);
     setMessage('');
     setLastAction(null);
+
+    // Lưu trạng thái reset vào database
+    await saveGame(false);
   };
 
   const currentStage = getCurrentStage();
@@ -243,6 +417,51 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-green-600 border-t-transparent mx-auto mb-4"></div>
           <p className="text-gray-600">Đang tải game...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Nếu đã chơi hôm nay
+  if (!canPlayToday && rewardClaimed) {
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={onBack}
+              className="flex items-center text-gray-600 hover:text-gray-900"
+            >
+              <FaArrowLeft className="mr-2" />
+              Quay lại
+            </button>
+
+            <div className="text-center flex-1">
+              <h2 className="text-xl font-semibold text-gray-900">Trồng cây xanh</h2>
+            </div>
+
+            <div className="text-right">
+              <div className="text-xs text-gray-500">Điểm của bạn</div>
+              <div className="text-lg font-semibold text-green-600">{points.total}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Already played today message */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-amber-200 p-8 text-center">
+          <div className="text-6xl mb-4">🌳</div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
+            Bạn đã hoàn thành trò chơi hôm nay!
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Bạn đã nhận 10 điểm xanh từ việc trồng cây. Hãy quay lại vào ngày mai để tiếp tục trồng cây mới nhé!
+          </p>
+          <div className="bg-blue-50 rounded-lg border border-blue-200 p-4 mt-6">
+            <p className="text-sm text-blue-800">
+              💡 <strong>Mẹo:</strong> Trong lúc chờ, bạn có thể thực hiện các hành động xanh khác để kiếm thêm điểm!
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -435,14 +654,14 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
           </div>
           <button
             onClick={handleBuyFertilizer}
-            disabled={points.total < FERTILIZER_COST}
+            disabled={points.total < FERTILIZER_COST || isSaving}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              points.total >= FERTILIZER_COST
+              points.total >= FERTILIZER_COST && !isSaving
                 ? 'bg-green-600 text-white hover:bg-green-700'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            Mua phân
+            {isSaving ? 'Đang xử lý...' : 'Mua phân'}
           </button>
         </div>
       </div>
@@ -459,17 +678,23 @@ export default function TreeGrowthGame({ onComplete, onBack }) {
               Cây của bạn đã trưởng thành và sẽ giúp làm sạch không khí!
             </p>
             <div className="space-y-3">
-              <button
-                onClick={() => {
-                  if (onComplete) onComplete(10); // Thưởng 10 điểm
-                }}
-                className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all"
-              >
-                Nhận thưởng (+10 điểm)
-              </button>
+              {!rewardClaimed ? (
+                <button
+                  onClick={handleClaimReward}
+                  disabled={isSaving}
+                  className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all disabled:opacity-50"
+                >
+                  {isSaving ? 'Đang xử lý...' : 'Nhận thưởng (+10 điểm)'}
+                </button>
+              ) : (
+                <div className="w-full py-3 px-4 bg-green-100 text-green-800 rounded-lg font-medium text-center">
+                  ✓ Đã nhận thưởng
+                </div>
+              )}
               <button
                 onClick={handleReset}
-                className="w-full py-3 px-4 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                disabled={isSaving}
+                className="w-full py-3 px-4 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
                 Trồng cây mới
               </button>

@@ -1,262 +1,191 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaFlag, FaTrophy, FaLock, FaCheck, FaClock } from 'react-icons/fa';
 import { useAppContext } from '@/context/AppContext';
 
-// Dữ liệu mẫu cho các thách thức
-const CHALLENGES = [
-  {
-    id: 1,
-    title: 'Tuần không túi ni-lông',
-    description: 'Không sử dụng túi ni-lông trong 7 ngày liên tiếp.',
-    points: 50,
-    days: 7,
-    difficulty: 'Trung bình',
-    category: 'Giảm rác thải',
-    status: 'in-progress', // completed, locked, in-progress
-    progress: 3,
-  },
-  {
-    id: 2,
-    title: 'Người tiết kiệm điện',
-    description: 'Tắt điện khi không sử dụng trong 5 ngày liên tiếp.',
-    points: 30,
-    days: 5,
-    difficulty: 'Dễ',
-    category: 'Tiết kiệm năng lượng',
-    status: 'completed',
-    progress: 5,
-  },
-  {
-    id: 3,
-    title: '30 ngày sống xanh',
-    description: 'Thực hiện ít nhất 3 hành vi xanh mỗi ngày trong 30 ngày.',
-    points: 200,
-    days: 30,
-    difficulty: 'Khó',
-    category: 'Tổng hợp',
-    status: 'locked',
-    progress: 0,
-    requiredPoints: 100,
-  },
-  {
-    id: 4,
-    title: 'Vận động viên xanh',
-    description: 'Đi bộ hoặc đi xe đạp đến trường trong 10 ngày.',
-    points: 80,
-    days: 10,
-    difficulty: 'Trung bình',
-    category: 'Vận động',
-    status: 'locked',
-    progress: 0,
-    requiredPoints: 50,
-  },
-];
-
-// Dữ liệu mẫu cho nhiệm vụ hàng ngày
-const DAILY_MISSIONS = [
-  {
-    id: 1,
-    title: 'Hôm nay ăn chay',
-    points: 10,
-    completed: false,
-    expiresIn: '12 giờ',
-  },
-  {
-    id: 2,
-    title: 'Dọn dẹp khu vực xung quanh',
-    points: 15,
-    completed: true,
-    expiresIn: '8 giờ',
-  },
-  {
-    id: 3,
-    title: 'Tuyên truyền sống xanh với 2 bạn',
-    points: 20,
-    completed: false,
-    expiresIn: '24 giờ',
-  },
-];
-
 export default function Challenges() {
-  const { points } = useAppContext();
-  const [challenges, setChallenges] = useState(CHALLENGES);
-  const [dailyMissions, setDailyMissions] = useState(DAILY_MISSIONS);
-  
-  // Xử lý hoàn thành nhiệm vụ hàng ngày
-  const completeDailyMission = (id) => {
-    setDailyMissions(dailyMissions.map(mission => 
-      mission.id === id ? { ...mission, completed: !mission.completed } : mission
-    ));
+  const { user } = useAppContext();
+  const [challenges, setChallenges] = useState([]);
+  const [dailyMissions, setDailyMissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [completing, setCompleting] = useState(null);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchDailyMissions();
+    }
+  }, [user]);
+
+  const fetchDailyMissions = async () => {
+    try {
+      const response = await fetch(`/api/daily-missions?userId=${user.id}`);
+      const data = await response.json();
+      setDailyMissions(data);
+    } catch (error) {
+      console.error('Error fetching daily missions:', error);
+    } finally {
+      setLoading(false);
+    }
   };
-  
-  return (
-    <div className="space-y-6 pb-16">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-green-800">
-          Thách thức & Nhiệm vụ
-        </h1>
-        <p className="text-gray-600 mt-1">
-          Hoàn thành thách thức để nhận thưởng
-        </p>
-      </div>
-      
-      {/* Nhiệm vụ hàng ngày */}
-      <div className="bg-yellow-50 p-4 rounded-lg shadow-md">
-        <h2 className="font-bold text-yellow-800 flex items-center mb-3">
-          <FaClock className="mr-2" />
-          Nhiệm vụ hàng ngày
-        </h2>
-        
-        <div className="space-y-3">
-          {dailyMissions.map(mission => (
-            <div 
-              key={mission.id} 
-              className={`p-3 rounded-lg border ${
-                mission.completed 
-                  ? 'bg-green-50 border-green-200' 
-                  : 'bg-white border-gray-200'
-              }`}
-            >
-              <div className="flex items-center">
-                <button
-                  onClick={() => completeDailyMission(mission.id)}
-                  className={`w-6 h-6 rounded-full border-2 flex-shrink-0 mr-3 flex items-center justify-center ${
-                    mission.completed 
-                      ? 'border-green-500 bg-green-500' 
-                      : 'border-gray-300'
-                  }`}
-                >
-                  {mission.completed && <FaCheck className="text-white text-xs" />}
-                </button>
-                
-                <div className="flex-1">
-                  <h3 className={`font-medium ${mission.completed ? 'text-green-800' : 'text-gray-800'}`}>
-                    {mission.title}
-                  </h3>
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-xs text-gray-500">
-                      Hết hạn trong {mission.expiresIn}
-                    </span>
-                    <span className="text-xs font-semibold text-green-600">
-                      +{mission.points} điểm
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+
+  const completeDailyMission = async (mission) => {
+    if (!user?.id) {
+      alert('Vui lòng đăng nhập');
+      return;
+    }
+
+    if (mission.completed) {
+      alert('Bạn đã hoàn thành nhiệm vụ này hôm nay rồi!');
+      return;
+    }
+
+    setCompleting(mission.id);
+
+    try {
+      const response = await fetch('/api/daily-missions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          missionId: mission.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to complete mission');
+      }
+
+      alert(`Chúc mừng! Bạn đã nhận ${mission.points} điểm`);
+
+      fetchDailyMissions();
+
+      window.location.reload();
+    } catch (error) {
+      console.error('Error completing mission:', error);
+      alert(error.message || 'Có lỗi xảy ra');
+    } finally {
+      setCompleting(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Đang tải...</p>
         </div>
       </div>
-      
-      {/* Thách thức */}
-      <div className="space-y-4">
-        <h2 className="font-bold text-green-800 flex items-center">
-          <FaFlag className="mr-2" />
-          Thách thức Sống Xanh
-        </h2>
-        
-        {challenges.map(challenge => (
-          <div 
-            key={challenge.id} 
-            className={`p-4 rounded-lg shadow-md border ${
-              challenge.status === 'completed' 
-                ? 'bg-green-50 border-green-200' 
-                : challenge.status === 'locked' 
-                  ? 'bg-gray-50 border-gray-200' 
-                  : 'bg-white border-blue-200'
-            }`}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <h3 className={`font-semibold ${
-                challenge.status === 'locked' 
-                  ? 'text-gray-500' 
-                  : challenge.status === 'completed' 
-                    ? 'text-green-800' 
-                    : 'text-blue-800'
-              }`}>
-                {challenge.title}
-              </h3>
-              
-              {challenge.status === 'locked' ? (
-                <div className="bg-gray-200 rounded-full p-1.5">
-                  <FaLock className="text-gray-500 text-xs" />
-                </div>
-              ) : challenge.status === 'completed' ? (
-                <div className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">
-                  Hoàn thành
-                </div>
-              ) : (
-                <div className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">
-                  Đang thực hiện
-                </div>
-              )}
-            </div>
-            
-            <p className={`text-sm mb-3 ${
-              challenge.status === 'locked' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              {challenge.description}
-            </p>
-            
-            {challenge.status === 'locked' ? (
-              <div className="text-xs text-gray-500 mb-2">
-                Cần {challenge.requiredPoints} điểm để mở khóa
-              </div>
-            ) : (
-              <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
-                <span>{challenge.category}</span>
-                <span>Độ khó: {challenge.difficulty}</span>
-              </div>
-            )}
-            
-            {challenge.status !== 'completed' && (
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
-                <div 
-                  className={`h-full ${
-                    challenge.status === 'locked' ? 'bg-gray-400' : 'bg-blue-500'
-                  }`}
-                  style={{ width: `${(challenge.progress / challenge.days) * 100}%` }}
-                ></div>
-              </div>
-            )}
-            
-            <div className="flex justify-between items-center">
-              {challenge.status !== 'locked' && (
-                <div className="text-sm">
-                  {challenge.status === 'completed' ? (
-                    <span className="text-green-700 font-medium">
-                      <FaTrophy className="inline-block mr-1 text-yellow-500" />
-                      Đã nhận {challenge.points} điểm
-                    </span>
-                  ) : (
-                    <span className="text-gray-600">
-                      {challenge.progress}/{challenge.days} ngày
-                    </span>
-                  )}
-                </div>
-              )}
-              
-              <div className="font-semibold text-sm text-green-600">
-                {challenge.points} điểm
-              </div>
-            </div>
-            
-            {challenge.status === 'locked' && (
-              <button 
-                className={`mt-3 w-full py-2 rounded-lg text-sm font-medium ${
-                  points.total >= challenge.requiredPoints
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-                disabled={points.total < challenge.requiredPoints}
-              >
-                {points.total >= challenge.requiredPoints ? 'Mở khóa ngay' : 'Chưa đủ điểm để mở khóa'}
-              </button>
-            )}
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-6">
+      <div className="max-w-4xl mx-auto space-y-6 pb-16">
+        <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+          <h1 className="text-3xl font-bold text-green-800">
+            Thách thức & Nhiệm vụ
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Hoàn thành nhiệm vụ hàng ngày để nhận điểm xanh
+          </p>
+          <div className="mt-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl p-4 inline-block">
+            <p className="text-sm opacity-90">Điểm hiện tại</p>
+            <p className="text-3xl font-bold">{user?.points || 0} điểm</p>
           </div>
-        ))}
+        </div>
+
+        {dailyMissions.length > 0 && (
+          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-2xl shadow-lg border-2 border-yellow-200">
+            <h2 className="font-bold text-2xl text-yellow-800 flex items-center mb-4">
+              <FaClock className="mr-2" />
+              Nhiệm vụ hàng ngày
+            </h2>
+
+            <div className="space-y-3">
+              {dailyMissions.map((mission) => (
+                <div
+                  key={mission.id}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    mission.completed
+                      ? 'bg-green-100 border-green-300 shadow-md'
+                      : 'bg-white border-yellow-300 hover:shadow-lg'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <button
+                      onClick={() => completeDailyMission(mission)}
+                      disabled={mission.completed || completing === mission.id}
+                      className={`w-8 h-8 rounded-full border-3 flex-shrink-0 flex items-center justify-center transition-all ${
+                        mission.completed
+                          ? 'border-green-500 bg-green-500'
+                          : 'border-yellow-400 hover:border-yellow-500 hover:bg-yellow-50'
+                      } ${completing === mission.id ? 'opacity-50' : ''}`}
+                    >
+                      {mission.completed && <FaCheck className="text-white text-sm" />}
+                    </button>
+
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3
+                            className={`font-semibold text-lg ${
+                              mission.completed ? 'text-green-800' : 'text-gray-800'
+                            }`}
+                          >
+                            {mission.icon} {mission.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 mt-1">{mission.description}</p>
+                          <span className="inline-block mt-2 text-xs bg-gray-200 px-2 py-1 rounded">
+                            {mission.category}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-2xl font-bold text-green-600">
+                            +{mission.points}
+                          </span>
+                          <p className="text-xs text-gray-500">điểm</p>
+                        </div>
+                      </div>
+
+                      {!mission.completed && (
+                        <button
+                          onClick={() => completeDailyMission(mission)}
+                          disabled={completing === mission.id}
+                          className="mt-3 w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all shadow-md disabled:opacity-50"
+                        >
+                          {completing === mission.id ? 'Đang xử lý...' : 'Hoàn thành nhiệm vụ'}
+                        </button>
+                      )}
+
+                      {mission.completed && (
+                        <div className="mt-3 text-center text-green-700 font-medium">
+                          <FaCheck className="inline-block mr-1" />
+                          Đã hoàn thành hôm nay
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 p-4 bg-white/70 rounded-xl border border-yellow-200">
+              <p className="text-sm text-gray-700 text-center">
+                Nhiệm vụ được làm mới mỗi ngày. Hoàn thành nhiệm vụ hàng ngày để tích lũy điểm xanh!
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <p className="text-center text-gray-600">
+            Tính năng thách thức dài hạn sẽ được cập nhật sớm!
+          </p>
+        </div>
       </div>
     </div>
   );
