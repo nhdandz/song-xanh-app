@@ -136,11 +136,19 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+<<<<<<< HEAD
+=======
+  "postinstall": false,
+>>>>>>> c9a6028 (add database)
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
+<<<<<<< HEAD
         "value": "postgres://postgres:123456@localhost:5432/song_xanh_db?schema=public"
+=======
+        "value": null
+>>>>>>> c9a6028 (add database)
       }
     }
   },
