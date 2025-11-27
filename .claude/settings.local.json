@@ -12,7 +12,17 @@
       "Bash(npm run seed:*)",
       "Bash(npx prisma db seed:*)",
       "Bash(npm run dev:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix: Khôi phục code và sửa lỗi dependencies\n\n- Khôi phục tất cả các tính năng từ commit trước (doi-qua, game, rewards, missions)\n- Sửa conflict markers trong package.json và schema.prisma\n- Thêm @types/react để tương thích với TypeScript\n- Cài đặt lại dependencies với --legacy-peer-deps\n- Test thành công ứng dụng chạy được\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(for file in src/app/api/activities/route.js src/app/api/user-activities/route.js src/app/api/users/route.js \"src/app/api/users/[id]/route.js\" src/lib/prisma.js)",
+      "Bash(do git show 8b8efb4:\"$file\")",
+      "Bash(\"$file\")",
+      "Bash(echo:*)",
+      "Bash(done)",
+      "Bash(for file in src/app/bao-cao/page.js src/app/cai-dat/page.js src/app/dang-ky/page.js src/app/quet-ma/page.js src/app/tiet-kiem/page.js src/app/tro-choi/page.js)",
+      "Bash(for file in src/generated/prisma/edge.js src/generated/prisma/index.js)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix: Xóa tất cả conflict markers trong source code\n\n- Sửa conflict markers trong các API routes (auth, activities, users, user-activities)\n- Sửa conflict markers trong các pages (bao-cao, cai-dat, dang-ky, dang-nhap, quet-ma, tiet-kiem, tro-choi)\n- Sửa conflict markers trong lib/prisma.js và generated files\n- Lấy version clean từ commit 8b8efb4\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
