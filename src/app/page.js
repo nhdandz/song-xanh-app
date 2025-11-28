@@ -86,7 +86,7 @@ export default function Home() {
 
     <PointDisplay
       todayPoints={points.today}
-      weekPoints={points.week}
+      sumPoints={user?.points ?? 0}
       streak={points.streak}
     />
 

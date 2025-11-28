@@ -15,9 +15,9 @@ const DEFAULT_GREEN_ACTIONS = [
 
 // Badge levels
 const BADGES = [
-  { id: '1', title: 'Người khởi đầu xanh', points: 10, image: '/images/badges/beginner.svg' },
-  { id: '2', title: 'Nhà môi trường nhỏ', points: 30, image: '/images/badges/environment.svg' },
-  { id: '3', title: 'Chiến binh xanh', points: 50, image: '/images/badges/warrior.svg' },
+  { id: '1', title: 'Người khởi đầu xanh', points: 20, image: '/images/badges/beginner.svg' },
+  { id: '2', title: 'Nhà môi trường nhỏ', points: 100, image: '/images/badges/environment.svg' },
+  { id: '3', title: 'Chiến binh xanh', points: 1000, image: '/images/badges/warrior.svg' },
 ];
 
 const AppContext = createContext();
