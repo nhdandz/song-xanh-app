@@ -22,21 +22,21 @@ model User {
   deviceUsages      DeviceUsage[]
   friendsAsFriend   Friend[]           @relation("FriendUsers")
   friendsAsUser     Friend[]           @relation("UserFriends")
+  gameProgresses    GameProgress[]
   groups            GroupMember[]
   ideas             Idea[]
   likes             Like[]
+  pointTransactions PointTransaction[]
   posts             Post[]
   reports           Report[]
+  rewardRedemptions RewardRedemption[]
   scanHistories     ScanHistory[]
   settings          Settings?
   userActivities    UserActivity[]
   badges            UserBadge[]
   challenges        UserChallenge[]
-  greenActivities   GreenActivity[]    @relation("GreenActivityToUser")
   dailyMissions     UserDailyMission[]
-  gameProgresses    GameProgress[]
-  pointTransactions PointTransaction[]
-  rewardRedemptions RewardRedemption[]
+  greenActivities   GreenActivity[]    @relation("GreenActivityToUser")
 }
 
 model Settings {
@@ -300,29 +300,29 @@ model DeviceUsage {
 }
 
 model Article {
-  id        String   @id @default(cuid())
   title     String
-  content   String   @db.Text
-  excerpt   String?  @db.Text
-  category  String   @default("Khác")
+  content   String
   image     String?
+  createdAt DateTime  @default(now())
+  category  String    @default("Khác")
+  excerpt   String?
   readTime  String?
+  id        String    @id @default(cuid())
   cards     Json?
   date      DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime  @updatedAt
 }
 
 model DailyMission {
-  id          String             @id @default(cuid())
-  title       String
-  description String
-  points      Int
-  icon        String?
-  category    String             @default("Chung")
-  active      Boolean            @default(true)
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id           String             @id @default(cuid())
+  title        String
+  description  String
+  points       Int
+  icon         String?
+  category     String             @default("Chung")
+  active       Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
   userMissions UserDailyMission[]
 }
 
@@ -332,8 +332,8 @@ model UserDailyMission {
   missionId   String
   completedAt DateTime     @default(now())
   date        DateTime     @default(now())
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   mission     DailyMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, missionId, date])
 }
@@ -359,19 +359,19 @@ model RewardRedemption {
   pointsUsed Int
   status     String   @default("pending")
   redeemedAt DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   reward     Reward   @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GameProgress {
-  id         String   @id @default(cuid())
-  userId     String
-  gameType   String
-  data       Json
-  points     Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  gameType  String
+  data      Json
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, gameType], name: "userId_gameType")
 }
@@ -388,4 +388,10 @@ model PointTransaction {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
 }
