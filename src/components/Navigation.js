@@ -10,7 +10,7 @@ export default function Navigation({ onMenuClick }) {
   const navItems = [
     { path: '/', label: 'Trang chủ', icon: <FaHome size={20} /> },
     { path: '/hanh-vi-xanh', label: 'Hành động', icon: <FaLeaf size={20} /> },
-    { path: '/tro-choi', label: 'Trò chơi', icon: <FaGamepad size={20} /> },
+    // { path: '/tro-choi', label: 'Trò chơi', icon: <FaGamepad size={20} /> },
     { path: '/thong-ke', label: 'Thống kê', icon: <FaChartBar size={20} /> },
     { path: '/so-sanh', label: 'Cộng đồng', icon: <FaUsers size={20} /> },
     { path: '/doi-qua', label: 'Đổi quà', icon: <FaGift size={20} /> },
