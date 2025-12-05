@@ -24,6 +24,7 @@
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
     "chart.js": "^4.4.9",
+    "cheerio": "^1.1.2",
     "html-react-parser": "^5.2.6",
     "isomorphic-dompurify": "^2.26.0",
     "lightningcss": "^1.30.2",
