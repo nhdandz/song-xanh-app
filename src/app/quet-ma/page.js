@@ -90,7 +90,6 @@ export default function BarcodeScan() {
       setScanHistory([]);
     }
     return () => stopScanner();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
