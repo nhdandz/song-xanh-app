@@ -1,7 +1,39 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/context/AppContext';
+
+const emojiFallback = {
+  'Văn phòng phẩm': '✏️',
+  'Đồ dùng': '🎒',
+  'Cây xanh': '🌱',
+  'Voucher': '🎟️'
+};
+
+function RewardMedia({ reward }) {
+  const [imgError, setImgError] = useState(false);
+
+  // fallback khi không có image hoặc load lỗi
+  if (!reward?.image || imgError) {
+    return (
+      <div className="h-48 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-6xl">
+        {emojiFallback[reward.category] || '🎁'}
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
+      <img
+        src={reward.image}
+        alt={reward.title || 'reward'}
+        loading="lazy"
+        onError={() => setImgError(true)}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  );
+}
 
 export default function RewardsPage() {
   const { user, isAuthenticated } = useAppContext();
@@ -14,33 +46,39 @@ export default function RewardsPage() {
   const categories = ['all', 'Văn phòng phẩm', 'Đồ dùng', 'Cây xanh', 'Voucher'];
 
   useEffect(() => {
-    console.log('User in RewardsPage:', user);
-    console.log('isAuthenticated:', isAuthenticated);
+    // load lại khi user thay đổi
     fetchRewards();
     if (user?.id) {
       fetchRedemptions();
+    } else {
+      setRedemptions([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAuthenticated]);
 
   const fetchRewards = async () => {
     try {
+      setLoading(true);
       const response = await fetch('/api/rewards');
       const data = await response.json();
-      setRewards(data);
+      setRewards(data || []);
     } catch (error) {
       console.error('Error fetching rewards:', error);
+      setRewards([]);
     } finally {
       setLoading(false);
     }
   };
 
   const fetchRedemptions = async () => {
+    if (!user?.id) return;
     try {
       const response = await fetch(`/api/rewards/redemptions?userId=${user.id}`);
       const data = await response.json();
-      setRedemptions(data);
+      setRedemptions(data || []);
     } catch (error) {
       console.error('Error fetching redemptions:', error);
+      setRedemptions([]);
     }
   };
 
@@ -86,9 +124,11 @@ export default function RewardsPage() {
 
       alert('Đổi quà thành công! Giáo viên sẽ liên hệ với bạn sớm.');
 
-      fetchRewards();
-      fetchRedemptions();
+      // cập nhật dữ liệu trên UI
+      await fetchRewards();
+      await fetchRedemptions();
 
+      // nếu bạn vẫn muốn reload toàn trang (giữ hành vi cũ)
       window.location.reload();
     } catch (error) {
       console.error('Error redeeming reward:', error);
@@ -175,12 +215,7 @@ export default function RewardsPage() {
                 key={reward.id}
                 className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
               >
-                <div className="h-48 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-6xl">
-                  {reward.category === 'Văn phòng phẩm' && '✏️'}
-                  {reward.category === 'Đồ dùng' && '🎒'}
-                  {reward.category === 'Cây xanh' && '🌱'}
-                  {reward.category === 'Voucher' && '🎟️'}
-                </div>
+                <RewardMedia reward={reward} />
                 <div className="p-4">
                   <h3 className="font-bold text-lg mb-2">{reward.title}</h3>
                   <p className="text-sm text-gray-600 mb-3">{reward.description}</p>
