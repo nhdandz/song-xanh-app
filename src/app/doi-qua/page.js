@@ -43,7 +43,7 @@ export default function RewardsPage() {
   const [loading, setLoading] = useState(true);
   const [redeeming, setRedeeming] = useState(null);
 
-  const categories = ['all', 'Văn phòng phẩm', 'Đồ dùng', 'Cây xanh', 'Voucher'];
+  const categories = ['all', 'Văn phòng phẩm', 'Đồ dùng', 'Cây xanh', 'Voucher', 'Dụng cụ học tập'];
 
   useEffect(() => {
     // load lại khi user thay đổi
