@@ -21,7 +21,8 @@ import {
   FaWater,
   FaTimes,
   FaSignOutAlt,
-  FaRobot
+  FaRobot,
+  FaGift
 } from 'react-icons/fa';
 
 export default function DrawerMenu({ isOpen, onClose }) {
@@ -60,6 +61,7 @@ export default function DrawerMenu({ isOpen, onClose }) {
     { path: '/tiet-kiem', label: 'Tiết kiệm tài nguyên', icon: <FaWater size={20} /> },
     { path: '/y-tuong', label: 'Ý tưởng xanh', icon: <FaLightbulb size={20} /> },
     { path: '/chat-bot', label: 'Chatbot AI', icon: <FaRobot size={20} />},
+    { path: '/doi-qua', label: 'Đổi quà', icon: <FaGift size={20} />},
     { divider: true },
     { path: '/cai-dat', label: 'Cài đặt', icon: <FaCog size={20} /> },
   ];
