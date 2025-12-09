@@ -71,6 +71,19 @@ const MAP_POINTS_INIT = [
     rating: 4.8,
     reviews: 42,
   },
+  {
+    id: 5,
+    name: 'Khu sinh thái Nhà Tôi',
+    type: 'green',
+    address: 'Xóm 8, Huyện Phú Lương, Thái Nguyên',
+    lat: 21.63897082573271,
+    lng: 105.77674650389926,
+    activities: ['Vui chơi', 'Du lịch', 'Cộng đồng'],
+    openHours: '7:00 - 18:00',
+    favorite: false,
+    rating: null,
+    reviews: 0,
+  },
 ];
 
 const CATEGORIES = [
