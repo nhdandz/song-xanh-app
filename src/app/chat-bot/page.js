@@ -1,4 +1,4 @@
-// "use client";
+// 'use client';
 // import React, { useEffect, useRef, useState } from "react";
 
 // const STORAGE_PREFIX = "songoanh_chat_history";
@@ -14,6 +14,59 @@
 //   const [error, setError] = useState("");
 //   const [userId, setUserId] = useState(""); // optional: cho phân biệt người dùng
 //   const bottomRef = useRef(null);
+
+//   // ---- VIDEO RANDOM SETUP ----
+//   // Thay mảng này bằng link của bạn (mp4/webm/ogg hoặc YouTube link)
+//   const videoLinks = [
+//     'https://www.youtube.com/watch?si=wTOQlpOCn-CVYJHu&v=wiOmECm6kjI&feature=youtu.be',
+//     'https://youtu.be/wiOmECm6kjI?si=wTOQlpOCn-CVYJHu',
+//     'https://youtu.be/jdzhSu6dO24?si=y-AddEDQzsO8TVOh',
+//     'https://www.youtube.com/watch?si=y-AddEDQzsO8TVOh&v=jdzhSu6dO24&feature=youtu.be',
+//     'https://youtu.be/ANULMme_ecc?si=O4taKVTBnVC8MsmQ',
+//     'https://www.youtube.com/watch?si=O4taKVTBnVC8MsmQ&v=ANULMme_ecc&feature=youtu.be',
+//     'https://youtu.be/CKzsnAHcMYE?si=Au2jbXEQIXlNp9pZ',
+//     'https://www.youtube.com/watch?si=Au2jbXEQIXlNp9pZ&v=CKzsnAHcMYE&feature=youtu.be',
+//   ];
+
+//   const [selectedVideo, setSelectedVideo] = useState(null);
+
+//   // chuyển YouTube url sang dạng embed
+//   const toYouTubeEmbed = (url) => {
+//     if (!url) return null;
+//     const m = url.match(
+//       /(?:youtube(?:-nocookie)?\.com\/(?:watch\?.*v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/
+//     );
+//     return m && m[1] ? `https://www.youtube.com/embed/${m[1]}?rel=0` : null;
+//   };
+
+//   const normalizeVideo = (url) => {
+//     if (!url) return null;
+//     const s = String(url).trim();
+//     if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(s)) return { kind: 'file', src: s };
+//     const yt = toYouTubeEmbed(s);
+//     if (yt) return { kind: 'youtube', src: yt };
+//     return { kind: 'iframe', src: s };
+//   };
+
+//   useEffect(() => {
+//     if (!videoLinks || videoLinks.length === 0) {
+//       setSelectedVideo(null);
+//       return;
+//     }
+//     const pick = videoLinks[Math.floor(Math.random() * videoLinks.length)];
+//     setSelectedVideo(pick);
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, []); // chỉ chạy 1 lần khi mount
+
+//   const pickAnotherVideo = () => {
+//     if (!videoLinks || videoLinks.length <= 1) return;
+//     let next = videoLinks[Math.floor(Math.random() * videoLinks.length)];
+//     if (next === selectedVideo) {
+//       next = videoLinks[Math.floor(Math.random() * videoLinks.length)];
+//     }
+//     setSelectedVideo(next);
+//   };
+//   // ---- END VIDEO SETUP ----
 
 //   // load history on mount
 //   useEffect(() => {
@@ -59,66 +112,64 @@
 
 //   // prepare contents from recent history (exclude system)
 //   const buildContentsFromMessages = (messagesArr, currentUserText) => {
-//   const recent = messagesArr.filter((m) => m.role !== "system").slice(-MAX_SEND_HISTORY);
-//   const contents = recent.map((m) => ({
-//     role: m.role,
-//     parts: [{ text: m.content }],
-//   }));
-//   if (currentUserText) {
-//     contents.push({ role: "user", parts: [{ text: currentUserText }] });
-//   }
-//   return contents;
-// };
-
-
-// const sendMessage = async () => {
-//   setError("");
-//   const trimmed = message.trim();
-//   if (!trimmed) return;
-
-//   // tạo newMessages cục bộ để dùng luôn (tránh trạng thái chưa kịp cập nhật)
-//   const newUserMsg = { role: "user", content: trimmed };
-//   const newMessages = [...messages, newUserMsg];
-
-//   // cập nhật UI trước
-//   setMessages(newMessages);
-//   setMessage("");
-//   setLoading(true);
-
-//   try {
-//     // build contents từ newMessages (không cần push trimmed nữa vì newMessages đã có)
-//     const contents = buildContentsFromMessages(newMessages, null); // sửa hàm để nếu currentUserText = null thì không append
-
-//     const payload = {
-//       contents,
-//       generation_config: { temperature: 0.2, maxOutputTokens: 512 },
-//     };
-
-//     const res = await fetch("/api/chat", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(payload),
-//     });
-
-//     if (!res.ok) {
-//       const txt = await res.text();
-//       throw new Error(`Lỗi proxy: ${res.status} ${txt}`);
+//     const recent = messagesArr.filter((m) => m.role !== "system").slice(-MAX_SEND_HISTORY);
+//     const contents = recent.map((m) => ({
+//       role: m.role,
+//       parts: [{ text: m.content }],
+//     }));
+//     if (currentUserText) {
+//       contents.push({ role: "user", parts: [{ text: currentUserText }] });
 //     }
+//     return contents;
+//   };
 
-//     const data = await res.json();
-//     const assistantText = parseGeminiText(data);
+//   const sendMessage = async () => {
+//     setError("");
+//     const trimmed = message.trim();
+//     if (!trimmed) return;
 
-//     // append assistant reply to latest state (functional update)
-//     setMessages((m) => [...m, { role: "assistant", content: assistantText }]);
-//   } catch (err) {
-//     console.error("Fetch error:", err);
-//     setError(err?.message || "Có lỗi xảy ra");
-//     setMessages((m) => [...m, { role: "assistant", content: "Xin lỗi — có lỗi khi gọi API." }]);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+//     // tạo newMessages cục bộ để dùng luôn (tránh trạng thái chưa kịp cập nhật)
+//     const newUserMsg = { role: "user", content: trimmed };
+//     const newMessages = [...messages, newUserMsg];
 
+//     // cập nhật UI trước
+//     setMessages(newMessages);
+//     setMessage("");
+//     setLoading(true);
+
+//     try {
+//       // build contents từ newMessages (không cần push trimmed nữa vì newMessages đã có)
+//       const contents = buildContentsFromMessages(newMessages, null); // sửa hàm để nếu currentUserText = null thì không append
+
+//       const payload = {
+//         contents,
+//         generation_config: { temperature: 0.2, maxOutputTokens: 512 },
+//       };
+
+//       const res = await fetch("/api/chat", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(payload),
+//       });
+
+//       if (!res.ok) {
+//         const txt = await res.text();
+//         throw new Error(`Lỗi proxy: ${res.status} ${txt}`);
+//       }
+
+//       const data = await res.json();
+//       const assistantText = parseGeminiText(data);
+
+//       // append assistant reply to latest state (functional update)
+//       setMessages((m) => [...m, { role: "assistant", content: assistantText }]);
+//     } catch (err) {
+//       console.error("Fetch error:", err);
+//       setError(err?.message || "Có lỗi xảy ra");
+//       setMessages((m) => [...m, { role: "assistant", content: "Xin lỗi — có lỗi khi gọi API." }]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
 //   const onKeyDown = (e) => {
 //     if (e.key === "Enter" && !e.shiftKey) {
@@ -171,6 +222,9 @@
 //     alert("Đã cập nhật userId. Lịch sử mới sẽ lưu theo userId này.");
 //   };
 
+//   // render normalized video
+//   const normalized = normalizeVideo(selectedVideo);
+
 //   return (
 //     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-6">
 //       <div className="max-w-5xl mx-auto">
@@ -195,6 +249,43 @@
 //             <button onClick={clearHistory} className="text-sm px-3 py-1 border rounded text-red-600">Clear</button>
 //           </div>
 //         </header>
+
+//         {/* --- VIDEO NGẪU NHIÊN: HIỂN THỊ NGAY DƯỚI HEADER --- */}
+//         {normalized && (
+//           <section className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+//             <div className="w-full aspect-video bg-black rounded-md overflow-hidden">
+//               {normalized.kind === 'file' && (
+//                 <video
+//                   controls
+//                   src={normalized.src}
+//                   className="w-full h-full object-cover"
+//                   playsInline
+//                 />
+//               )}
+
+//               {normalized.kind === 'youtube' && (
+//                 <iframe
+//                   title="youtube-video"
+//                   src={normalized.src}
+//                   className="w-full h-full"
+//                   frameBorder="0"
+//                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+//                   allowFullScreen
+//                 />
+//               )}
+
+//               {normalized.kind === 'iframe' && (
+//                 <iframe
+//                   title="embed-video"
+//                   src={normalized.src}
+//                   className="w-full h-full"
+//                   frameBorder="0"
+//                   allowFullScreen
+//                 />
+//               )}
+//             </div>
+//           </section>
+//         )}
 
 //         <main className="bg-white rounded-2xl shadow p-4 h-[68vh] flex flex-col overflow-hidden">
 //           <div className="flex-1 overflow-y-auto pr-2 space-y-4">
@@ -348,18 +439,23 @@ export default function ChatBotPage() {
     }
   }, [messages, userId]);
 
-  // parse Gemini response safely
-  const parseGeminiText = (data) => {
+  // parse Groq response safely
+  const parseGroqText = (data) => {
     try {
-      const cand = data?.candidates?.[0];
-      if (cand?.content?.parts && Array.isArray(cand.content.parts)) {
-        return cand.content.parts.map((p) => p.text || "").join("");
+      // Groq standard: choices[0].message.content
+      // content can be string or structured object — try to handle both.
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content) return "Không có phản hồi";
+      if (typeof content === "string") return content;
+      // if content is an object with 'parts' or 'text' fields
+      if (Array.isArray(content.parts)) {
+        return content.parts.map(p => p.text || "").join("");
       }
-      if (cand?.output) return cand.output;
-      if (data?.text) return data.text;
-      return "Không có phản hồi";
-    } catch {
-      return "Không đọc được phản hồi từ Gemini";
+      if (typeof content.text === "string") return content.text;
+      // fallback to JSON stringify if structured
+      return JSON.stringify(content);
+    } catch (e) {
+      return "Không đọc được phản hồi từ Groq";
     }
   };
 
@@ -411,7 +507,7 @@ export default function ChatBotPage() {
       }
 
       const data = await res.json();
-      const assistantText = parseGeminiText(data);
+      const assistantText = parseGroqText(data);
 
       // append assistant reply to latest state (functional update)
       setMessages((m) => [...m, { role: "assistant", content: assistantText }]);
