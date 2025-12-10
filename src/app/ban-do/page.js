@@ -84,6 +84,19 @@ const MAP_POINTS_INIT = [
     rating: null,
     reviews: 0,
   },
+  {
+    id: 6,
+    name: 'Vườn quốc gia Ba Vì',
+    type: 'green',
+    address: 'Ba Vì, Hà Nội',
+    lat: 21.08139408239521,
+    lng: 105.36312669049664,
+    activities: ['Vườn', 'Công viên', 'Cộng đồng'],
+    openHours: '5:00 - 17:00',
+    favorite: false,
+    rating: null,
+    reviews: 20,
+  },
 ];
 
 const CATEGORIES = [
