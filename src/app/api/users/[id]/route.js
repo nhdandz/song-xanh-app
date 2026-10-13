@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireSelfOrAdmin } from "@/lib/auth";
 
 // GET /api/users/:id - Lấy thông tin chi tiết người dùng
 export async function GET(request, { params }) {
@@ -84,6 +85,8 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     const resolvedParams = await params;
+    const { error } = await requireSelfOrAdmin(resolvedParams.id);
+    if (error) return error;
     const { id } = resolvedParams;
     const data = await request.json();
     
@@ -143,6 +146,8 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     const resolvedParams = await params;
+    const { error } = await requireSelfOrAdmin(resolvedParams.id);
+    if (error) return error;
     const { id } = resolvedParams;    
     // Xóa người dùng - các bảng liên quan sẽ được xóa cascade theo cấu hình schema
     await prisma.user.delete({

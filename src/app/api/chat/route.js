@@ -1,7 +1,11 @@
 // app/api/chat/route.js
 import Groq from "groq-sdk";
+import { requireAuth } from "@/lib/auth";
 
 export async function POST(req) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const body = await req.json();
 

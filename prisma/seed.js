@@ -1,17 +1,29 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
+
+// Tài khoản mẫu lấy từ biến môi trường; có mặc định để clone về chạy được ngay.
+// Mật khẩu luôn được hash trước khi ghi vào DB.
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || 'admin@songxanh.local';
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'admin-doi-mat-khau';
+const USER_EMAIL = process.env.SEED_USER_EMAIL || 'hocsinh@example.com';
+const USER_PASSWORD = process.env.SEED_USER_PASSWORD || 'hocsinh-doi-mat-khau';
 
 async function main() {
   console.log('Bắt đầu tạo dữ liệu mẫu...');
 
-  // Khởi tạo người dùng mẫu
+  // Khởi tạo người dùng mẫu.
+  // update cũng đặt lại mật khẩu + vai trò, để chạy lại seed là chuẩn hoá
+  // được tài khoản cũ (ví dụ mật khẩu còn lưu dạng plaintext).
+  const userPasswordHash = await bcrypt.hash(USER_PASSWORD, 10);
   const user1 = await prisma.user.upsert({
-    where: { email: 'hocsinh@example.com' },
-    update: {},
+    where: { email: USER_EMAIL },
+    update: { password: userPasswordHash, role: 'USER' },
     create: {
       name: 'Học Sinh',
-      email: 'hocsinh@example.com',
-      password: 'password123',
+      email: USER_EMAIL,
+      password: userPasswordHash,
+      role: 'USER',
       school: 'THPT Nguyễn Huệ',
       points: 0,
       level: 'Người khởi đầu xanh',
@@ -26,6 +38,27 @@ async function main() {
 
   console.log('Đã tạo người dùng mẫu:', user1.name);
 
+  const adminPasswordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+  const admin = await prisma.user.upsert({
+    where: { email: ADMIN_EMAIL },
+    update: { password: adminPasswordHash, role: 'ADMIN' },
+    create: {
+      name: 'Quản trị viên',
+      email: ADMIN_EMAIL,
+      password: adminPasswordHash,
+      role: 'ADMIN',
+      points: 0,
+      settings: {
+        create: {
+          reminderOn: false,
+          reminderTime: '18:00',
+        },
+      },
+    },
+  });
+
+  console.log('Đã tạo quản trị viên:', admin.email);
+
   // Khởi tạo các hoạt động xanh
   const activities = [
     { name: 'Mang chai nước cá nhân', description: 'Giảm sử dụng chai nhựa dùng một lần', points: 1, icon: 'water-bottle' },
@@ -38,10 +71,19 @@ async function main() {
   ];
 
   for (const activity of activities) {
-    const createdActivity = await prisma.greenActivity.create({
-      data: activity,
+    // Không có ràng buộc unique nên phải tự kiểm tra, nếu không chạy lại
+    // seed sẽ nhân bản dữ liệu.
+    const existing = await prisma.greenActivity.findFirst({
+      where: { name: activity.name },
     });
-    console.log(`Đã tạo hoạt động: ${createdActivity.name}`);
+
+    if (existing) {
+      console.log(`Bỏ qua hoạt động đã có: ${activity.name}`);
+      continue;
+    }
+
+    const created = await prisma.greenActivity.create({ data: activity });
+    console.log(`Đã tạo hoạt động: ${created.name}`);
   }
 
   console.log(`Đã tạo ${activities.length} hoạt động xanh`);
@@ -56,10 +98,19 @@ async function main() {
   ];
 
   for (const badge of badges) {
-    const createdBadge = await prisma.badge.create({
-      data: badge,
+    // Không có ràng buộc unique nên phải tự kiểm tra, nếu không chạy lại
+    // seed sẽ nhân bản dữ liệu.
+    const existing = await prisma.badge.findFirst({
+      where: { title: badge.title },
     });
-    console.log(`Đã tạo huy hiệu: ${createdBadge.title}`);
+
+    if (existing) {
+      console.log(`Bỏ qua huy hiệu đã có: ${badge.title}`);
+      continue;
+    }
+
+    const created = await prisma.badge.create({ data: badge });
+    console.log(`Đã tạo huy hiệu: ${created.title}`);
   }
 
   console.log(`Đã tạo ${badges.length} huy hiệu`);
@@ -94,10 +145,19 @@ async function main() {
   ];
 
   for (const challenge of challenges) {
-    const createdChallenge = await prisma.challenge.create({
-      data: challenge,
+    // Không có ràng buộc unique nên phải tự kiểm tra, nếu không chạy lại
+    // seed sẽ nhân bản dữ liệu.
+    const existing = await prisma.challenge.findFirst({
+      where: { title: challenge.title },
     });
-    console.log(`Đã tạo thách thức: ${createdChallenge.title}`);
+
+    if (existing) {
+      console.log(`Bỏ qua thách thức đã có: ${challenge.title}`);
+      continue;
+    }
+
+    const created = await prisma.challenge.create({ data: challenge });
+    console.log(`Đã tạo thách thức: ${created.title}`);
   }
 
   console.log(`Đã tạo ${challenges.length} thách thức`);
@@ -117,10 +177,19 @@ async function main() {
   ];
 
   for (const group of groups) {
-    const createdGroup = await prisma.group.create({
-      data: group,
+    // Không có ràng buộc unique nên phải tự kiểm tra, nếu không chạy lại
+    // seed sẽ nhân bản dữ liệu.
+    const existing = await prisma.group.findFirst({
+      where: { name: group.name },
     });
-    console.log(`Đã tạo nhóm: ${createdGroup.name}`);
+
+    if (existing) {
+      console.log(`Bỏ qua nhóm đã có: ${group.name}`);
+      continue;
+    }
+
+    const created = await prisma.group.create({ data: group });
+    console.log(`Đã tạo nhóm: ${created.name}`);
   }
 
   console.log(`Đã tạo ${groups.length} nhóm`);
@@ -154,8 +223,10 @@ async function main() {
   ];
 
   for (const product of products) {
-    const createdProduct = await prisma.product.create({
-      data: product,
+    const createdProduct = await prisma.product.upsert({
+      where: { barcode: product.barcode },
+      update: product,
+      create: product,
     });
     console.log(`Đã tạo sản phẩm: ${createdProduct.name}`);
   }

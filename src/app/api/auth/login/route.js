@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-// Trong thực tế cần sử dụng thư viện mã hóa như bcrypt
-// import bcrypt from 'bcrypt';
+import { verifyPassword } from '@/lib/auth';
+import { createSessionToken, SESSION_COOKIE, sessionCookieOptions } from '@/lib/auth-token';
 
 export async function POST(request) {
   try {
@@ -14,7 +14,6 @@ export async function POST(request) {
       );
     }
 
-    // Tìm người dùng theo email
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
@@ -22,36 +21,32 @@ export async function POST(request) {
         name: true,
         email: true,
         password: true,
+        role: true,
       },
     });
 
-    if (!user) {
+    // So khớp mật khẩu đã hash. Thông báo lỗi giữ nguyên một kiểu cho cả
+    // trường hợp sai email lẫn sai mật khẩu, để không lộ email nào có thật.
+    const passwordMatch = await verifyPassword(password, user?.password);
+
+    if (!user || !passwordMatch) {
       return NextResponse.json(
         { error: 'Email hoặc mật khẩu không đúng' },
         { status: 401 }
       );
     }
 
-    // Trong thực tế, cần kiểm tra mật khẩu với bcrypt
-    // const passwordMatch = await bcrypt.compare(password, user.password);
-
-    // Giả lập kiểm tra mật khẩu (demo)
-    const passwordMatch = password === user.password;
-
-    if (!passwordMatch) {
-      return NextResponse.json(
-        { error: 'Email hoặc mật khẩu không đúng' },
-        { status: 401 }
-      );
-    }
-
-    // Không trả về mật khẩu
     const { password: _, ...userWithoutPassword } = user;
 
-    return NextResponse.json({
+    const token = await createSessionToken({ id: user.id, role: user.role });
+
+    const response = NextResponse.json({
       message: 'Đăng nhập thành công',
-      user: userWithoutPassword
+      user: userWithoutPassword,
     });
+    response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions());
+
+    return response;
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(

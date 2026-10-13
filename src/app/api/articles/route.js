@@ -91,6 +91,7 @@
 // File: src/app/api/articles/route.js
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 /**
  * Helper: safe parse incoming body by trying json, text->json, formData
@@ -191,6 +192,9 @@ export async function GET(req) {
  * - Hỗ trợ cả { article: {...} } hoặc direct { title, content, ... }
  */
 export async function POST(req) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   // Log headers (convert Headers to plain object)
   try {
     const headersObj = {};
