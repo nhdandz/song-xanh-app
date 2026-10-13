@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeftIcon, ChartBarIcon, UserGroupIcon, TrendingUpIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ChartBarIcon, UserGroupIcon, ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 
 export default function AdminStatsPage() {
   const [stats, setStats] = useState(null);
@@ -77,7 +77,7 @@ export default function AdminStatsPage() {
               <p className="text-gray-500 text-sm">Tổng sản phẩm</p>
               <p className="text-3xl font-bold text-gray-900 mt-2">{stats?.products || 0}</p>
             </div>
-            <TrendingUpIcon className="w-12 h-12 text-purple-500" />
+            <ArrowTrendingUpIcon className="w-12 h-12 text-purple-500" />
           </div>
         </div>
 
