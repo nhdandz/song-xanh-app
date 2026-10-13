@@ -37,8 +37,8 @@ export default function BadgeCard({ badge, earned, progress }) {
   const badgeIcon = badgeIcons[badge.id] || badgeIcons[1];
   
   return (
-    <div className={`p-4 rounded-lg shadow-md border ${
-      earned ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white'
+    <div className={`p-4 rounded-card border ${
+      earned ? 'border-green-500 bg-brand-wash' : 'border-line bg-paper'
     }`}>
       <div className="flex items-center">
         <div className="relative w-16 h-16 mr-4 flex-shrink-0">
@@ -49,7 +49,7 @@ export default function BadgeCard({ badge, earned, progress }) {
           </div>
           
           {earned && (
-            <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1">
+            <div className="absolute -top-1 -right-1 bg-brand-bright rounded-full p-1">
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 className="h-3 w-3 text-white" 
@@ -69,16 +69,16 @@ export default function BadgeCard({ badge, earned, progress }) {
         </div>
         
         <div className="flex-1">
-          <h3 className={`font-semibold ${earned ? 'text-green-800' : 'text-gray-700'}`}>
+          <h3 className={`font-semibold ${earned ? 'text-ink' : 'text-ink-soft'}`}>
             {badge.title}
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-ink-faint">
             {earned ? 'Đã đạt được' : `Cần ${badge.points} điểm`}
           </p>
           
           <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-green-500 rounded-full" 
+              className="h-full bg-brand-bright rounded-full" 
               style={{ width: `${progress}%` }}
             ></div>
           </div>

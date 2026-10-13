@@ -9,15 +9,15 @@ const WASTE_CATEGORIES = {
     name: 'Tái chế',
     icon: <FaRecycle className="text-blue-500" size={24} />,
     color: 'blue',
-    bgColor: 'bg-blue-50',
+    bgColor: 'bg-sky-wash',
     borderColor: 'border-blue-300'
   },
   organic: {
     name: 'Hữu cơ',
     icon: <FaLeaf className="text-green-500" size={24} />,
     color: 'green',
-    bgColor: 'bg-green-50',
-    borderColor: 'border-green-300'
+    bgColor: 'bg-brand-wash',
+    borderColor: 'border-brand'
   },
   hazardous: {
     name: 'Nguy hại',
@@ -28,10 +28,10 @@ const WASTE_CATEGORIES = {
   },
   general: {
     name: 'Rác thải thông thường',
-    icon: <FaTrash className="text-gray-500" size={24} />,
+    icon: <FaTrash className="text-ink-faint" size={24} />,
     color: 'gray',
-    bgColor: 'bg-gray-50',
-    borderColor: 'border-gray-300'
+    bgColor: 'bg-canvas',
+    borderColor: 'border-line'
   }
 };
 
@@ -184,7 +184,7 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+          className="flex items-center text-ink-soft hover:text-ink transition-colors"
         >
           <FaArrowLeft className="mr-2" />
           Quay lại
@@ -198,29 +198,29 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center text-xs text-gray-500 mb-1">
+        <div className="bg-paper p-4 rounded-card border border-line">
+          <div className="flex items-center text-xs text-ink-faint mb-1">
             <FaStar className="text-yellow-500 mr-1" size={12} />
             Điểm
           </div>
-          <div className="text-2xl font-bold text-gray-800">{score}</div>
+          <div className="text-2xl font-bold text-ink">{score}</div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="text-xs text-gray-500 mb-1">Độ chính xác</div>
-          <div className="text-2xl font-bold text-green-600">{accuracy}%</div>
+        <div className="bg-paper p-4 rounded-card border border-line">
+          <div className="text-xs text-ink-faint mb-1">Độ chính xác</div>
+          <div className="text-2xl font-bold text-brand">{accuracy}%</div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center text-xs text-gray-500 mb-1">
+        <div className="bg-paper p-4 rounded-card border border-line">
+          <div className="flex items-center text-xs text-ink-faint mb-1">
             <FaTrophy className="text-orange-500 mr-1" size={12} />
             Chuỗi hiện tại
           </div>
           <div className="text-2xl font-bold text-orange-600">{streak}</div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="text-xs text-gray-500 mb-1">Kỷ lục</div>
+        <div className="bg-paper p-4 rounded-card border border-line">
+          <div className="text-xs text-ink-faint mb-1">Kỷ lục</div>
           <div className="text-2xl font-bold text-purple-600">{bestStreak}</div>
         </div>
       </div>
@@ -228,9 +228,8 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
       {/* Feedback */}
       {feedback && (
         <div className={`p-4 rounded-xl ${
-          feedback.type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' :
-          feedback.type === 'levelup' ? 'bg-purple-50 border border-purple-200 text-purple-700' :
-          'bg-red-50 border border-red-200 text-red-700'
+          feedback.type === 'success' ? 'bg-brand-wash border border-green-200 text-brand' :
+          feedback.type === 'levelup' ? 'bg-purple-50 border border-purple-200 text-purple-700' : 'bg-red-50 border border-red-200 text-red-700'
         } animate-pulse`}>
           <p className="font-medium text-center">{feedback.message}</p>
         </div>
@@ -238,12 +237,12 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
 
       {/* Current Item */}
       {currentItems.length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-paper p-8 rounded-card border border-line">
           <div className="text-center mb-8">
-            <p className="text-sm text-gray-500 mb-4">Hãy phân loại rác thải này:</p>
+            <p className="text-sm text-ink-faint mb-4">Hãy phân loại rác thải này:</p>
             <div className="text-7xl mb-4">{currentItems[0].emoji}</div>
-            <h3 className="text-2xl font-bold text-gray-800">{currentItems[0].name}</h3>
-            <p className="text-sm text-gray-500 mt-2">Còn {currentItems.length} vật phẩm trong vòng này</p>
+            <h3 className="text-2xl font-bold text-ink">{currentItems[0].name}</h3>
+            <p className="text-sm text-ink-faint mt-2">Còn {currentItems.length} vật phẩm trong vòng này</p>
           </div>
 
           {/* Category Buttons */}
@@ -252,7 +251,7 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
               <button
                 key={key}
                 onClick={() => handleSort(currentItems[0], key)}
-                className={`${category.bgColor} ${category.borderColor} border-2 p-6 rounded-xl hover:shadow-lg transition-all transform hover:scale-105 active:scale-95`}
+                className={`${category.bgColor} ${category.borderColor} border-2 p-6 rounded-xl  transition-all transform hover:scale-105 active:scale-95`}
               >
                 <div className="flex flex-col items-center gap-2">
                   {category.icon}
@@ -267,9 +266,9 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
       )}
 
       {/* Instructions */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-sky-wash border border-line rounded-xl p-4">
         <h4 className="font-semibold text-blue-900 mb-2 text-sm">Hướng dẫn:</h4>
-        <ul className="text-xs text-blue-800 space-y-1">
+        <ul className="text-xs text-sky space-y-1">
           <li>• <strong>Tái chế:</strong> Nhựa, giấy, kim loại, thủy tinh</li>
           <li>• <strong>Hữu cơ:</strong> Thức ăn thừa, vỏ trái cây, lá cây</li>
           <li>• <strong>Nguy hại:</strong> Pin, bóng đèn, hóa chất, khẩu trang y tế</li>

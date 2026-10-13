@@ -55,7 +55,7 @@
 
 'use client';
 
-import { Inter } from 'next/font/google';
+import { Be_Vietnam_Pro } from 'next/font/google';
 import './globals.css';
 import Navigation from '@/components/Navigation';
 import DrawerMenu from '@/components/DrawerMenu';
@@ -64,7 +64,13 @@ import { AppProvider } from '@/context/AppContext';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 
-const inter = Inter({ subsets: ['latin'] });
+// Be Vietnam Pro được thiết kế riêng cho tiếng Việt nên dấu không bị vỡ như Inter
+const beVietnam = Be_Vietnam_Pro({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-be-vietnam',
+  display: 'swap',
+});
 
 // Những đường dẫn không hiện navigation (ví dụ đăng nhập/đăng ký)
 const noNavPaths = ['/dang-nhap', '/dang-ky'];
@@ -81,41 +87,27 @@ export default function RootLayout({ children }) {
   const showNavigation = !noNavPaths.includes(pathname) && !isAdminPath;
 
   return (
-    <html lang="vi">
-      <body className={`${inter.className}`}>
+    <html lang="vi" className={beVietnam.variable}>
+      <body>
         <AppProvider>
           <AuthGuard>
             {/* Flex column để footer luôn nằm đáy nếu nội dung ngắn */}
-            <div
-              className={`min-h-screen flex flex-col ${
-                isAdminPath
-                  ? 'bg-gray-100'
-                  : 'bg-gradient-to-br from-gray-50 via-green-50/30 to-emerald-50/30'
-              }`}
-            >
+            <div className={`min-h-screen flex flex-col ${isAdminPath ? 'bg-canvas' : ''}`}>
               {/* Navigation (nếu có) */}
               {showNavigation && <Navigation onMenuClick={toggleDrawer} />}
 
               {/* Nội dung chính */}
-              <main className={`${isAdminPath ? '' : 'lg:ml-64'} flex-grow`}>
-                {/* Decorative background elements (chỉ khi không phải admin và có navigation) */}
-                {!isAdminPath && showNavigation && (
-                  <>
-                    <div className="fixed top-20 right-10 w-72 h-72 bg-green-200 rounded-full opacity-10 blur-3xl pointer-events-none z-0"></div>
-                    <div className="fixed bottom-40 left-20 lg:left-80 w-96 h-96 bg-emerald-200 rounded-full opacity-10 blur-3xl pointer-events-none z-0"></div>
-                  </>
-                )}
-
-                <div className="relative z-10">
-                  {children}
-                </div>
+              <main className={`${isAdminPath ? '' : 'lg:ml-72'} flex-grow`}>
+                {children}
               </main>
 
               {/* Footer bản quyền - xuất hiện ở cuối mọi trang và responsive */}
-              <footer className="w-full border-t border-gray-200 mt-6">
-                <div className="max-w-7xl mx-auto px-4 py-4 sm:py-5">
-                  <p className="text-center text-gray-500 text-xs sm:text-sm md:text-base">
-                    © {new Date().getFullYear()} Ngọc Tú-Nhật Minh
+              <footer
+                className={`w-full border-t border-line ${isAdminPath ? '' : 'lg:ml-72'}`}
+              >
+                <div className="max-w-6xl mx-auto px-4 py-5">
+                  <p className="text-center text-ink-faint text-xs sm:text-sm">
+                    © {new Date().getFullYear()} Ngọc Tú — Nhật Minh
                   </p>
                 </div>
               </footer>

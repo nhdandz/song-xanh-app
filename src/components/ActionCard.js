@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaCheck } from 'react-icons/fa';
 import { useAppContext } from '@/context/AppContext';
 
 export default function ActionCard({ action, onChange }) {
   const { deleteActivity, isLoading } = useAppContext();
   const [showConfirmation, setShowConfirmation] = useState(false);
-  
+
   const handleDelete = async (e) => {
     e.stopPropagation(); // Ngăn chặn sự kiện click lan tỏa đến phần tử cha
-    
+
     if (showConfirmation) {
       const success = await deleteActivity(action.id);
       if (success) {
@@ -20,89 +20,91 @@ export default function ActionCard({ action, onChange }) {
       setShowConfirmation(true);
     }
   };
-  
+
   const handleClick = () => {
     if (!showConfirmation) {
       onChange(!action.completed);
     }
     setShowConfirmation(false);
   };
-  
+
   const handleClose = (e) => {
     e.stopPropagation();
     setShowConfirmation(false);
   };
-  
+
   return (
     <div
-      className={`p-4 rounded-lg border transition-all cursor-pointer ${
-        action.completed
-          ? 'bg-green-50 border-green-600 shadow-sm'
-          : 'bg-white border-gray-300 hover:border-gray-400'
-      }`}
+      role="checkbox"
+      tabIndex={0}
+      aria-checked={action.completed}
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+      className={`sx-tap p-4 rounded-card border-[1.5px] cursor-pointer select-none ${
+        action.completed
+          ? 'bg-brand-wash border-brand'
+          : 'bg-paper border-line hover:border-brand'
+      }`}
+      style={{ boxShadow: action.completed ? '0 3px 0 0 #bfe0ca' : 'var(--shadow-pop)' }}
     >
-      <div className="flex items-center">
-        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center mr-3 flex-shrink-0 ${
-          action.completed
-            ? 'border-green-600 bg-green-600'
-            : 'border-gray-400'
-        }`}>
-          {action.completed && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3.5 w-3.5 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          )}
-        </div>
-        <span className={`text-base flex-1 ${action.completed ? 'text-gray-900' : 'text-gray-700'}`}>
+      <div className="flex items-center gap-3">
+        {/* Ô tick to, dễ bấm trên điện thoại */}
+        <span
+          className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition-colors ${
+            action.completed ? 'border-brand bg-brand' : 'border-ink-faint bg-white'
+          }`}
+        >
+          {action.completed && <FaCheck className="text-white" size={12} />}
+        </span>
+
+        <span
+          className={`flex-1 font-semibold leading-snug ${
+            action.completed ? 'text-brand-dark' : 'text-ink-soft'
+          }`}
+        >
           {action.text}
         </span>
 
         {action.completed && (
-          <div className="ml-2">
+          <span className="ml-1 shrink-0">
             {showConfirmation ? (
-              <div className="flex items-center">
+              <span className="flex items-center gap-2">
                 <button
                   onClick={handleDelete}
-                  className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                  className="px-2.5 py-1 bg-coral text-white text-xs font-bold rounded-pill hover:opacity-90 disabled:opacity-50"
                   disabled={isLoading}
                 >
                   Xóa
                 </button>
                 <button
                   onClick={handleClose}
-                  className="ml-2 px-2 py-1 text-xs text-gray-600 hover:text-gray-800"
+                  className="px-1 text-xs font-bold text-ink-faint hover:text-ink"
                 >
                   Hủy
                 </button>
-              </div>
+              </span>
             ) : (
               <button
                 onClick={handleDelete}
-                className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                aria-label="Xóa hành động"
+                className="p-2 text-ink-faint hover:text-coral transition-colors"
               >
-                <FaTrash size={14} />
+                <FaTrash size={13} />
               </button>
             )}
-          </div>
+          </span>
         )}
       </div>
 
       {showConfirmation && (
-        <div className="mt-2 pt-2 border-t border-red-200 text-sm text-red-700">
+        <p className="mt-2.5 pt-2.5 border-t border-coral/30 text-sm font-medium text-coral">
           Xóa hành động này? Điểm sẽ bị trừ.
-        </div>
+        </p>
       )}
     </div>
   );

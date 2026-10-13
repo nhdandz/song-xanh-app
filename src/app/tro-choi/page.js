@@ -204,41 +204,49 @@ const GAMES = [
   {
     id: 1,
     title: 'Câu đố môi trường',
-    description: 'Trả lời các câu hỏi về môi trường và kiểm tra kiến thức của bạn',
-    icon: <FaQuestionCircle className="text-green-500" size={24} />,
+    description: 'Trả lời câu hỏi và kiểm tra kiến thức của bạn',
+    icon: <FaQuestionCircle size={26} />,
     points: 10,
     timeLimit: '2 phút',
     type: 'quiz',
+    tint: 'bg-brand-wash',
+    ink: 'text-brand',
   },
   {
     id: 2,
     title: 'Trồng cây',
-    description: 'Hóa thân thành người làm vườn, chăm cây mỗi ngày để cây lớn lên và cùng lan tỏa lối sống xanh',
-    icon: <FaTree className="text-green-500" size={24} />,
+    description: 'Hóa thân thành người làm vườn, chăm cây mỗi ngày để cây lớn lên',
+    icon: <FaTree size={26} />,
     points: 10,
     timeLimit: '3-5 phút',
     type: 'plant',
     comingSoon: false,
+    tint: 'bg-sun-wash',
+    ink: 'text-sun',
   },
   {
     id: 3,
     title: 'Phân loại rác thải',
     description: 'Phân loại các loại rác thải vào đúng thùng rác',
-    icon: <FaRecycle className="text-blue-500" size={24} />,
+    icon: <FaRecycle size={26} />,
     points: 15,
     timeLimit: '3 phút',
     type: 'sorting',
     comingSoon: false,
+    tint: 'bg-sky-wash',
+    ink: 'text-sky',
   },
   {
     id: 4,
     title: 'Xây dựng thành phố xanh',
     description: 'Xây dựng một thành phố thân thiện với môi trường',
-    icon: <FaCity className="text-purple-500" size={24} />,
+    icon: <FaCity size={26} />,
     points: 20,
     timeLimit: '5 phút',
     type: 'city',
     comingSoon: false,
+    tint: 'bg-grape-wash',
+    ink: 'text-grape',
   },
 ];
 
@@ -358,69 +366,63 @@ export default function Games() {
 
   // Render màn hình danh sách trò chơi
   const renderGamesList = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-green-800">
-          Trò chơi môi trường
-        </h1>
-        <p className="text-gray-600 mt-1">
-          Vừa học vừa chơi, vừa tích điểm
+    <div className="space-y-5">
+      <header className="sx-enter">
+        <span className="sx-chip bg-grape-wash text-grape">
+          <FaGamepad size={11} />
+          Vừa học vừa chơi
+        </span>
+        <h1 className="text-2xl sm:text-3xl text-ink mt-2.5">Trò chơi môi trường</h1>
+        <p className="text-ink-soft mt-1">
+          Chơi để hiểu thêm về môi trường và kiếm điểm xanh đổi quà.
         </p>
-      </div>
+      </header>
 
-      <div className="space-y-4">
-        {GAMES.map(game => (
-          <div
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {GAMES.map((game, i) => (
+          <button
             key={game.id}
-            className={`p-4 rounded-lg shadow-md border ${game.comingSoon ? 'bg-gray-50 border-gray-200' : 'bg-white border-green-100'}`}
+            type="button"
+            disabled={game.comingSoon}
             onClick={() => handleGameSelect(game)}
+            className={`sx-card sx-enter p-5 text-left w-full ${
+              game.comingSoon ? 'opacity-60 cursor-not-allowed' : 'sx-tap'
+            }`}
+            style={{ animationDelay: `${i * 60}ms` }}
           >
-            <div className="flex items-start">
-              <div className="p-3 rounded-full bg-gray-100 mr-3">
+            <div className="flex items-start gap-4">
+              <span
+                className={`flex items-center justify-center w-14 h-14 rounded-2xl shrink-0 ${game.tint} ${game.ink}`}
+              >
                 {game.icon}
-              </div>
+              </span>
 
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h2 className={`font-bold ${game.comingSoon ? 'text-gray-600' : 'text-green-800'}`}>
-                    {game.title}
-                  </h2>
-
+              <span className="flex-1 min-w-0">
+                <span className="flex items-center gap-2">
+                  <span className="font-extrabold text-ink leading-tight">{game.title}</span>
                   {game.comingSoon && (
-                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
-                      Sắp ra mắt
-                    </span>
+                    <span className="sx-chip bg-sun-wash text-sun">Sắp ra mắt</span>
                   )}
-                </div>
+                </span>
 
-                <p className={`text-sm mt-1 ${game.comingSoon ? 'text-gray-500' : 'text-gray-600'}`}>
+                <span className="block text-sm text-ink-soft mt-1 leading-snug">
                   {game.description}
-                </p>
+                </span>
 
-                <div className="flex items-center mt-2 text-xs text-gray-500">
-                  <div className="flex items-center mr-3">
-                    <FaClock className="mr-1" />
-                    <span>{game.timeLimit}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <FaTrophy className="mr-1 text-yellow-500" />
-                    <span>+{game.points} điểm</span>
-                  </div>
-                </div>
-              </div>
+                <span className="flex items-center gap-2 mt-3">
+                  <span className="sx-chip bg-canvas text-ink-soft">
+                    <FaClock size={10} />
+                    {game.timeLimit}
+                  </span>
+                  <span className="sx-chip bg-sun-wash text-sun">
+                    <FaTrophy size={10} />
+                    +{game.points} điểm
+                  </span>
+                </span>
+              </span>
             </div>
-          </div>
+          </button>
         ))}
-      </div>
-
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-        <h3 className="font-semibold text-blue-800 mb-2">Lợi ích từ trò chơi</h3>
-        <ul className="text-sm text-blue-700 space-y-1 pl-5 list-disc">
-          <li>Học thêm kiến thức về môi trường</li>
-          <li>Giải trí lành mạnh</li>
-          <li>Nhận thêm điểm xanh</li>
-          <li>Thử thách bản thân</li>
-        </ul>
       </div>
     </div>
   );
@@ -436,7 +438,7 @@ export default function Games() {
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={handleBackToGames}
-            className="text-gray-600 flex items-center"
+            className="text-ink-soft flex items-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -444,18 +446,18 @@ export default function Games() {
             Quay lại
           </button>
 
-          <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center">
+          <div className="bg-blue-100 text-sky px-3 py-1 rounded-full flex items-center">
             <FaClock className="mr-1" />
             <span>{formatTime(timeLeft)}</span>
           </div>
 
-          <div className="text-gray-600">
+          <div className="text-ink-soft">
             {currentQuestion + 1}/{quizQuestions.length}
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h2 className="font-bold text-green-800 text-lg mb-4">
+        <div className="bg-paper p-4 rounded-card">
+          <h2 className="font-bold text-ink text-lg mb-4">
             {currentQ.question}
           </h2>
 
@@ -468,10 +470,10 @@ export default function Games() {
                   selectedAnswer === index
                     ? isAnswered
                       ? index === currentQ.correctAnswer
-                        ? 'bg-green-100 border-green-500 text-green-800'
-                        : 'bg-red-100 border-red-500 text-red-800'
-                      : 'bg-blue-100 border-blue-500 text-blue-800'
-                    : 'border-gray-200 hover:bg-gray-50'
+                        ? 'bg-brand-wash border-green-500 text-ink'
+                       : 'bg-red-100 border-red-500 text-red-800'
+                     : 'bg-blue-100 border-blue-500 text-sky'
+                   : 'border-line hover:bg-canvas'
                 }`}
                 disabled={isAnswered}
               >
@@ -480,10 +482,10 @@ export default function Games() {
                     selectedAnswer === index
                       ? isAnswered
                         ? index === currentQ.correctAnswer
-                          ? 'bg-green-500 text-white'
-                          : 'bg-red-500 text-white'
-                        : 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-600'
+                          ? 'bg-brand-bright text-white'
+                         : 'bg-red-500 text-white'
+                       : 'bg-sky-wash0 text-white'
+                     : 'bg-gray-200 text-ink-soft'
                   }`}>
                     {selectedAnswer === index && isAnswered ? (
                       index === currentQ.correctAnswer ? <FaCheck size={12} /> : <FaTimes size={12} />
@@ -498,9 +500,9 @@ export default function Games() {
           </div>
 
           {isAnswered && (
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-gray-700 mb-1">Giải thích:</h3>
-              <p className="text-sm text-gray-600 whitespace-pre-line">{currentQ.explanation}</p>
+            <div className="mt-4 p-3 bg-canvas rounded-lg border border-line">
+              <h3 className="font-semibold text-ink-soft mb-1">Giải thích:</h3>
+              <p className="text-sm text-ink-soft whitespace-pre-line">{currentQ.explanation}</p>
             </div>
           )}
         </div>
@@ -508,7 +510,7 @@ export default function Games() {
         {isAnswered && (
           <button
             onClick={handleNextQuestion}
-            className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
+            className="w-full py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand"
           >
             {currentQuestion < quizQuestions.length - 1 ? 'Câu tiếp theo' : 'Xem kết quả'}
           </button>
@@ -525,30 +527,30 @@ export default function Games() {
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-green-800 mb-2">
+          <h1 className="text-2xl font-bold text-ink mb-2">
             Kết quả câu đố
           </h1>
-          <p className="text-gray-600">
+          <p className="text-ink-soft">
             Bạn đã hoàn thành trò chơi!
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md text-center">
+        <div className="bg-paper p-6 rounded-card text-center">
           <div className="mb-4">
-            <div className="inline-block p-4 rounded-full bg-green-100">
+            <div className="inline-block p-4 rounded-full bg-brand-wash">
               <FaTrophy className="text-yellow-500 text-4xl" />
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-green-800 mb-2">
+          <h2 className="text-2xl font-bold text-ink mb-2">
             {percentage}%
           </h2>
 
-          <p className="text-gray-600 mb-4">
+          <p className="text-ink-soft mb-4">
             Bạn trả lời đúng {score}/{quizQuestions.length} câu hỏi
           </p>
 
-          <div className="p-3 bg-green-50 rounded-lg text-green-800 mb-4">
+          <div className="p-3 bg-brand-wash rounded-lg text-ink mb-4">
             <p className="font-semibold">
               +{earnedPoints} điểm xanh
             </p>
@@ -557,7 +559,7 @@ export default function Games() {
           <div className="space-y-3">
             <button
               onClick={handleBackToGames}
-              className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
+              className="w-full py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand"
             >
               Quay lại danh sách trò chơi
             </button>
@@ -573,7 +575,7 @@ export default function Games() {
                 setSelectedAnswer(null);
                 setIsAnswered(false);
               }}
-              className="w-full py-3 bg-green-50 text-green-700 rounded-lg font-semibold hover:bg-green-100"
+              className="w-full py-3 bg-brand-wash text-brand rounded-lg font-semibold hover:bg-brand-wash"
             >
               Chơi lại
             </button>
@@ -635,7 +637,7 @@ export default function Games() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 pb-24">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       {renderGame()}
     </div>
   );

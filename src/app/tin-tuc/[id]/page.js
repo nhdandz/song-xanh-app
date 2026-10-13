@@ -126,7 +126,7 @@
 
 //   return (
 //     <div style={{ maxWidth: 800, margin: "0 auto", padding: "1.5rem" }}>
-//       <Link href="/tin-tuc" className="text-green-600 mb-4 inline-block">
+//       <Link href="/tin-tuc" className="text-brand mb-4 inline-block">
 //         ← Quay lại
 //       </Link>
 
@@ -303,15 +303,15 @@ export default function ArticleDetail() {
         {cards.map((c, idx) => (
           <div
             key={idx}
-            className="relative bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            className="relative bg-brand-wash border-2 border-green-200 rounded-2xl p-6 hover:shadow-xl transition-shadow duration-300"
           >
             {/* Card number badge */}
-            <div className="absolute -top-4 -left-4 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+            <div className="absolute -top-4 -left-4 w-12 h-12 bg-brand text-white rounded-full flex items-center justify-center font-bold text-lg">
               {idx + 1}
             </div>
 
             {/* Card title */}
-            <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2 pl-8">
+            <h3 className="text-xl font-bold text-ink mb-4 mt-2 pl-8">
               {c.title}
             </h3>
 
@@ -319,8 +319,8 @@ export default function ArticleDetail() {
             <ul className="space-y-2.5">
               {Array.isArray(c.bullets)
                 ? c.bullets.map((b, i) => (
-                    <li key={i} className="flex items-start gap-3 text-gray-700">
-                      <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <li key={i} className="flex items-start gap-3 text-ink-soft">
+                      <svg className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                       <span className="flex-1 leading-relaxed">{b}</span>
@@ -345,10 +345,10 @@ export default function ArticleDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen bg-brand-wash flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent mb-4"></div>
-          <p className="text-gray-600 font-medium">Đang tải bài viết...</p>
+          <p className="text-ink-soft font-medium">Đang tải bài viết...</p>
         </div>
       </div>
     );
@@ -359,12 +359,12 @@ export default function ArticleDetail() {
   const cards = getCards();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+    <div className="min-h-screen bg-brand-wash">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back button */}
         <Link
           href="/tin-tuc"
-          className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 font-semibold mb-8 transition-colors group"
+          className="inline-flex items-center gap-2 text-brand hover:text-brand font-semibold mb-8 transition-colors group"
         >
           <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -373,7 +373,7 @@ export default function ArticleDetail() {
         </Link>
 
         {/* Article container */}
-        <article className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <article className="bg-paper rounded-2xl shadow-2xl overflow-hidden">
           {/* Article image */}
           {article.image && (
             <div className="relative h-96 overflow-hidden">
@@ -385,7 +385,7 @@ export default function ArticleDetail() {
               />
               {article.category && (
                 <div className="absolute top-6 right-6">
-                  <span className="inline-block bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-full shadow-lg">
+                  <span className="inline-block bg-brand text-white text-sm font-semibold px-4 py-2 rounded-full">
                     {article.category}
                   </span>
                 </div>
@@ -395,15 +395,15 @@ export default function ArticleDetail() {
 
           {/* Article header */}
           <div className="p-8 md:p-12">
-            <h1 className="mx-auto text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="mx-auto text-3xl md:text-4xl font-bold text-ink mb-6 leading-tight">
               {article.title}
             </h1>
 
             {/* Meta information */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-8 pb-8 border-b border-gray-200">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-ink-soft mb-8 pb-8 border-b border-line">
               {article.createdAt && (
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <span className="font-medium">
@@ -417,7 +417,7 @@ export default function ArticleDetail() {
               )}
               {article.readTime && (
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <span className="font-medium">{article.readTime}</span>
@@ -427,8 +427,8 @@ export default function ArticleDetail() {
 
             {/* Excerpt */}
             {article.excerpt && (
-              <div className="bg-green-50 border-l-4 border-green-600 p-6 mb-8 rounded-r-lg">
-                <p className="text-lg text-gray-700 leading-relaxed italic">
+              <div className="bg-brand-wash border-l-4 border-green-600 p-6 mb-8 rounded-r-lg">
+                <p className="text-lg text-ink-soft leading-relaxed italic">
                   {article.excerpt}
                 </p>
               </div>
@@ -458,7 +458,7 @@ export default function ArticleDetail() {
         <div className="mt-12 text-center">
           <Link
             href="/tin-tuc"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 hover:shadow-xl transition-all duration-200"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-brand text-white font-semibold rounded-lg hover:bg-brand hover:shadow-xl transition-all duration-200"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

@@ -246,23 +246,23 @@ export default function ResourceManagement() {
     const unit = activeTab === 'electricity' ? 'kWh' : 'm³';
     
     return (
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="bg-paper p-4 rounded-card">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="font-bold text-gray-800">
+          <h2 className="font-bold text-ink">
             Tình hình sử dụng {activeTab === 'electricity' ? 'điện' : 'nước'}
           </h2>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-ink-faint">
             Tháng {new Date().getMonth() + 1}/{new Date().getFullYear()}
           </span>
         </div>
         
         <div className="flex justify-between items-center mb-4">
           <div>
-            <div className="text-gray-500 text-sm">Lượng sử dụng</div>
-            <div className="text-2xl font-bold text-gray-800">
+            <div className="text-ink-faint text-sm">Lượng sử dụng</div>
+            <div className="text-2xl font-bold text-ink">
               {currentMonth.usage} {unit}
             </div>
-            <div className={`text-xs flex items-center ${isDecrease ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-xs flex items-center ${isDecrease ? 'text-brand' : 'text-red-600'}`}>
               {isDecrease ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -277,18 +277,18 @@ export default function ResourceManagement() {
           </div>
           
           <div>
-            <div className="text-gray-500 text-sm">Chi phí</div>
-            <div className="text-2xl font-bold text-gray-800">
+            <div className="text-ink-faint text-sm">Chi phí</div>
+            <div className="text-2xl font-bold text-ink">
               {currentMonth.cost.toLocaleString('vi-VN')} đ
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-ink-faint">
               {activeTab === 'electricity' ? '2,000đ/kWh' : '10,000đ/m³'}
             </div>
           </div>
         </div>
         
         <div className="h-40 bg-gray-100 rounded-lg flex items-center justify-center">
-          <div className="text-gray-400">Biểu đồ sử dụng {activeTab === 'electricity' ? 'điện' : 'nước'}</div>
+          <div className="text-ink-faint">Biểu đồ sử dụng {activeTab === 'electricity' ? 'điện' : 'nước'}</div>
         </div>
       </div>
     );
@@ -296,9 +296,9 @@ export default function ResourceManagement() {
   
   // Render danh sách thiết bị
   const renderDevicesList = () => (
-    <div className="bg-white p-4 rounded-lg shadow-md">
+    <div className="bg-paper p-4 rounded-card">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="font-bold text-gray-800">
+        <h2 className="font-bold text-ink">
           Thiết bị {activeTab === 'electricity' ? 'điện' : 'nước'}
         </h2>
         
@@ -314,7 +314,7 @@ export default function ResourceManagement() {
               type: activeTab,
             });
           }}
-          className="text-sm text-green-600 flex items-center"
+          className="text-sm text-brand flex items-center"
         >
           <FaPlusCircle className="mr-1" />
           {showAddForm ? 'Đóng' : 'Thêm thiết bị'}
@@ -322,20 +322,20 @@ export default function ResourceManagement() {
       </div>
       
       {showAddForm && (
-        <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-          <h3 className="font-semibold text-green-800 mb-2">
+        <div className="mb-4 p-3 bg-brand-wash rounded-lg border border-green-200">
+          <h3 className="font-semibold text-ink mb-2">
             {editDeviceId ? 'Chỉnh sửa thiết bị' : 'Thêm thiết bị mới'}
           </h3>
           
           <form onSubmit={editDeviceId ? handleSaveEdit : handleAddDevice} className="space-y-3">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Tên thiết bị</label>
+              <label className="block text-sm text-ink-soft mb-1">Tên thiết bị</label>
               <input
                 type="text"
                 name="name"
                 value={newDevice.name}
                 onChange={handleFormChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 border border-line rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 placeholder="VD: Tủ lạnh"
                 required
               />
@@ -344,13 +344,13 @@ export default function ResourceManagement() {
             <div className="grid grid-cols-2 gap-3">
               {activeTab === 'electricity' && (
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Công suất (W)</label>
+                  <label className="block text-sm text-ink-soft mb-1">Công suất (W)</label>
                   <input
                     type="number"
                     name="wattage"
                     value={newDevice.wattage}
                     onChange={handleFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-3 py-2 border border-line rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="VD: 150"
                     min="0"
                   />
@@ -359,13 +359,13 @@ export default function ResourceManagement() {
               
               {activeTab === 'water' && (
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Lít/giờ</label>
+                  <label className="block text-sm text-ink-soft mb-1">Lít/giờ</label>
                   <input
                     type="number"
                     name="litersPerHour"
                     value={newDevice.litersPerHour}
                     onChange={handleFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-3 py-2 border border-line rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="VD: 10"
                     min="0"
                   />
@@ -373,13 +373,13 @@ export default function ResourceManagement() {
               )}
               
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Giờ sử dụng/ngày</label>
+                <label className="block text-sm text-ink-soft mb-1">Giờ sử dụng/ngày</label>
                 <input
                   type="number"
                   name="hoursPerDay"
                   value={newDevice.hoursPerDay}
                   onChange={handleFormChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-line rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   placeholder="VD: 5"
                   min="0"
                   max="24"
@@ -395,13 +395,13 @@ export default function ResourceManagement() {
                   setShowAddForm(false);
                   setEditDeviceId(null);
                 }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-ink-soft hover:text-ink"
               >
                 Hủy
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                className="px-4 py-2 bg-brand text-white rounded-md hover:bg-brand"
               >
                 {editDeviceId ? 'Cập nhật' : 'Thêm'}
               </button>
@@ -420,15 +420,15 @@ export default function ResourceManagement() {
                     type="checkbox"
                     checked={device.active}
                     onChange={() => toggleDeviceActive(device.id)}
-                    className="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                    className="h-5 w-5 text-brand border-line rounded focus:ring-green-500"
                   />
                 </div>
                 
                 <div className="ml-3 flex-1">
-                  <h3 className={`font-medium ${device.active ? 'text-gray-800' : 'text-gray-500'}`}>
+                  <h3 className={`font-medium ${device.active ? 'text-ink' : 'text-ink-faint'}`}>
                     {device.name}
                   </h3>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-ink-faint">
                     {activeTab === 'electricity' 
                       ? `${device.wattage}W • ${device.hoursPerDay} giờ/ngày • ${((device.wattage * device.hoursPerDay * 30) / 1000).toFixed(1)} kWh/tháng`
                       : `${device.litersPerHour} lít/giờ • ${device.hoursPerDay} giờ/ngày • ${((device.litersPerHour * device.hoursPerDay * 30) / 1000).toFixed(1)} m³/tháng`
@@ -439,13 +439,13 @@ export default function ResourceManagement() {
                 <div className="flex space-x-1">
                   <button
                     onClick={() => handleStartEdit(device)}
-                    className="p-2 text-gray-400 hover:text-gray-600"
+                    className="p-2 text-ink-faint hover:text-ink-soft"
                   >
                     <FaPencilAlt size={14} />
                   </button>
                   <button
                     onClick={() => handleDeleteDevice(device.id)}
-                    className="p-2 text-gray-400 hover:text-red-600"
+                    className="p-2 text-ink-faint hover:text-red-600"
                   >
                     <FaTrash size={14} />
                   </button>
@@ -454,24 +454,24 @@ export default function ResourceManagement() {
             </div>
           ))
         ) : (
-          <div className="text-center py-4 text-gray-500">
+          <div className="text-center py-4 text-ink-faint">
             Chưa có thiết bị nào. Hãy thêm thiết bị để theo dõi.
           </div>
         )}
       </div>
       
-      <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+      <div className="mt-4 p-3 bg-canvas rounded-lg border border-line">
         <div className="flex justify-between items-center">
           <div>
-            <div className="text-gray-600">Tổng ước tính</div>
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-ink-soft">Tổng ước tính</div>
+            <div className="text-xl font-bold text-ink">
               {totalUsage.toFixed(1)} {activeTab === 'electricity' ? 'kWh' : 'm³'}/tháng
             </div>
           </div>
           
           <div className="text-right">
-            <div className="text-gray-600">Chi phí ước tính</div>
-            <div className="text-xl font-bold text-green-600">
+            <div className="text-ink-soft">Chi phí ước tính</div>
+            <div className="text-xl font-bold text-brand">
               {estimatedCost.toLocaleString('vi-VN')} đ/tháng
             </div>
           </div>
@@ -482,9 +482,9 @@ export default function ResourceManagement() {
   
   // Render mẹo tiết kiệm
   const renderSavingTips = () => (
-    <div className="bg-white p-4 rounded-lg shadow-md">
+    <div className="bg-paper p-4 rounded-card">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="font-bold text-gray-800">
+        <h2 className="font-bold text-ink">
           Mẹo tiết kiệm {activeTab === 'electricity' ? 'điện' : 'nước'}
         </h2>
         <FaRegLightbulb className="text-yellow-500" />
@@ -492,10 +492,10 @@ export default function ResourceManagement() {
       
       <div className="space-y-3">
         {SAVING_TIPS.filter(tip => tip.type === activeTab).map(tip => (
-          <div key={tip.id} className="p-3 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-800 mb-1">{tip.title}</h3>
-            <p className="text-sm text-blue-700 mb-1">{tip.description}</p>
-            <div className="text-xs text-blue-600 font-medium">
+          <div key={tip.id} className="p-3 bg-sky-wash rounded-xl">
+            <h3 className="font-semibold text-sky mb-1">{tip.title}</h3>
+            <p className="text-sm text-sky mb-1">{tip.description}</p>
+            <div className="text-xs text-sky font-medium">
               Tiết kiệm tiềm năng: {tip.savingPotential}
             </div>
           </div>
@@ -507,10 +507,10 @@ export default function ResourceManagement() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 pb-24 space-y-6">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-green-800">
+        <h1 className="text-2xl font-bold text-ink">
           Tiết kiệm tài nguyên
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-ink-soft mt-1">
           Theo dõi và quản lý việc sử dụng điện, nước
         </p>
       </div>
@@ -521,7 +521,7 @@ export default function ResourceManagement() {
           className={`flex-1 py-3 flex items-center justify-center ${
             activeTab === 'electricity' 
               ? 'bg-blue-600 text-white' 
-              : 'bg-white text-gray-700'
+             : 'bg-paper text-ink-soft'
           }`}
           onClick={() => handleTabChange('electricity')}
         >
@@ -532,7 +532,7 @@ export default function ResourceManagement() {
           className={`flex-1 py-3 flex items-center justify-center ${
             activeTab === 'water' 
               ? 'bg-blue-600 text-white' 
-              : 'bg-white text-gray-700'
+             : 'bg-paper text-ink-soft'
           }`}
           onClick={() => handleTabChange('water')}
         >
@@ -548,8 +548,8 @@ export default function ResourceManagement() {
       
       {renderSavingTips()}
       
-      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-        <h3 className="font-semibold text-yellow-800 mb-2 flex items-center">
+      <div className="bg-sun-wash p-4 rounded-lg border border-line">
+        <h3 className="font-semibold text-sun mb-2 flex items-center">
           <FaChartLine className="mr-2" />
           Tiết kiệm cùng gia đình
         </h3>
