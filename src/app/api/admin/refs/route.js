@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { REF_SOURCES } from "@/lib/adminModels";
+import { requireAdmin } from "@/lib/auth";
 
 const MAX_OPTIONS = 500;
 
 // Trả về danh sách lựa chọn cho các field liên kết (dropdown trong form admin).
 // Ví dụ: /api/admin/refs?name=user
 export async function GET(req) {
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(req.url);
     const name = searchParams.get("name");

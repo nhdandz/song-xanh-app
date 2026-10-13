@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAdminModel } from "@/lib/adminModels";
 import { AdminDataError, buildData, prismaErrorMessage } from "@/lib/adminData";
+import { requireAdmin } from "@/lib/auth";
 
 const DEFAULT_PAGE_SIZE = 25;
 const MAX_PAGE_SIZE = 100;
@@ -20,6 +21,9 @@ function resolve(slug) {
 
 // GET /api/admin/data/[slug]?q=&page=1&pageSize=25
 export async function GET(req, { params }) {
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   const { model: slug } = await params;
   const { config, delegate, error, status } = resolve(slug);
   if (error) return NextResponse.json({ error }, { status });
@@ -73,6 +77,9 @@ export async function GET(req, { params }) {
 
 // POST /api/admin/data/[slug]
 export async function POST(req, { params }) {
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   const { model: slug } = await params;
   const { config, delegate, error, status } = resolve(slug);
   if (error) return NextResponse.json({ error }, { status });

@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { ADMIN_MODELS, MODEL_GROUPS } from "@/lib/adminModels";
+import { requireAdmin } from "@/lib/auth";
 
 // Danh sách model quản lý được + số bản ghi hiện có, dùng cho trang /admin/du-lieu.
 export async function GET() {
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const items = await Promise.all(
       ADMIN_MODELS.map(async (config) => {

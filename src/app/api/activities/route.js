@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireAdmin } from "@/lib/auth";
 
 // GET /api/activities - Lấy danh sách hoạt động xanh
 export async function GET(request) {
@@ -57,6 +58,9 @@ export async function GET(request) {
 
 // POST /api/activities - Tạo hoạt động xanh mới
 export async function POST(request) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   try {
     const data = await request.json();
     

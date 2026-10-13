@@ -1,7 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 const data = require('./seed-data');
 
 const prisma = new PrismaClient();
+
+// Tài khoản mẫu lấy từ biến môi trường; có mặc định để clone về chạy được ngay.
+// Mật khẩu luôn được hash trước khi ghi vào DB.
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || 'admin@songxanh.local';
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'admin-doi-mat-khau';
+const USER_EMAIL = process.env.SEED_USER_EMAIL || 'hocsinh@example.com';
+const USER_PASSWORD = process.env.SEED_USER_PASSWORD || 'hocsinh-doi-mat-khau';
 
 /**
  * Tạo bản ghi nếu chưa có, cập nhật nếu đã có.
@@ -30,14 +38,18 @@ async function upsertBy(model, key, rows, label) {
 async function main() {
   console.log('Bắt đầu cập nhật dữ liệu mẫu...\n');
 
-  // --- Người dùng demo ---
+  // --- Tài khoản học sinh mẫu ---
+  // update cũng đặt lại mật khẩu + vai trò, để chạy lại seed là chuẩn hoá
+  // được tài khoản cũ (ví dụ mật khẩu còn lưu dạng plaintext).
+  const userPasswordHash = await bcrypt.hash(USER_PASSWORD, 10);
   const user = await prisma.user.upsert({
-    where: { email: 'hocsinh@example.com' },
-    update: {},
+    where: { email: USER_EMAIL },
+    update: { password: userPasswordHash, role: 'USER' },
     create: {
       name: 'Học Sinh',
-      email: 'hocsinh@example.com',
-      password: 'password123',
+      email: USER_EMAIL,
+      password: userPasswordHash,
+      role: 'USER',
       school: 'THPT Nguyễn Huệ',
       points: 0,
       level: 'Người khởi đầu xanh',
@@ -46,7 +58,25 @@ async function main() {
       },
     },
   });
-  console.log(`Người dùng demo: ${user.name} (${user.email})`);
+  console.log(`Tài khoản học sinh: ${user.email}`);
+
+  // --- Tài khoản quản trị ---
+  const adminPasswordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+  const admin = await prisma.user.upsert({
+    where: { email: ADMIN_EMAIL },
+    update: { password: adminPasswordHash, role: 'ADMIN' },
+    create: {
+      name: 'Quản trị viên',
+      email: ADMIN_EMAIL,
+      password: adminPasswordHash,
+      role: 'ADMIN',
+      points: 0,
+      settings: {
+        create: { reminderOn: false, reminderTime: '18:00' },
+      },
+    },
+  });
+  console.log(`Tài khoản quản trị: ${admin.email}\n`);
 
   // --- Nhóm / lớp ---
   await upsertBy(
