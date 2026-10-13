@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { requireAdmin } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
@@ -50,6 +51,9 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   try {
     const body = await request.json();
     const { userId, missionId } = body;

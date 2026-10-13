@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET() {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   try {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: "desc" }
@@ -18,6 +22,9 @@ export async function GET() {
 }
 
 export async function POST(req) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   try {
     const body = await req.json();
 

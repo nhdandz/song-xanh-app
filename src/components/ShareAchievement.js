@@ -51,34 +51,34 @@ export default function ShareAchievement({ onClose }) {
   
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+      <div className="bg-paper rounded-lg max-w-md w-full p-6 relative">
         <button 
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+          className="absolute top-3 right-3 text-ink-faint hover:text-ink"
         >
           <FaTimes size={20} />
         </button>
         
-        <h2 className="text-xl font-bold text-green-800 mb-4">Chia sẻ thành tích</h2>
+        <h2 className="text-xl font-bold text-ink mb-4">Chia sẻ thành tích</h2>
         
-        <div className="bg-green-50 p-4 rounded-lg mb-4 text-center">
-          <div className="font-bold text-green-800 text-lg mb-1">Điểm xanh: {points.total}</div>
-          <div className="text-green-700">Chuỗi ngày: {points.streak} ngày liên tiếp</div>
+        <div className="bg-brand-wash p-4 rounded-lg mb-4 text-center">
+          <div className="font-bold text-ink text-lg mb-1">Điểm xanh: {points.total}</div>
+          <div className="text-brand">Chuỗi ngày: {points.streak} ngày liên tiếp</div>
           
           {latestBadge && (
             <div className="mt-2">
-              <div className="text-sm text-gray-600">Huy hiệu mới nhất</div>
-              <div className="font-semibold text-green-700">{latestBadge.title}</div>
+              <div className="text-sm text-ink-soft">Huy hiệu mới nhất</div>
+              <div className="font-semibold text-brand">{latestBadge.title}</div>
             </div>
           )}
         </div>
         
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-ink-soft mb-1">
             Lời nhắn chia sẻ
           </label>
           <textarea
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full px-3 py-2 border border-line rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             rows="3"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -96,7 +96,7 @@ export default function ShareAchievement({ onClose }) {
           
           <button 
             onClick={() => handleShare('twitter')}
-            className="flex flex-col items-center justify-center p-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500"
+            className="flex flex-col items-center justify-center p-3 bg-blue-400 text-white rounded-lg hover:bg-sky-wash0"
           >
             <FaTwitter size={24} />
             <span className="text-xs mt-1">Twitter</span>
@@ -121,7 +121,7 @@ export default function ShareAchievement({ onClose }) {
         
         <button 
           onClick={() => handleShare('other')}
-          className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
+          className="w-full py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand"
         >
           Chia sẻ ngay
         </button>

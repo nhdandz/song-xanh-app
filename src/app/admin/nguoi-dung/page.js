@@ -4,11 +4,23 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeftIcon, MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
+const EMPTY_FORM = {
+  name: "",
+  email: "",
+  school: "",
+  level: "",
+  points: "",
+  password: ""
+};
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterLevel, setFilterLevel] = useState("all");
+  const [editingUser, setEditingUser] = useState(null);
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -27,6 +39,55 @@ export default function AdminUsersPage() {
       alert("Không thể tải danh sách người dùng");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openEditForm = (user) => {
+    setEditingUser(user);
+    setFormData({
+      name: user.name || "",
+      email: user.email || "",
+      school: user.school || "",
+      level: user.level || "",
+      points: user.points ?? "",
+      password: ""
+    });
+  };
+
+  const closeEditForm = () => {
+    setEditingUser(null);
+    setFormData(EMPTY_FORM);
+  };
+
+  const saveUser = async (e) => {
+    e.preventDefault();
+    if (saving || !editingUser) return;
+
+    if (!formData.name.trim()) {
+      alert("Vui lòng nhập tên người dùng");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      const res = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Cập nhật thất bại");
+
+      setUsers(users.map(u => (u.id === data.id ? data : u)));
+      closeEditForm();
+      alert("Đã cập nhật người dùng");
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -172,6 +233,12 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
+                          onClick={() => openEditForm(user)}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Sửa
+                        </button>
+                        <button
                           onClick={() => deleteUser(user.id)}
                           className="text-red-600 hover:text-red-900 ml-4"
                         >
@@ -183,6 +250,102 @@ export default function AdminUsersPage() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-full overflow-y-auto">
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-1">Sửa người dùng</h2>
+              <p className="text-sm text-gray-500 mb-4">ID: {editingUser.id}</p>
+
+              <form onSubmit={saveUser} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Tên <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Email</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Trường</label>
+                  <input
+                    type="text"
+                    value={formData.school}
+                    onChange={(e) => setFormData({ ...formData, school: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">Cấp độ</label>
+                    <input
+                      type="text"
+                      value={formData.level}
+                      onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">Điểm</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formData.points}
+                      onChange={(e) => setFormData({ ...formData, points: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Mật khẩu mới</label>
+                  <input
+                    type="text"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Để trống nếu không đổi mật khẩu"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300"
+                  >
+                    {saving ? "Đang lưu..." : "Lưu thay đổi"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeEditForm}
+                    className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Hủy
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

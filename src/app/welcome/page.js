@@ -70,18 +70,18 @@ export default function Welcome() {
   }
   
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 bg-green-50">
+    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 bg-brand-wash">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mb-8">
             {steps[currentStep].icon}
           </div>
           
-          <h1 className="text-3xl font-bold text-green-800 mb-4">
+          <h1 className="text-3xl font-bold text-ink mb-4">
             {steps[currentStep].title}
           </h1>
           
-          <p className="text-gray-600 mb-8">
+          <p className="text-ink-soft mb-8">
             {steps[currentStep].description}
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function Welcome() {
             <div 
               key={index}
               className={`w-2.5 h-2.5 rounded-full ${
-                index === currentStep ? 'bg-green-600' : 'bg-gray-300'
+                index === currentStep ? 'bg-brand' : 'bg-gray-300'
               }`}
             ></div>
           ))}
@@ -101,7 +101,7 @@ export default function Welcome() {
         <div className="space-y-3">
           <button
             onClick={handleNextStep}
-            className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 flex items-center justify-center"
+            className="w-full py-3 bg-brand text-white rounded-lg font-semibold hover:bg-brand flex items-center justify-center"
           >
             {currentStep < steps.length - 1 ? 'Tiếp tục' : 'Bắt đầu ngay'} <FaArrowRight className="ml-2" />
           </button>
@@ -109,7 +109,7 @@ export default function Welcome() {
           {currentStep < steps.length - 1 && (
             <button
               onClick={handleSkip}
-              className="w-full py-2 text-gray-600 font-medium hover:text-gray-800"
+              className="w-full py-2 text-ink-soft font-medium hover:text-ink"
             >
               Bỏ qua
             </button>
@@ -117,7 +117,7 @@ export default function Welcome() {
         </div>
         
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-ink-faint">
             Bạn có thể tìm hiểu thêm tính năng trong quá trình sử dụng ứng dụng.
           </p>
         </div>

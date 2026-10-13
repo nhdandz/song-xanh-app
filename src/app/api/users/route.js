@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireAuth, hashPassword } from "@/lib/auth";
 
 // GET /api/users - Lấy danh sách người dùng
 export async function GET(request) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -97,7 +101,8 @@ export async function POST(request) {
       data: {
         name: data.name,
         email: data.email,
-        password: data.password, // Nên mã hóa mật khẩu trước khi lưu
+        password: data.password ? await hashPassword(data.password) : null,
+        role: "USER", // đăng ký công khai luôn là người dùng thường
         school: data.school,
         settings: {
           create: {
@@ -108,7 +113,9 @@ export async function POST(request) {
       }
     });
     
-    return NextResponse.json({ user }, { status: 201 });
+    const { password: _, ...userWithoutPassword } = user;
+
+    return NextResponse.json({ user: userWithoutPassword }, { status: 201 });
   } catch (error) {
     console.error('Error creating user:', error);
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });

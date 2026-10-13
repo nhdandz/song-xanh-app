@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 export async function GET() {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   try {
     // Safe count with fallback for models that might not be generated yet
     const safeCount = async (model, modelName) => {
@@ -16,13 +20,14 @@ export async function GET() {
       }
     };
 
-    const [users, articles, products, events, reports, ideas] = await Promise.all([
+    const [users, articles, products, events, reports, ideas, rewards] = await Promise.all([
       safeCount(prisma.user, 'user'),
       safeCount(prisma.article, 'article'),
       safeCount(prisma.product, 'product'),
       safeCount(prisma.event, 'event'),
       safeCount(prisma.report, 'report'),
-      safeCount(prisma.idea, 'idea')
+      safeCount(prisma.idea, 'idea'),
+      safeCount(prisma.reward, 'reward')
     ]);
 
     return NextResponse.json({
@@ -31,7 +36,8 @@ export async function GET() {
       products,
       events,
       reports,
-      ideas
+      ideas,
+      rewards
     });
   } catch (error) {
     console.error("GET /api/admin/stats error:", error);

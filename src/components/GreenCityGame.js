@@ -58,7 +58,7 @@ const BUILDINGS = [
   {
     id: 'wind',
     name: 'Tuabin gió',
-    icon: <FaWind className="text-gray-500" size={32} />,
+    icon: <FaWind className="text-ink-faint" size={32} />,
     emoji: '🌬️',
     cost: 35,
     greenPoints: 15,
@@ -172,9 +172,9 @@ const GreenCityGame = ({ onComplete, onBack }) => {
   };
 
   const getCityStatus = () => {
-    if (pollution <= 20) return { text: 'Rất sạch', color: 'text-green-600', bg: 'bg-green-50' };
-    if (pollution <= 40) return { text: 'Sạch', color: 'text-blue-600', bg: 'bg-blue-50' };
-    if (pollution <= 60) return { text: 'Trung bình', color: 'text-yellow-600', bg: 'bg-yellow-50' };
+    if (pollution <= 20) return { text: 'Rất sạch', color: 'text-brand', bg: 'bg-brand-wash' };
+    if (pollution <= 40) return { text: 'Sạch', color: 'text-sky', bg: 'bg-sky-wash' };
+    if (pollution <= 60) return { text: 'Trung bình', color: 'text-yellow-600', bg: 'bg-sun-wash' };
     if (pollution <= 80) return { text: 'Ô nhiễm', color: 'text-orange-600', bg: 'bg-orange-50' };
     return { text: 'Rất ô nhiễm', color: 'text-red-600', bg: 'bg-red-50' };
   };
@@ -188,7 +188,7 @@ const GreenCityGame = ({ onComplete, onBack }) => {
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+          className="flex items-center text-ink-soft hover:text-ink transition-colors"
         >
           <FaArrowLeft className="mr-2" />
           Quay lại
@@ -202,53 +202,53 @@ const GreenCityGame = ({ onComplete, onBack }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center text-xs text-gray-500 mb-1">
+        <div className="bg-paper p-4 rounded-card border border-line">
+          <div className="flex items-center text-xs text-ink-faint mb-1">
             <FaCoins className="text-yellow-500 mr-1" size={12} />
             Tiền thành phố
           </div>
           <div className="text-2xl font-bold text-yellow-600">{cityCoins}</div>
         </div>
 
-        <div className={`${status.bg} backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200`}>
-          <div className="text-xs text-gray-500 mb-1">Mức ô nhiễm</div>
+        <div className={`${status.bg}  p-4 rounded-card border border-line`}>
+          <div className="text-xs text-ink-faint mb-1">Mức ô nhiễm</div>
           <div className={`text-2xl font-bold ${status.color}`}>{pollution}%</div>
           <div className={`text-xs ${status.color} mt-1`}>{status.text}</div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="text-xs text-gray-500 mb-1">Điểm xanh tích lũy</div>
-          <div className="text-2xl font-bold text-green-600">{totalGreenScore}</div>
+        <div className="bg-paper p-4 rounded-card border border-line">
+          <div className="text-xs text-ink-faint mb-1">Điểm xanh tích lũy</div>
+          <div className="text-2xl font-bold text-brand">{totalGreenScore}</div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
-          <div className="text-xs text-gray-500 mb-1">Công trình</div>
+        <div className="bg-paper p-4 rounded-card border border-line">
+          <div className="text-xs text-ink-faint mb-1">Công trình</div>
           <div className="text-2xl font-bold text-purple-600">{cityBuildings.length}</div>
         </div>
       </div>
 
       {/* Level Progress */}
-      <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-200">
+      <div className="bg-paper p-4 rounded-card border border-line">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-gray-600">Tiến độ lên cấp {cityLevel + 1}</span>
-          <span className="text-gray-800 font-medium">{Math.round(nextLevelProgress)}%</span>
+          <span className="text-ink-soft">Tiến độ lên cấp {cityLevel + 1}</span>
+          <span className="text-ink font-medium">{Math.round(nextLevelProgress)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+        <div className="sx-track h-3">
           <div
-            className="bg-gradient-to-r from-purple-500 to-purple-600 h-full transition-all duration-500 rounded-full"
+            className="bg-grape h-full transition-all duration-500 rounded-full"
             style={{ width: `${nextLevelProgress}%` }}
           ></div>
         </div>
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-ink-faint mt-2">
           {cityLevel * 50 - (totalGreenScore % (cityLevel * 50))} điểm xanh nữa để lên cấp
         </p>
       </div>
 
       {/* City Grid */}
-      <div className="bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50 p-6 rounded-xl shadow-sm border border-gray-200">
-        <h3 className="font-semibold text-gray-800 mb-4">Thành phố của bạn</h3>
+      <div className="bg-gradient-to-br from-green-50 via-blue-50 to-emerald-50 p-6 rounded-card border border-line">
+        <h3 className="font-semibold text-ink mb-4">Thành phố của bạn</h3>
         {cityBuildings.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-ink-faint">
             <p className="mb-2">Thành phố của bạn đang trống</p>
             <p className="text-sm">Hãy xây dựng công trình đầu tiên!</p>
           </div>
@@ -257,7 +257,7 @@ const GreenCityGame = ({ onComplete, onBack }) => {
             {cityBuildings.map((building, index) => (
               <div
                 key={index}
-                className="aspect-square bg-white/60 backdrop-blur-sm rounded-lg border border-gray-200 flex items-center justify-center text-4xl hover:scale-110 transition-transform shadow-sm"
+                className="aspect-square bg-paper/60 rounded-lg border border-line flex items-center justify-center text-4xl hover:scale-110 transition-transform shadow-sm"
                 title={building.name}
               >
                 {building.emoji}
@@ -268,8 +268,8 @@ const GreenCityGame = ({ onComplete, onBack }) => {
       </div>
 
       {/* Buildings Shop */}
-      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-gray-200">
-        <h3 className="font-semibold text-gray-800 mb-4">Cửa hàng công trình xanh</h3>
+      <div className="bg-paper p-6 rounded-card border border-line">
+        <h3 className="font-semibold text-ink mb-4">Cửa hàng công trình xanh</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {BUILDINGS.map(building => {
             const count = getBuildingCount(building.id);
@@ -280,8 +280,8 @@ const GreenCityGame = ({ onComplete, onBack }) => {
                 key={building.id}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   canAfford
-                    ? 'border-green-200 bg-green-50/50 hover:border-green-300 hover:shadow-md'
-                    : 'border-gray-200 bg-gray-50 opacity-60'
+                    ? 'border-green-200 bg-brand-wash/50 hover:border-brand '
+                   : 'border-line bg-canvas opacity-60'
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -289,9 +289,9 @@ const GreenCityGame = ({ onComplete, onBack }) => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h4 className="font-semibold text-gray-800 text-sm">{building.name}</h4>
+                        <h4 className="font-semibold text-ink text-sm">{building.name}</h4>
                         {count > 0 && (
-                          <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                          <div className="flex items-center gap-1 text-xs text-brand mt-1">
                             <FaCheckCircle size={10} />
                             Đã có {count}
                           </div>
@@ -302,17 +302,17 @@ const GreenCityGame = ({ onComplete, onBack }) => {
                         disabled={!canAfford}
                         className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
                           canAfford
-                            ? 'bg-green-600 text-white hover:bg-green-700 active:scale-95'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            ? 'bg-brand text-white hover:bg-brand active:scale-95'
+                           : 'bg-gray-300 text-ink-faint cursor-not-allowed'
                         }`}
                       >
                         {building.cost} 💰
                       </button>
                     </div>
-                    <p className="text-xs text-gray-600 mt-2">{building.description}</p>
+                    <p className="text-xs text-ink-soft mt-2">{building.description}</p>
                     <div className="flex gap-3 mt-2 text-xs">
-                      <span className="text-green-600">+{building.greenPoints} điểm</span>
-                      <span className="text-blue-600">{building.pollution} ô nhiễm</span>
+                      <span className="text-brand">+{building.greenPoints} điểm</span>
+                      <span className="text-sky">{building.pollution} ô nhiễm</span>
                     </div>
                   </div>
                 </div>
@@ -323,9 +323,9 @@ const GreenCityGame = ({ onComplete, onBack }) => {
       </div>
 
       {/* Instructions */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-sky-wash border border-line rounded-xl p-4">
         <h4 className="font-semibold text-blue-900 mb-2 text-sm">Hướng dẫn:</h4>
-        <ul className="text-xs text-blue-800 space-y-1">
+        <ul className="text-xs text-sky space-y-1">
           <li>• Sử dụng tiền thành phố để xây dựng các công trình xanh</li>
           <li>• Mỗi công trình sẽ giảm ô nhiễm và tặng điểm xanh thật</li>
           <li>• Các công trình tự động tạo thu nhập mỗi 10 giây (2 💰/công trình)</li>

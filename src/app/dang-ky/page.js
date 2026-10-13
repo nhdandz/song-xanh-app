@@ -91,18 +91,18 @@ export default function Register() {
   };
   
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-green-50">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-brand-wash">
+      <div className="max-w-md w-full space-y-8 bg-paper p-8 rounded-card">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
-            <FaLeaf className="text-green-600 text-3xl" />
+          <div className="mx-auto h-16 w-16 rounded-full bg-brand-wash flex items-center justify-center">
+            <FaLeaf className="text-brand text-3xl" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-green-800">
+          <h2 className="mt-6 text-3xl font-bold text-ink">
             Đăng ký tài khoản
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-ink-soft">
             hoặc{' '}
-            <Link href="/dang-nhap" className="font-medium text-green-600 hover:text-green-500">
+            <Link href="/dang-nhap" className="font-medium text-brand hover:text-green-500">
               đăng nhập nếu đã có tài khoản
             </Link>
           </p>
@@ -122,7 +122,7 @@ export default function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaUser className="text-gray-400" />
+                  <FaUser className="text-ink-faint" />
                 </div>
                 <input
                   id="name"
@@ -130,7 +130,7 @@ export default function Register() {
                   type="text"
                   autoComplete="name"
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-line placeholder-gray-500 text-ink focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder="Họ tên"
                   value={formData.name}
                   onChange={handleChange}
@@ -144,7 +144,7 @@ export default function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaEnvelope className="text-gray-400" />
+                  <FaEnvelope className="text-ink-faint" />
                 </div>
                 <input
                   id="email"
@@ -152,7 +152,7 @@ export default function Register() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-line placeholder-gray-500 text-ink focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleChange}
@@ -166,7 +166,7 @@ export default function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="text-gray-400" />
+                  <FaLock className="text-ink-faint" />
                 </div>
                 <input
                   id="password"
@@ -174,7 +174,7 @@ export default function Register() {
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-line placeholder-gray-500 text-ink focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder="Mật khẩu"
                   value={formData.password}
                   onChange={handleChange}
@@ -188,7 +188,7 @@ export default function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="text-gray-400" />
+                  <FaLock className="text-ink-faint" />
                 </div>
                 <input
                   id="passwordConfirm"
@@ -196,7 +196,7 @@ export default function Register() {
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-line placeholder-gray-500 text-ink focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder="Xác nhận mật khẩu"
                   value={formData.passwordConfirm}
                   onChange={handleChange}
@@ -210,14 +210,14 @@ export default function Register() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaSchool className="text-gray-400" />
+                  <FaSchool className="text-ink-faint" />
                 </div>
                 <input
                   id="school"
                   name="school"
                   type="text"
                   autoComplete="organization"
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-line placeholder-gray-500 text-ink focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder="Trường học (không bắt buộc)"
                   value={formData.school}
                   onChange={handleChange}
@@ -229,7 +229,7 @@ export default function Register() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-brand hover:bg-brand focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               disabled={registering || isLoading}
             >
               {registering ? 'Đang đăng ký...' : isLoading ? 'Đang xử lý...' : 'Đăng ký'}

@@ -234,14 +234,14 @@ export default function ChatBotPage() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-6">
       <div className="max-w-5xl mx-auto">
         <header className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-12 h-12 bg-paper rounded-full flex items-center justify-center shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v12m0 0C8.134 15 4 17 4 20c0 0 4-1 8-1s8 1 8 1c0-3-4.134-5-8-5z" />
             </svg>
           </div>
 
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-green-800">Sống Xanh — Trợ lý AI</h1>
+            <h1 className="text-2xl font-bold text-ink">Sống Xanh — Trợ lý AI</h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function ChatBotPage() {
 
         {/* --- VIDEO NGẪU NHIÊN: HIỂN THỊ NGAY DƯỚI HEADER --- */}
         {normalized && (
-          <section className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <section className="mb-6 bg-paper rounded-card border border-line p-4">
             <div className="w-full aspect-video bg-black rounded-md overflow-hidden">
               {normalized.kind === 'file' && (
                 <video
@@ -292,11 +292,11 @@ export default function ChatBotPage() {
           </section>
         )}
 
-        <main className="bg-white rounded-2xl shadow p-4 h-[68vh] flex flex-col overflow-hidden">
+        <main className="bg-paper rounded-2xl shadow p-4 h-[68vh] flex flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto pr-2 space-y-4">
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`${m.role === "user" ? "bg-green-600 text-white" : "bg-green-50 text-green-900"} max-w-[80%] px-4 py-3 rounded-xl shadow-sm whitespace-pre-wrap`}>
+                <div className={`${m.role === "user" ? "bg-brand text-white" : "bg-brand-wash text-ink"} max-w-[80%] px-4 py-3 rounded-card whitespace-pre-wrap`}>
                   {m.content}
                 </div>
               </div>
@@ -304,7 +304,7 @@ export default function ChatBotPage() {
 
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-green-50 text-green-900 max-w-[70%] px-4 py-3 rounded-xl shadow-sm flex items-center gap-3">
+                <div className="bg-brand-wash text-ink max-w-[70%] px-4 py-3 rounded-card flex items-center gap-3">
                   <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
                     <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
@@ -317,7 +317,7 @@ export default function ChatBotPage() {
             <div ref={bottomRef} />
           </div>
 
-          <div className="mt-4 pt-4 border-t border-green-100">
+          <div className="mt-4 pt-4 border-t border-line">
             {error && <div className="text-sm text-red-600 mb-2">Lỗi: {error}</div>}
 
             <div className="flex gap-3">
@@ -326,13 +326,13 @@ export default function ChatBotPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={onKeyDown}
                 placeholder="Gõ câu hỏi của bạn... (Enter gửi, Shift+Enter xuống dòng)"
-                className="flex-1 resize-none h-20 rounded-xl border border-green-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-200"
+                className="flex-1 resize-none h-20 rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-200"
               />
 
               <button
                 onClick={sendMessage}
                 disabled={loading}
-                className="h-12 w-12 flex-shrink-0 rounded-xl bg-green-600 hover:bg-green-700 active:scale-95 text-white flex items-center justify-center shadow"
+                className="h-12 w-12 flex-shrink-0 rounded-xl bg-brand hover:bg-brand active:scale-95 text-white flex items-center justify-center shadow"
                 title="Gửi"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

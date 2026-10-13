@@ -250,22 +250,22 @@ export default function GreenMap() {
   };
 
   return (
-    <div className="pb-16 relative min-h-screen flex flex-col bg-white">
+    <div className="pb-16 relative min-h-screen flex flex-col bg-paper">
       {/* Header */}
       <div className="max-w-6xl mx-auto w-full text-center pt-6 px-4">
-        <h1 className="text-2xl font-bold text-green-800">Bản đồ xanh</h1>
-        <p className="text-gray-600 mt-1">Tìm điểm tái chế và không gian xanh gần bạn</p>
+        <h1 className="text-2xl font-bold text-ink">Bản đồ xanh</h1>
+        <p className="text-ink-soft mt-1">Tìm điểm tái chế và không gian xanh gần bạn</p>
       </div>
 
       {/* Danh mục: đặt ngoài vùng bản đồ (không che header) */}
       <div className="max-w-6xl mx-auto w-full px-4 mt-4 mb-3">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-paper rounded-lg overflow-hidden">
           <div className="grid grid-cols-4 divide-x divide-gray-200">
             {CATEGORIES.map(category => (
               <button
                 key={category.id}
                 className={`p-3 flex flex-col items-center w-full ${
-                  activeCategory === category.id ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-50'
+                  activeCategory === category.id ? 'bg-brand-wash text-brand' : 'text-ink-soft hover:bg-canvas'
                 }`}
                 onClick={() => setActiveCategory(category.id)}
               >
@@ -279,10 +279,10 @@ export default function GreenMap() {
 
       {/* Vùng bản đồ (giả lập) */}
       <div className="mx-4 mb-4">
-        <div className="bg-green-50 rounded-lg p-6 flex items-center justify-center" style={{ minHeight: 160 }}>
-          <div className="text-center text-gray-500">
+        <div className="bg-brand-wash rounded-lg p-6 flex items-center justify-center" style={{ minHeight: 160 }}>
+          <div className="text-center text-ink-faint">
             <FaMapMarkerAlt className="mx-auto text-4xl mb-2 text-green-500" />
-            <div className="mt-2 text-sm text-gray-600">
+            <div className="mt-2 text-sm text-ink-soft">
               {loadingLoc ? 'Đang xác định vị trí...' :
                 geoError ? `Lỗi vị trí: ${geoError}` :
                 userLoc ? `Vị trí của bạn: ${userLoc.latitude.toFixed(5)}, ${userLoc.longitude.toFixed(5)}` :
@@ -292,7 +292,7 @@ export default function GreenMap() {
             <div className="mt-3 flex items-center justify-center gap-3">
               <button
                 onClick={() => fetchLocationWithRetry(2)}
-                className="px-3 py-2 bg-white border rounded shadow-sm text-sm"
+                className="px-3 py-2 bg-paper border rounded shadow-sm text-sm"
               >
                 Lấy lại vị trí
               </button>
@@ -306,7 +306,7 @@ export default function GreenMap() {
                     alert('Chưa có vị trí của bạn.');
                   }
                 }}
-                className="px-3 py-2 bg-green-600 text-white rounded shadow-sm text-sm"
+                className="px-3 py-2 bg-brand text-white rounded shadow-sm text-sm"
               >
                 Mở vị trí trên Maps
               </button>
@@ -317,7 +317,7 @@ export default function GreenMap() {
 
       {/* Danh sách điểm */}
       <div className="mx-4 mb-8">
-        <h2 className="font-bold text-green-800 mb-3 flex items-center">
+        <h2 className="font-bold text-ink mb-3 flex items-center">
           <FaMapMarkerAlt className="mr-2" /> Điểm gần bạn ({filteredSorted.length})
         </h2>
 
@@ -325,7 +325,7 @@ export default function GreenMap() {
           {filteredSorted.map(point => (
             <div
               key={point.id}
-              className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex items-center cursor-pointer"
+              className="bg-paper p-3 rounded-card border border-line flex items-center cursor-pointer"
               onClick={() => handlePointClick(point.id)}
             >
               <div className="mr-3 p-2 rounded-full bg-gray-100">
@@ -334,7 +334,7 @@ export default function GreenMap() {
 
               <div className="flex-1">
                 <h3 className="font-semibold">{point.name}</h3>
-                <p className="text-xs text-gray-500 flex items-center">
+                <p className="text-xs text-ink-faint flex items-center">
                   <FaMapMarkerAlt className="mr-1" size={10} />
                   {point.address}
                 </p>
@@ -344,19 +344,19 @@ export default function GreenMap() {
                       <span key={i} className="text-[10px]">★</span>
                     ))}
                   </div>
-                  <span className="text-xs text-gray-500">{point.rating ?? '—'} ({point.reviews ?? 0})</span>
+                  <span className="text-xs text-ink-faint">{point.rating ?? '—'} ({point.reviews ?? 0})</span>
                 </div>
               </div>
 
               <div className="flex flex-col items-end">
-                <span className="text-sm text-green-600 font-medium">{point.distance ?? '—'}</span>
+                <span className="text-sm text-brand font-medium">{point.distance ?? '—'}</span>
                 <div className="flex items-center gap-2 mt-1">
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleFavorite(point.id); }}
                     className="p-1"
                     title={point.favorite ? 'Bỏ yêu thích' : 'Thêm yêu thích'}
                   >
-                    {point.favorite ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-gray-400" />}
+                    {point.favorite ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-ink-faint" />}
                   </button>
 
                   <button
@@ -364,7 +364,7 @@ export default function GreenMap() {
                     className="p-1"
                     title="Chỉ đường"
                   >
-                    <FaDirections className="text-gray-600" />
+                    <FaDirections className="text-ink-soft" />
                   </button>
                 </div>
               </div>
@@ -372,7 +372,7 @@ export default function GreenMap() {
           ))}
 
           {filteredSorted.length === 0 && (
-            <div className="text-gray-500 text-sm">Không có điểm phù hợp.</div>
+            <div className="text-ink-faint text-sm">Không có điểm phù hợp.</div>
           )}
         </div>
       </div>
@@ -380,11 +380,11 @@ export default function GreenMap() {
       {/* Chi tiết điểm modal */}
       {selectedPoint && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end" onClick={closePointDetails}>
-          <div className="bg-white rounded-t-xl w-full p-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-paper rounded-t-xl w-full p-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h2 className="font-bold text-xl">{selectedPoint.name}</h2>
-                <div className="flex items-center text-sm text-gray-600 mt-1">
+                <div className="flex items-center text-sm text-ink-soft mt-1">
                   <div className="mr-2">{renderTypeIcon(selectedPoint.type)}</div>
                   <span>
                     {selectedPoint.type === 'recycle' && 'Điểm tái chế'}
@@ -395,7 +395,7 @@ export default function GreenMap() {
               </div>
 
               <button onClick={() => toggleFavorite(selectedPoint.id)} className="p-2" title="Yêu thích">
-                {selectedPoint.favorite ? <FaStar className="text-yellow-500 text-xl" /> : <FaRegStar className="text-gray-400 text-xl" />}
+                {selectedPoint.favorite ? <FaStar className="text-yellow-500 text-xl" /> : <FaRegStar className="text-ink-faint text-xl" />}
               </button>
             </div>
 
@@ -405,38 +405,38 @@ export default function GreenMap() {
 
             <div className="space-y-3 mb-4">
               <div className="flex items-start">
-                <FaMapMarkerAlt className="text-gray-400 mt-1 mr-3" />
+                <FaMapMarkerAlt className="text-ink-faint mt-1 mr-3" />
                 <div>
-                  <div className="text-gray-800">{selectedPoint.address}</div>
-                  <div className="text-sm text-gray-500">{selectedPoint.distance ?? '—'} từ vị trí của bạn</div>
+                  <div className="text-ink">{selectedPoint.address}</div>
+                  <div className="text-sm text-ink-faint">{selectedPoint.distance ?? '—'} từ vị trí của bạn</div>
                 </div>
               </div>
 
               {selectedPoint.openHours && (
                 <div className="flex items-start">
-                  <FaClock className="text-gray-400 mt-1 mr-3" />
+                  <FaClock className="text-ink-faint mt-1 mr-3" />
                   <div>
-                    <div className="text-gray-800">Giờ mở cửa</div>
-                    <div className="text-sm text-gray-500">{selectedPoint.openHours}</div>
+                    <div className="text-ink">Giờ mở cửa</div>
+                    <div className="text-sm text-ink-faint">{selectedPoint.openHours}</div>
                   </div>
                 </div>
               )}
 
               {selectedPoint.phone && (
                 <div className="flex items-start">
-                  <FaPhoneAlt className="text-gray-400 mt-1 mr-3" />
-                  <div className="text-gray-800">{selectedPoint.phone}</div>
+                  <FaPhoneAlt className="text-ink-faint mt-1 mr-3" />
+                  <div className="text-ink">{selectedPoint.phone}</div>
                 </div>
               )}
 
               {selectedPoint.materials && (
                 <div className="flex items-start">
-                  <FaRecycle className="text-gray-400 mt-1 mr-3" />
+                  <FaRecycle className="text-ink-faint mt-1 mr-3" />
                   <div>
-                    <div className="text-gray-800">Vật liệu nhận</div>
+                    <div className="text-ink">Vật liệu nhận</div>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {selectedPoint.materials.map((m, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded">{m}</span>
+                        <span key={i} className="px-2 py-0.5 bg-sky-wash text-sky text-xs rounded">{m}</span>
                       ))}
                     </div>
                   </div>
@@ -445,12 +445,12 @@ export default function GreenMap() {
 
               {selectedPoint.activities && (
                 <div className="flex items-start">
-                  <FaLeaf className="text-gray-400 mt-1 mr-3" />
+                  <FaLeaf className="text-ink-faint mt-1 mr-3" />
                   <div>
-                    <div className="text-gray-800">Hoạt động</div>
+                    <div className="text-ink">Hoạt động</div>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {selectedPoint.activities.map((a, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded">{a}</span>
+                        <span key={i} className="px-2 py-0.5 bg-brand-wash text-brand text-xs rounded">{a}</span>
                       ))}
                     </div>
                   </div>
@@ -459,9 +459,9 @@ export default function GreenMap() {
 
               {selectedPoint.products && (
                 <div className="flex items-start">
-                  <FaStore className="text-gray-400 mt-1 mr-3" />
+                  <FaStore className="text-ink-faint mt-1 mr-3" />
                   <div>
-                    <div className="text-gray-800">Sản phẩm</div>
+                    <div className="text-ink">Sản phẩm</div>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {selectedPoint.products.map((p, i) => (
                         <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs rounded">{p}</span>
@@ -473,8 +473,8 @@ export default function GreenMap() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <button className="py-2 bg-gray-100 rounded-lg font-semibold text-gray-700" onClick={closePointDetails}>Đóng</button>
-              <button className="py-2 bg-green-600 text-white rounded-lg font-semibold flex items-center justify-center" onClick={() => openDirections(selectedPoint)}>
+              <button className="py-2 bg-gray-100 rounded-lg font-semibold text-ink-soft" onClick={closePointDetails}>Đóng</button>
+              <button className="py-2 bg-brand text-white rounded-lg font-semibold flex items-center justify-center" onClick={() => openDirections(selectedPoint)}>
                 <FaDirections className="mr-2" /> Chỉ đường
               </button>
             </div>
