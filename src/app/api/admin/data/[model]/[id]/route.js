@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAdminModel } from "@/lib/adminModels";
 import { AdminDataError, buildData, prismaErrorMessage } from "@/lib/adminData";
+import { requireAdmin } from "@/lib/auth";
 
 function resolve(slug) {
   const config = getAdminModel(slug);
@@ -17,6 +18,9 @@ function resolve(slug) {
 
 // GET /api/admin/data/[slug]/[id]
 export async function GET(req, { params }) {
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   const { model: slug, id } = await params;
   const { config, delegate, error, status } = resolve(slug);
   if (error) return NextResponse.json({ error }, { status });
@@ -43,6 +47,9 @@ export async function GET(req, { params }) {
 
 // PUT /api/admin/data/[slug]/[id]
 export async function PUT(req, { params }) {
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   const { model: slug, id } = await params;
   const { config, delegate, error, status } = resolve(slug);
   if (error) return NextResponse.json({ error }, { status });
@@ -73,6 +80,9 @@ export async function PUT(req, { params }) {
 
 // DELETE /api/admin/data/[slug]/[id]
 export async function DELETE(req, { params }) {
+  const { error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   const { model: slug, id } = await params;
   const { config, delegate, error, status } = resolve(slug);
   if (error) return NextResponse.json({ error }, { status });

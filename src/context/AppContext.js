@@ -242,15 +242,47 @@ const initializeUser = async (id) => {
       
       const { user } = await response.json();
       
-      // Lưu userId vào localStorage
+      // Phiên thật nằm ở cookie httpOnly do server cấp. localStorage chỉ
+      // giữ id để khởi tạo dữ liệu hiển thị, không dùng để xác thực.
       localStorage.setItem('userId', user.id);
       
-      // Khởi tạo dữ liệu người dùng
       const initSuccess = await initializeUser(user.id);
       
-      return initSuccess;
+      return initSuccess ? user : false;
     } catch (error) {
       console.error('Login error:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Đăng nhập nhanh bằng tài khoản mẫu; server giữ thông tin tài khoản.
+  const loginDemo = async (as) => {
+    if (isLoading) return false;
+
+    try {
+      setIsLoading(true);
+
+      const response = await fetch('/api/auth/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ as }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Đăng nhập demo thất bại');
+      }
+
+      const { user } = await response.json();
+      localStorage.setItem('userId', user.id);
+
+      const initSuccess = await initializeUser(user.id);
+
+      return initSuccess ? user : false;
+    } catch (error) {
+      console.error('Demo login error:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -262,6 +294,9 @@ const initializeUser = async (id) => {
     // Ngăn chặn đăng xuất khi đang trong quá trình chuyển hướng
     if (isRedirecting.current) return;
     
+    // Xoá cookie phiên ở server (không chặn luồng đăng xuất nếu lỗi mạng)
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+
     // Xóa thông tin người dùng khỏi localStorage
     localStorage.removeItem('userId');
     localStorage.removeItem('greenUser');
@@ -586,6 +621,7 @@ const initializeUser = async (id) => {
     initializeUser,
     isAuthenticated,
     login,
+    loginDemo,
     logout,
     checkAuthentication,
     fetchGreenActivities,
