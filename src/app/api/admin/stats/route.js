@@ -16,13 +16,14 @@ export async function GET() {
       }
     };
 
-    const [users, articles, products, events, reports, ideas] = await Promise.all([
+    const [users, articles, products, events, reports, ideas, rewards] = await Promise.all([
       safeCount(prisma.user, 'user'),
       safeCount(prisma.article, 'article'),
       safeCount(prisma.product, 'product'),
       safeCount(prisma.event, 'event'),
       safeCount(prisma.report, 'report'),
-      safeCount(prisma.idea, 'idea')
+      safeCount(prisma.idea, 'idea'),
+      safeCount(prisma.reward, 'reward')
     ]);
 
     return NextResponse.json({
@@ -31,7 +32,8 @@ export async function GET() {
       products,
       events,
       reports,
-      ideas
+      ideas,
+      rewards
     });
   } catch (error) {
     console.error("GET /api/admin/stats error:", error);
