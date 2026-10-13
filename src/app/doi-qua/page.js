@@ -16,14 +16,14 @@ function RewardMedia({ reward }) {
   // fallback khi không có image hoặc load lỗi
   if (!reward?.image || imgError) {
     return (
-      <div className="h-48 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-6xl">
+      <div className="h-44 bg-brand-wash flex items-center justify-center text-6xl">
         {emojiFallback[reward.category] || '🎁'}
       </div>
     );
   }
 
   return (
-    <div className="h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
+    <div className="h-44 bg-canvas flex items-center justify-center overflow-hidden">
       <img
         src={reward.image}
         alt={reward.title || 'reward'}
@@ -144,10 +144,10 @@ export default function RewardsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-6 flex items-center justify-center">
+      <div className="max-w-6xl mx-auto px-4 py-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Đang tải...</p>
+          <div className="animate-spin rounded-full h-10 w-10 border-[3px] border-line border-t-brand mx-auto" />
+          <p className="mt-4 text-ink-soft font-medium">Đang tải quà...</p>
         </div>
       </div>
     );
@@ -155,17 +155,12 @@ export default function RewardsPage() {
 
   if (!isAuthenticated || !user?.id) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-6 flex items-center justify-center">
-        <div className="max-w-md bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div className="text-6xl mb-4">🔒</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Vui lòng đăng nhập</h2>
-          <p className="text-gray-600 mb-6">
-            Bạn cần đăng nhập để xem và đổi quà
-          </p>
-          <a
-            href="/login"
-            className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
-          >
+      <div className="max-w-md mx-auto px-4 py-20">
+        <div className="sx-card p-8 text-center">
+          <div className="text-5xl mb-4">🔒</div>
+          <h2 className="text-xl text-ink mb-2">Vui lòng đăng nhập</h2>
+          <p className="text-ink-soft mb-6">Bạn cần đăng nhập để xem và đổi quà.</p>
+          <a href="/dang-nhap" className="sx-btn sx-btn-primary">
             Đăng nhập ngay
           </a>
         </div>
@@ -174,77 +169,102 @@ export default function RewardsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Đổi Quà</h1>
-          <p className="text-gray-600 mb-4">
-            Sử dụng điểm xanh của bạn để đổi lấy các phần quà thú vị
-          </p>
-          <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl p-4">
-            <p className="text-sm opacity-90">Điểm hiện tại của bạn</p>
-            <p className="text-4xl font-bold">{user?.points || 0} điểm</p>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-5">
+      {/* Khối điểm hiện có */}
+      <section className="sx-dark sx-enter p-6 sm:p-8">
+        <div className="relative flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <span className="sx-chip bg-white/15 text-brand-bright">Đổi quà</span>
+            <h1 className="text-2xl sm:text-4xl text-white mt-3">Đổi điểm lấy quà</h1>
+            <p className="text-white/70 mt-1.5 text-sm sm:text-base">
+              Tích điểm từ hành động xanh và trò chơi để đổi phần quà bạn thích.
+            </p>
+          </div>
+          <div className="sm:text-right shrink-0">
+            <p className="text-[11px] uppercase tracking-widest font-bold text-brand-bright/90">
+              Điểm hiện có
+            </p>
+            <p className="sx-figure text-4xl sm:text-5xl text-white mt-1">
+              {(user?.points || 0).toLocaleString('vi-VN')}
+            </p>
           </div>
         </div>
+      </section>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-green-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {cat === 'all' ? 'Tất cả' : cat}
-              </button>
-            ))}
-          </div>
+      {/* Lọc theo danh mục */}
+      <div className="sx-scroll-x -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex gap-2 w-max">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-pill font-bold text-sm whitespace-nowrap border-[1.5px] transition-colors ${
+                selectedCategory === cat
+                  ? 'bg-brand text-white border-brand'
+                 : 'bg-paper text-ink-soft border-line hover:border-brand hover:text-brand'
+              }`}
+            >
+              {cat === 'all' ? 'Tất cả' : cat}
+            </button>
+          ))}
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {filteredRewards.map((reward) => {
+      {/* Danh sách quà */}
+      {filteredRewards.length === 0 ? (
+        <div className="sx-card p-12 text-center">
+          <p className="text-4xl mb-3">🎁</p>
+          <p className="font-bold text-ink">Chưa có quà trong mục này</p>
+          <p className="text-sm text-ink-soft mt-1">Hãy thử chọn danh mục khác nhé.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredRewards.map((reward, i) => {
             const canAfford = user && user.points >= reward.points;
             const isAvailable = reward.available && reward.stock > 0;
+            const lowStock = reward.stock > 0 && reward.stock <= 5;
 
             return (
-              <div
+              <article
                 key={reward.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                className="sx-card sx-enter overflow-hidden flex flex-col"
+                style={{ animationDelay: `${Math.min(i, 9) * 50}ms` }}
               >
-                <RewardMedia reward={reward} />
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-2">{reward.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{reward.description}</p>
-
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-gray-500">Danh mục</span>
-                    <span className="text-sm font-medium">{reward.category}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-gray-500">Còn lại</span>
-                    <span className={`text-sm font-medium ${reward.stock <= 5 ? 'text-red-600' : 'text-green-600'}`}>
-                      {reward.stock} quà
+                <div className="relative">
+                  <RewardMedia reward={reward} />
+                  <span className="absolute top-3 left-3 sx-chip bg-white/95 text-ink-soft shadow-sm">
+                    {reward.category}
+                  </span>
+                  {lowStock && (
+                    <span className="absolute top-3 right-3 sx-chip bg-coral text-white shadow-sm">
+                      Sắp hết
                     </span>
-                  </div>
+                  )}
+                </div>
 
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold text-green-600">
-                      {reward.points} điểm
-                    </span>
+                <div className="p-4 flex flex-col flex-1">
+                  <h3 className="font-extrabold text-ink leading-tight">{reward.title}</h3>
+                  <p className="text-sm text-ink-soft mt-1 leading-snug line-clamp-2">
+                    {reward.description}
+                  </p>
+
+                  <div className="flex items-end justify-between gap-2 mt-4 mb-3">
+                    <p className="sx-figure text-2xl text-brand">
+                      {reward.points}
+                      <span className="text-xs font-semibold text-ink-faint ml-1 tracking-normal">
+                        điểm
+                      </span>
+                    </p>
+                    <p className="text-xs font-semibold text-ink-faint">
+                      Còn {reward.stock}
+                    </p>
                   </div>
 
                   <button
                     onClick={() => handleRedeem(reward)}
                     disabled={!canAfford || !isAvailable || redeeming === reward.id}
-                    className={`w-full py-3 rounded-lg font-medium transition-all ${
-                      canAfford && isAvailable && redeeming !== reward.id
-                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-md hover:shadow-lg'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    className={`sx-btn w-full mt-auto ${
+                      canAfford && isAvailable ? 'sx-btn-primary' : 'sx-btn-outline'
                     }`}
                   >
                     {redeeming === reward.id
@@ -252,47 +272,57 @@ export default function RewardsPage() {
                       : !isAvailable
                       ? 'Hết hàng'
                       : !canAfford
-                      ? 'Không đủ điểm'
+                      ? `Còn thiếu ${reward.points - (user?.points || 0)} điểm`
                       : 'Đổi quà'}
                   </button>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
+      )}
 
-        {redemptions.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Lịch sử đổi quà</h2>
-            <div className="space-y-3">
-              {redemptions.map((redemption) => (
+      {/* Lịch sử đổi quà */}
+      {redemptions.length > 0 && (
+        <section className="sx-card p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl text-ink mb-4">Lịch sử đổi quà</h2>
+          <div className="space-y-2.5">
+            {redemptions.map((redemption) => {
+              const status = redemption.status;
+              const tone =
+                status === 'pending'
+                  ? 'bg-sun-wash text-sun'
+                  : status === 'approved'
+                  ? 'bg-brand-wash text-brand'
+                 : 'bg-coral-wash text-coral';
+
+              return (
                 <div
                   key={redemption.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-canvas border border-line"
                 >
-                  <div>
-                    <p className="font-medium">{redemption.reward.title}</p>
-                    <p className="text-sm text-gray-600">
+                  <div className="min-w-0">
+                    <p className="font-bold text-ink truncate">{redemption.reward.title}</p>
+                    <p className="text-xs text-ink-faint mt-0.5">
                       {new Date(redemption.redeemedAt).toLocaleDateString('vi-VN')}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-green-600">-{redemption.pointsUsed} điểm</p>
-                    <p className={`text-sm ${
-                      redemption.status === 'pending' ? 'text-yellow-600' :
-                      redemption.status === 'approved' ? 'text-green-600' :
-                      'text-red-600'
-                    }`}>
-                      {redemption.status === 'pending' ? 'Đang xử lý' :
-                       redemption.status === 'approved' ? 'Đã duyệt' : 'Đã hủy'}
-                    </p>
+                  <div className="text-right shrink-0">
+                    <p className="font-extrabold text-ink">-{redemption.pointsUsed} điểm</p>
+                    <span className={`sx-chip mt-1 ${tone}`}>
+                      {status === 'pending'
+                        ? 'Đang xử lý'
+                        : status === 'approved'
+                        ? 'Đã duyệt'
+                       : 'Đã hủy'}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        )}
-      </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -76,10 +76,10 @@
 //   return (
 //     <div className="max-w-6xl mx-auto px-4 py-8 pb-24">
 //       <div className="text-center mb-6">
-//         <h1 className="text-2xl font-bold text-green-800">
+//         <h1 className="text-2xl font-bold text-ink">
 //           Dự án môi trường
 //         </h1>
-//         <p className="text-gray-600 mt-1">
+//         <p className="text-ink-soft mt-1">
 //           Tham gia các hoạt động và nhận điểm xanh
 //         </p>
 //       </div>
@@ -90,8 +90,8 @@
 //           <button
 //             className={`px-3 py-1.5 rounded-full text-sm font-medium ${
 //               !favoriteFilter
-//                 ? 'bg-green-600 text-white'
-//                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+//                 ? 'bg-brand text-white'
+// : 'bg-gray-100 text-ink-soft hover:bg-gray-200'
 //             }`}
 //             onClick={() => setFavoriteFilter(false)}
 //           >
@@ -100,8 +100,8 @@
 //           <button
 //             className={`px-3 py-1.5 rounded-full text-sm font-medium ${
 //               favoriteFilter
-//                 ? 'bg-green-600 text-white'
-//                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+//                 ? 'bg-brand text-white'
+// : 'bg-gray-100 text-ink-soft hover:bg-gray-200'
 //             }`}
 //             onClick={() => setFavoriteFilter(true)}
 //           >
@@ -109,7 +109,7 @@
 //           </button>
 //         </div>
         
-//         <button className="text-sm text-green-600 font-medium">
+//         <button className="text-sm text-brand font-medium">
 //           Sắp xếp theo
 //         </button>
 //       </div>
@@ -118,37 +118,37 @@
 //       <div className="space-y-4">
 //         {filteredProjects.length > 0 ? (
 //           filteredProjects.map(project => (
-//             <div key={project.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+//             <div key={project.id} className="bg-paper rounded-card overflow-hidden">
 //               <div className="h-48 bg-gray-200">
 //                 {/* Placeholder cho hình ảnh */}
 //                 <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-blue-100">
-//                   <FaLeaf className="text-green-600 text-2xl mb-2" />
-//                   <span className="text-green-800 font-semibold">{project.title}</span>
+//                   <FaLeaf className="text-brand text-2xl mb-2" />
+//                   <span className="text-ink font-semibold">{project.title}</span>
 //                 </div>
 //               </div>
               
 //               <div className="p-4">
-//                 <h2 className="font-bold text-green-800 text-lg mb-2">{project.title}</h2>
+//                 <h2 className="font-bold text-ink text-lg mb-2">{project.title}</h2>
                 
 //                 <div className="space-y-1 mb-3">
-//                   <div className="flex items-center text-sm text-gray-600">
-//                     <FaMapMarkerAlt className="text-gray-400 mr-2" />
+//                   <div className="flex items-center text-sm text-ink-soft">
+//                     <FaMapMarkerAlt className="text-ink-faint mr-2" />
 //                     <span>{project.location}</span>
 //                   </div>
                   
-//                   <div className="flex items-center text-sm text-gray-600">
-//                     <FaCalendarAlt className="text-gray-400 mr-2" />
+//                   <div className="flex items-center text-sm text-ink-soft">
+//                     <FaCalendarAlt className="text-ink-faint mr-2" />
 //                     <span>{project.date}</span>
 //                   </div>
                   
-//                   <div className="flex items-center text-sm text-gray-600">
-//                     <FaUsers className="text-gray-400 mr-2" />
+//                   <div className="flex items-center text-sm text-ink-soft">
+//                     <FaUsers className="text-ink-faint mr-2" />
 //                     <span>{project.participants}/{project.maxParticipants} người tham gia</span>
 //                   </div>
 //                 </div>
                 
 //                 <div className="flex justify-between items-center mb-4">
-//                   <div className="bg-green-50 text-green-700 px-2 py-1 rounded text-sm font-medium">
+//                   <div className="bg-brand-wash text-brand px-2 py-1 rounded text-sm font-medium">
 //                     {project.points} điểm xanh
 //                   </div>
                   
@@ -156,7 +156,7 @@
 //                     {project.joined ? (
 //                       <FaStar className="text-yellow-500" />
 //                     ) : (
-//                       <FaRegStar className="text-gray-400" />
+//                       <FaRegStar className="text-ink-faint" />
 //                     )}
 //                   </button>
 //                 </div>
@@ -166,7 +166,7 @@
 //                   className={`w-full py-2 rounded-lg text-sm font-medium flex items-center justify-center ${
 //                     project.joined
 //                       ? 'bg-red-50 text-red-600 border border-red-200'
-//                       : 'bg-green-600 text-white hover:bg-green-700'
+// : 'bg-brand text-white hover:bg-brand'
 //                   }`}
 //                 >
 //                   {project.joined ? 'Đã tham gia' : 'Tham gia ngay'}
@@ -177,14 +177,14 @@
 //           ))
 //         ) : (
 //           <div className="text-center py-8">
-//             <p className="text-gray-500">Không có dự án nào phù hợp.</p>
+//             <p className="text-ink-faint">Không có dự án nào phù hợp.</p>
 //           </div>
 //         )}
 //       </div>
       
 //       {/* Thông báo */}
-//       <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-//         <h3 className="font-semibold text-yellow-800 mb-2">Tổ chức dự án riêng?</h3>
+//       <div className="bg-sun-wash p-4 rounded-lg border border-line">
+//         <h3 className="font-semibold text-sun mb-2">Tổ chức dự án riêng?</h3>
 //         <p className="text-sm text-yellow-700 mb-3">
 //           Bạn có thể đề xuất dự án môi trường và kêu gọi mọi người tham gia
 //         </p>
@@ -285,8 +285,8 @@
 //   if (!ok) {
 //     return (
 //       <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-blue-100">
-//         <FaLeaf className="text-green-600 text-2xl mb-2" />
-//         <span className="text-green-800 font-semibold">{title}</span>
+//         <FaLeaf className="text-brand text-2xl mb-2" />
+//         <span className="text-ink font-semibold">{title}</span>
 //       </div>
 //     );
 //   }
@@ -348,21 +348,21 @@
 //   return (
 //     <div className="max-w-6xl mx-auto px-4 py-8 pb-24">
 //       <div className="text-center mb-6">
-//         <h1 className="text-2xl font-bold text-green-800">Dự án môi trường</h1>
-//         <p className="text-gray-600 mt-1">Tham gia các hoạt động và nhận điểm xanh</p>
+//         <h1 className="text-2xl font-bold text-ink">Dự án môi trường</h1>
+//         <p className="text-ink-soft mt-1">Tham gia các hoạt động và nhận điểm xanh</p>
 //       </div>
 
 //       {/* Bộ lọc */}
 //       <div className="flex justify-between items-center mb-4">
 //         <div className="flex space-x-2">
 //           <button
-//             className={`px-3 py-1.5 rounded-full text-sm font-medium ${!favoriteFilter ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+//             className={`px-3 py-1.5 rounded-full text-sm font-medium ${!favoriteFilter ? 'bg-brand text-white' : 'bg-gray-100 text-ink-soft hover:bg-gray-200'}`}
 //             onClick={() => setFavoriteFilter(false)}
 //           >
 //             Tất cả
 //           </button>
 //           <button
-//             className={`px-3 py-1.5 rounded-full text-sm font-medium ${favoriteFilter ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+//             className={`px-3 py-1.5 rounded-full text-sm font-medium ${favoriteFilter ? 'bg-brand text-white' : 'bg-gray-100 text-ink-soft hover:bg-gray-200'}`}
 //             onClick={() => setFavoriteFilter(true)}
 //           >
 //             Đã tham gia
@@ -370,7 +370,7 @@
 //         </div>
 
 //         <button
-//           className="text-sm text-green-600 font-medium"
+//           className="text-sm text-brand font-medium"
 //           onClick={() => {
 //             setLoading(true);
 //             // reset về mock hiện tại
@@ -387,34 +387,34 @@
 //         {loading ? (
 //           <div className="text-center py-12">
 //             <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
-//             <p className="mt-4 text-gray-600">Đang tải danh sách dự án...</p>
+//             <p className="mt-4 text-ink-soft">Đang tải danh sách dự án...</p>
 //           </div>
 //         ) : filteredProjects.length > 0 ? (
 //           filteredProjects.map((project) => {
 //             const dt = parseDateAuto(project.date);
 //             const dateLabel = dt ? dt.toLocaleString('vi-VN', { dateStyle: 'long', timeStyle: 'short' }) : project.date || 'Chưa có ngày';
 //             return (
-//               <div key={project.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+//               <div key={project.id} className="bg-paper rounded-card overflow-hidden">
 //                 <div className="h-48 bg-gray-200">
 //                   <ProjectImage src={project.image} title={project.title} />
 //                 </div>
 
 //                 <div className="p-4">
-//                   <h2 className="font-bold text-green-800 text-lg mb-2">{project.title}</h2>
+//                   <h2 className="font-bold text-ink text-lg mb-2">{project.title}</h2>
 
 //                   <div className="space-y-1 mb-3">
-//                     <div className="flex items-center text-sm text-gray-600">
-//                       <FaMapMarkerAlt className="text-gray-400 mr-2" />
+//                     <div className="flex items-center text-sm text-ink-soft">
+//                       <FaMapMarkerAlt className="text-ink-faint mr-2" />
 //                       <span>{project.location}</span>
 //                     </div>
 
-//                     <div className="flex items-center text-sm text-gray-600">
-//                       <FaCalendarAlt className="text-gray-400 mr-2" />
+//                     <div className="flex items-center text-sm text-ink-soft">
+//                       <FaCalendarAlt className="text-ink-faint mr-2" />
 //                       <span>{dateLabel}</span>
 //                     </div>
 
-//                     <div className="flex items-center text-sm text-gray-600">
-//                       <FaUsers className="text-gray-400 mr-2" />
+//                     <div className="flex items-center text-sm text-ink-soft">
+//                       <FaUsers className="text-ink-faint mr-2" />
 //                       <span>
 //                         {project.participants ?? 0}
 //                         {project.maxParticipants ? ` / ${project.maxParticipants}` : ''} người tham gia
@@ -423,7 +423,7 @@
 //                   </div>
 
 //                   <div className="flex justify-between items-center mb-4">
-//                     <div className="bg-green-50 text-green-700 px-2 py-1 rounded text-sm font-medium">
+//                     <div className="bg-brand-wash text-brand px-2 py-1 rounded text-sm font-medium">
 //                       {project.points ?? 0} điểm xanh
 //                     </div>
 
@@ -433,14 +433,14 @@
 //                       title={project.joined ? 'Rút khỏi dự án' : 'Tham gia dự án'}
 //                       className="focus:outline-none"
 //                     >
-//                       {project.joined ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-gray-400" />}
+//                       {project.joined ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-ink-faint" />}
 //                     </button>
 //                   </div>
 
 //                   <button
 //                     onClick={() => handleJoinClick(project.id)}
 //                     disabled={busyIds.includes(project.id)}
-//                     className={`w-full py-2 rounded-lg text-sm font-medium flex items-center justify-center ${project.joined ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-green-600 text-white hover:bg-green-700'}`}
+//                     className={`w-full py-2 rounded-lg text-sm font-medium flex items-center justify-center ${project.joined ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-brand text-white hover:bg-brand'}`}
 //                   >
 //                     {project.joined ? 'Đã tham gia' : 'Tham gia ngay'}
 //                     <FaChevronRight className="ml-1" size={12} />
@@ -451,14 +451,14 @@
 //           })
 //         ) : (
 //           <div className="text-center py-8">
-//             <p className="text-gray-500">Không có dự án nào phù hợp.</p>
+//             <p className="text-ink-faint">Không có dự án nào phù hợp.</p>
 //           </div>
 //         )}
 //       </div>
 
 //       {/* CTA */}
-//       <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-8">
-//         <h3 className="font-semibold text-yellow-800 mb-2">Tổ chức dự án riêng?</h3>
+//       <div className="bg-sun-wash p-4 rounded-lg border border-line mt-8">
+//         <h3 className="font-semibold text-sun mb-2">Tổ chức dự án riêng?</h3>
 //         <p className="text-sm text-yellow-700 mb-3">Bạn có thể đề xuất dự án môi trường và kêu gọi mọi người tham gia.</p>
 //         <button onClick={() => alert('Tính năng đề xuất dự án hiện đang tạm mock.')} className="w-full py-2 bg-yellow-600 text-white rounded-lg font-semibold hover:bg-yellow-700">
 //           Đề xuất dự án mới
@@ -509,8 +509,8 @@ function ProjectImage({ src, title }) {
   if (!ok) {
     return (
       <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-blue-100">
-        <FaLeaf className="text-green-600 text-2xl mb-2" />
-        <span className="text-green-800 font-semibold">{title}</span>
+        <FaLeaf className="text-brand text-2xl mb-2" />
+        <span className="text-ink font-semibold">{title}</span>
       </div>
     );
   }
@@ -613,20 +613,20 @@ export default function ProjectsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 pb-24">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-green-800">Dự án / Sự kiện môi trường</h1>
-        <p className="text-gray-600 mt-1">Tham gia các hoạt động và nhận điểm xanh</p>
+        <h1 className="text-2xl font-bold text-ink">Dự án / Sự kiện môi trường</h1>
+        <p className="text-ink-soft mt-1">Tham gia các hoạt động và nhận điểm xanh</p>
       </div>
 
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-2">
           <button
-            className={`px-3 py-1.5 rounded-full text-sm font-medium ${!favoriteFilter ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium ${!favoriteFilter ? 'bg-brand text-white' : 'bg-gray-100 text-ink-soft hover:bg-gray-200'}`}
             onClick={() => setFavoriteFilter(false)}
           >
             Tất cả
           </button>
           <button
-            className={`px-3 py-1.5 rounded-full text-sm font-medium ${favoriteFilter ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium ${favoriteFilter ? 'bg-brand text-white' : 'bg-gray-100 text-ink-soft hover:bg-gray-200'}`}
             onClick={() => setFavoriteFilter(true)}
           >
             Đã tham gia
@@ -634,7 +634,7 @@ export default function ProjectsPage() {
         </div>
 
         <div className="flex items-center space-x-3">
-          <div className="text-sm text-gray-500">{projects.length} sự kiện</div>
+          <div className="text-sm text-ink-faint">{projects.length} sự kiện</div>
         </div>
       </div>
 
@@ -642,39 +642,39 @@ export default function ProjectsPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
-            <p className="mt-4 text-gray-600">Đang tải danh sách sự kiện...</p>
+            <p className="mt-4 text-ink-soft">Đang tải danh sách sự kiện...</p>
           </div>
         ) : error ? (
           <div className="text-center py-8">
             <p className="text-red-600 mb-2">{error}</p>
-            <button onClick={() => fetchEvents()} className="px-4 py-2 bg-green-600 text-white rounded">Thử lại</button>
+            <button onClick={() => fetchEvents()} className="px-4 py-2 bg-brand text-white rounded">Thử lại</button>
           </div>
         ) : filteredProjects.length > 0 ? (
           filteredProjects.map((project) => {
             const dt = parseDateAuto(project.date);
             const dateLabel = dt ? dt.toLocaleString('vi-VN', { dateStyle: 'long', timeStyle: 'short' }) : (project.date || 'Chưa có ngày');
             return (
-              <div key={project.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div key={project.id} className="bg-paper rounded-card overflow-hidden">
                 <div className="h-48 bg-gray-200">
                   <ProjectImage src={project.image} title={project.title} />
                 </div>
 
                 <div className="p-4">
-                  <h2 className="font-bold text-green-800 text-lg mb-2">{project.title}</h2>
+                  <h2 className="font-bold text-ink text-lg mb-2">{project.title}</h2>
 
                   <div className="space-y-1 mb-3">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <FaMapMarkerAlt className="text-gray-400 mr-2" />
+                    <div className="flex items-center text-sm text-ink-soft">
+                      <FaMapMarkerAlt className="text-ink-faint mr-2" />
                       <span>{project.location}</span>
                     </div>
 
-                    <div className="flex items-center text-sm text-gray-600">
-                      <FaCalendarAlt className="text-gray-400 mr-2" />
+                    <div className="flex items-center text-sm text-ink-soft">
+                      <FaCalendarAlt className="text-ink-faint mr-2" />
                       <span>{dateLabel}</span>
                     </div>
 
-                    <div className="flex items-center text-sm text-gray-600">
-                      <FaUsers className="text-gray-400 mr-2" />
+                    <div className="flex items-center text-sm text-ink-soft">
+                      <FaUsers className="text-ink-faint mr-2" />
                       <span>
                         {project.participants ?? 0}
                         {project.maxParticipants ? ` / ${project.maxParticipants}` : ''} người tham gia
@@ -683,7 +683,7 @@ export default function ProjectsPage() {
                   </div>
 
                   <div className="flex justify-between items-center mb-4">
-                    <div className="bg-green-50 text-green-700 px-2 py-1 rounded text-sm font-medium">
+                    <div className="bg-brand-wash text-brand px-2 py-1 rounded text-sm font-medium">
                       {project.points ?? 0} điểm xanh
                     </div>
 
@@ -693,14 +693,14 @@ export default function ProjectsPage() {
                       title={project.joined ? 'Rút khỏi dự án' : 'Tham gia dự án'}
                       className="focus:outline-none"
                     >
-                      {project.joined ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-gray-400" />}
+                      {project.joined ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-ink-faint" />}
                     </button>
                   </div>
 
                   <button
                     onClick={() => handleJoinClick(project.id)}
                     disabled={busyIds.includes(project.id)}
-                    className={`w-full py-2 rounded-lg text-sm font-medium flex items-center justify-center ${project.joined ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-green-600 text-white hover:bg-green-700'}`}
+                    className={`w-full py-2 rounded-lg text-sm font-medium flex items-center justify-center ${project.joined ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-brand text-white hover:bg-brand'}`}
                   >
                     {project.joined ? 'Đã tham gia' : 'Tham gia ngay'}
                     <FaChevronRight className="ml-1" size={12} />
@@ -711,13 +711,13 @@ export default function ProjectsPage() {
           })
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-500">Không có sự kiện nào phù hợp.</p>
+            <p className="text-ink-faint">Không có sự kiện nào phù hợp.</p>
           </div>
         )}
       </div>
 
-      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mt-8">
-        <h3 className="font-semibold text-yellow-800 mb-2">Tổ chức sự kiện riêng?</h3>
+      <div className="bg-sun-wash p-4 rounded-lg border border-line mt-8">
+        <h3 className="font-semibold text-sun mb-2">Tổ chức sự kiện riêng?</h3>
         <p className="text-sm text-yellow-700 mb-3">Bạn có thể đề xuất sự kiện môi trường và kêu gọi mọi người tham gia.</p>
         <button onClick={() => alert('Tính năng đề xuất sự kiện đang tạm mock.')} className="w-full py-2 bg-yellow-600 text-white rounded-lg font-semibold hover:bg-yellow-700">
           Đề xuất sự kiện mới

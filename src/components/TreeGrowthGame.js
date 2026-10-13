@@ -416,7 +416,7 @@
 //       <div className="flex items-center justify-center min-h-96">
 //         <div className="text-center">
 //           <div className="animate-spin rounded-full h-12 w-12 border-4 border-green-600 border-t-transparent mx-auto mb-4"></div>
-//           <p className="text-gray-600">Đang tải game...</p>
+//           <p className="text-ink-soft">Đang tải game...</p>
 //         </div>
 //       </div>
 //     );
@@ -427,38 +427,38 @@
 //     return (
 //       <div className="space-y-6">
 //         {/* Header */}
-//         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-6">
+//         <div className="bg-paper rounded-card border border-line p-6">
 //           <div className="flex items-center justify-between">
 //             <button
 //               onClick={onBack}
-//               className="flex items-center text-gray-600 hover:text-gray-900"
+//               className="flex items-center text-ink-soft hover:text-ink"
 //             >
 //               <FaArrowLeft className="mr-2" />
 //               Quay lại
 //             </button>
 
 //             <div className="text-center flex-1">
-//               <h2 className="text-xl font-semibold text-gray-900">Trồng cây xanh</h2>
+//               <h2 className="text-xl font-semibold text-ink">Trồng cây xanh</h2>
 //             </div>
 
 //             <div className="text-right">
-//               <div className="text-xs text-gray-500">Điểm của bạn</div>
-//               <div className="text-lg font-semibold text-green-600">{points.total}</div>
+//               <div className="text-xs text-ink-faint">Điểm của bạn</div>
+//               <div className="text-lg font-semibold text-brand">{points.total}</div>
 //             </div>
 //           </div>
 //         </div>
 
 //         {/* Already played today message */}
-//         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-amber-200 p-8 text-center">
+//         <div className="bg-paper rounded-card border border-amber-200 p-8 text-center">
 //           <div className="text-6xl mb-4">🌳</div>
-//           <h3 className="text-xl font-bold text-gray-800 mb-2">
+//           <h3 className="text-xl font-bold text-ink mb-2">
 //             Bạn đã hoàn thành trò chơi hôm nay!
 //           </h3>
-//           <p className="text-gray-600 mb-4">
+//           <p className="text-ink-soft mb-4">
 //             Bạn đã nhận 10 điểm xanh từ việc trồng cây. Hãy quay lại vào ngày mai để tiếp tục trồng cây mới nhé!
 //           </p>
-//           <div className="bg-blue-50 rounded-lg border border-blue-200 p-4 mt-6">
-//             <p className="text-sm text-blue-800">
+//           <div className="bg-sky-wash rounded-xl border border-line p-4 mt-6">
+//             <p className="text-sm text-sky">
 //               💡 <strong>Mẹo:</strong> Trong lúc chờ, bạn có thể thực hiện các hành động xanh khác để kiếm thêm điểm!
 //             </p>
 //           </div>
@@ -470,42 +470,42 @@
 //   return (
 //     <div className="space-y-6">
 //       {/* Header */}
-//       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+//       <div className="bg-paper rounded-card border border-line p-6 relative overflow-hidden">
 //         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400 to-emerald-400 opacity-10 rounded-full blur-2xl"></div>
 
 //         <div className="relative flex items-center justify-between">
 //           <button
 //             onClick={onBack}
-//             className="flex items-center text-gray-600 hover:text-gray-900"
+//             className="flex items-center text-ink-soft hover:text-ink"
 //           >
 //             <FaArrowLeft className="mr-2" />
 //             Quay lại
 //           </button>
 
 //           <div className="text-center">
-//             <h2 className="text-xl font-semibold text-gray-900">Trồng cây xanh</h2>
-//             <p className="text-sm text-gray-600 mt-1">
+//             <h2 className="text-xl font-semibold text-ink">Trồng cây xanh</h2>
+//             <p className="text-sm text-ink-soft mt-1">
 //               Chăm sóc cây để nó lớn lên! {isSaving && '💾'}
 //             </p>
 //           </div>
 
 //           <div className="text-right">
-//             <div className="text-xs text-gray-500">Điểm của bạn</div>
-//             <div className="text-lg font-semibold text-green-600">{points.total}</div>
+//             <div className="text-xs text-ink-faint">Điểm của bạn</div>
+//             <div className="text-lg font-semibold text-brand">{points.total}</div>
 //           </div>
 //         </div>
 //       </div>
 
 //       {/* Tree Display */}
-//       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-8 relative overflow-hidden">
+//       <div className="bg-paper rounded-card border border-line p-8 relative overflow-hidden">
 //         {/* Sky gradient */}
 //         <div className="absolute inset-0 bg-gradient-to-b from-blue-100 via-blue-50 to-green-50 opacity-50"></div>
 
 //         <div className="relative text-center">
 //           {/* Stage info */}
 //           <div className="mb-4">
-//             <h3 className="text-lg font-semibold text-gray-800">{currentStage.name}</h3>
-//             <p className="text-sm text-gray-600">{currentStage.description}</p>
+//             <h3 className="text-lg font-semibold text-ink">{currentStage.name}</h3>
+//             <p className="text-sm text-ink-soft">{currentStage.description}</p>
 //           </div>
 
 //           {/* Tree visualization */}
@@ -538,7 +538,7 @@
 
 //           {/* Message */}
 //           {message && (
-//             <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm animate-pulse">
+//             <div className="mt-4 p-3 bg-brand-wash border border-green-200 rounded-lg text-ink text-sm animate-pulse">
 //               {message}
 //             </div>
 //           )}
@@ -548,13 +548,13 @@
 //       {/* Stats */}
 //       <div className="grid grid-cols-3 gap-4">
 //         {/* Health */}
-//         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-4">
+//         <div className="bg-paper rounded-card border border-line p-4">
 //           <div className="flex items-center justify-between mb-2">
-//             <span className="text-sm text-gray-600 flex items-center">
+//             <span className="text-sm text-ink-soft flex items-center">
 //               <FaHeart className="text-red-500 mr-1" />
 //               Sức khỏe
 //             </span>
-//             <span className="text-sm font-semibold text-gray-900">{Math.round(treeHealth)}%</span>
+//             <span className="text-sm font-semibold text-ink">{Math.round(treeHealth)}%</span>
 //           </div>
 //           <div className="w-full bg-gray-200 rounded-full h-2">
 //             <div
@@ -565,34 +565,34 @@
 //         </div>
 
 //         {/* Water */}
-//         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-4">
+//         <div className="bg-paper rounded-card border border-line p-4">
 //           <div className="flex items-center justify-between mb-2">
-//             <span className="text-sm text-gray-600 flex items-center">
+//             <span className="text-sm text-ink-soft flex items-center">
 //               <FaTint className="text-blue-500 mr-1" />
 //               Nước
 //             </span>
-//             <span className="text-sm font-semibold text-gray-900">{Math.round(waterLevel)}%</span>
+//             <span className="text-sm font-semibold text-ink">{Math.round(waterLevel)}%</span>
 //           </div>
 //           <div className="w-full bg-gray-200 rounded-full h-2">
 //             <div
-//               className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+//               className="bg-sky-wash0 h-2 rounded-full transition-all duration-500"
 //               style={{ width: `${waterLevel}%` }}
 //             ></div>
 //           </div>
 //         </div>
 
 //         {/* Sun */}
-//         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-4">
+//         <div className="bg-paper rounded-card border border-line p-4">
 //           <div className="flex items-center justify-between mb-2">
-//             <span className="text-sm text-gray-600 flex items-center">
+//             <span className="text-sm text-ink-soft flex items-center">
 //               <FaSun className="text-yellow-500 mr-1" />
 //               Ánh sáng
 //             </span>
-//             <span className="text-sm font-semibold text-gray-900">{Math.round(sunLevel)}%</span>
+//             <span className="text-sm font-semibold text-ink">{Math.round(sunLevel)}%</span>
 //           </div>
 //           <div className="w-full bg-gray-200 rounded-full h-2">
 //             <div
-//               className="bg-yellow-500 h-2 rounded-full transition-all duration-500"
+//               className="bg-sun-wash0 h-2 rounded-full transition-all duration-500"
 //               style={{ width: `${sunLevel}%` }}
 //             ></div>
 //           </div>
@@ -603,39 +603,39 @@
 //       <div className="grid grid-cols-3 gap-4">
 //         <button
 //           onClick={handleWater}
-//           className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-blue-200 p-4 hover:shadow-md transition-all hover:scale-105 active:scale-95"
+//           className="bg-paper rounded-card border border-line p-4 transition-all hover:scale-105 active:scale-95"
 //         >
 //           <div className="text-center">
 //             <FaTint className="text-blue-500 text-3xl mx-auto mb-2" />
-//             <div className="text-sm font-medium text-gray-900">Tưới nước</div>
-//             <div className="text-xs text-gray-600 mt-1">+30% nước</div>
+//             <div className="text-sm font-medium text-ink">Tưới nước</div>
+//             <div className="text-xs text-ink-soft mt-1">+30% nước</div>
 //           </div>
 //         </button>
 
 //         <button
 //           onClick={handleSun}
-//           className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-yellow-200 p-4 hover:shadow-md transition-all hover:scale-105 active:scale-95"
+//           className="bg-paper rounded-card border border-line p-4 transition-all hover:scale-105 active:scale-95"
 //         >
 //           <div className="text-center">
 //             <FaSun className="text-yellow-500 text-3xl mx-auto mb-2" />
-//             <div className="text-sm font-medium text-gray-900">Phơi nắng</div>
-//             <div className="text-xs text-gray-600 mt-1">+30% ánh sáng</div>
+//             <div className="text-sm font-medium text-ink">Phơi nắng</div>
+//             <div className="text-xs text-ink-soft mt-1">+30% ánh sáng</div>
 //           </div>
 //         </button>
 
 //         <button
 //           onClick={handleFertilize}
 //           disabled={fertilizer === 0}
-//           className={`bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-green-200 p-4 transition-all ${
+//           className={`bg-paper  rounded-card border border-green-200 p-4 transition-all ${
 //             fertilizer > 0
-//               ? 'hover:shadow-md hover:scale-105 active:scale-95'
-//               : 'opacity-50 cursor-not-allowed'
+//               ? ' hover:scale-105 active:scale-95'
+// : 'opacity-50 cursor-not-allowed'
 //           }`}
 //         >
 //           <div className="text-center">
 //             <FaLeaf className="text-green-500 text-3xl mx-auto mb-2" />
-//             <div className="text-sm font-medium text-gray-900">Bón phân</div>
-//             <div className="text-xs text-gray-600 mt-1">
+//             <div className="text-sm font-medium text-ink">Bón phân</div>
+//             <div className="text-xs text-ink-soft mt-1">
 //               {fertilizer > 0 ? `Còn ${fertilizer} lần` : 'Hết phân'}
 //             </div>
 //           </div>
@@ -643,13 +643,13 @@
 //       </div>
 
 //       {/* Shop phân bón */}
-//       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-amber-200 p-4">
+//       <div className="bg-paper rounded-card border border-amber-200 p-4">
 //         <div className="flex items-center justify-between">
 //           <div className="flex items-center">
 //             <FaShoppingCart className="text-amber-600 mr-2" />
 //             <div>
-//               <div className="text-sm font-medium text-gray-900">Cửa hàng phân bón</div>
-//               <div className="text-xs text-gray-600">1 phân bón = {FERTILIZER_COST} điểm xanh</div>
+//               <div className="text-sm font-medium text-ink">Cửa hàng phân bón</div>
+//               <div className="text-xs text-ink-soft">1 phân bón = {FERTILIZER_COST} điểm xanh</div>
 //             </div>
 //           </div>
 //           <button
@@ -657,8 +657,8 @@
 //             disabled={points.total < FERTILIZER_COST || isSaving}
 //             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
 //               points.total >= FERTILIZER_COST && !isSaving
-//                 ? 'bg-green-600 text-white hover:bg-green-700'
-//                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+//                 ? 'bg-brand text-white hover:bg-brand'
+// : 'bg-gray-300 text-ink-faint cursor-not-allowed'
 //             }`}
 //           >
 //             {isSaving ? 'Đang xử lý...' : 'Mua phân'}
@@ -668,13 +668,13 @@
 
 //       {/* Complete/Reset */}
 //       {gameCompleted ? (
-//         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-green-200 p-6">
+//         <div className="bg-paper rounded-card border border-green-200 p-6">
 //           <div className="text-center">
 //             <FaTrophy className="text-yellow-500 text-5xl mx-auto mb-4" />
-//             <h3 className="text-xl font-bold text-green-800 mb-2">
+//             <h3 className="text-xl font-bold text-ink mb-2">
 //               Chúc mừng! Bạn đã trồng cây thành công!
 //             </h3>
-//             <p className="text-gray-600 mb-4">
+//             <p className="text-ink-soft mb-4">
 //               Cây của bạn đã trưởng thành và sẽ giúp làm sạch không khí!
 //             </p>
 //             <div className="space-y-3">
@@ -682,19 +682,19 @@
 //                 <button
 //                   onClick={handleClaimReward}
 //                   disabled={isSaving}
-//                   className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all disabled:opacity-50"
+//                   className="w-full py-3 px-4 sx-btn sx-btn-primary disabled:opacity-50"
 //                 >
 //                   {isSaving ? 'Đang xử lý...' : 'Nhận thưởng (+10 điểm)'}
 //                 </button>
 //               ) : (
-//                 <div className="w-full py-3 px-4 bg-green-100 text-green-800 rounded-lg font-medium text-center">
+//                 <div className="w-full py-3 px-4 bg-brand-wash text-ink rounded-lg font-medium text-center">
 //                   ✓ Đã nhận thưởng
 //                 </div>
 //               )}
 //               <button
 //                 onClick={handleReset}
 //                 disabled={isSaving}
-//                 className="w-full py-3 px-4 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+//                 className="w-full py-3 px-4 bg-paper border border-line text-ink-soft rounded-lg font-medium hover:bg-canvas transition-colors disabled:opacity-50"
 //               >
 //                 Trồng cây mới
 //               </button>
@@ -702,12 +702,12 @@
 //           </div>
 //         </div>
 //       ) : (
-//         <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
+//         <div className="bg-sky-wash rounded-xl border border-line p-4">
 //           <h4 className="font-semibold text-blue-900 mb-2 flex items-center">
 //             <FaBolt className="mr-2" />
 //             Hướng dẫn chơi
 //           </h4>
-//           <ul className="text-sm text-blue-800 space-y-1 pl-5 list-disc">
+//           <ul className="text-sm text-sky space-y-1 pl-5 list-disc">
 //             <li>Luôn giữ mức nước và ánh sáng trên 30%</li>
 //             <li>Làm nhiệm vụ xanh để kiếm điểm mua phân bón</li>
 //             <li>Phân bón giúp cây phát triển nhanh hơn (+15% sức khỏe)</li>
@@ -1063,7 +1063,7 @@ export default function TreeGrowthGame({ onBack }) {
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-green-600 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-gray-600">Đang tải game...</p>
+          <p className="text-ink-soft">Đang tải game...</p>
         </div>
       </div>
     );
@@ -1072,31 +1072,31 @@ export default function TreeGrowthGame({ onBack }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+      <div className="bg-paper rounded-card border border-line p-6 relative overflow-hidden">
         <div className="relative flex items-center justify-between">
-          <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900">
+          <button onClick={onBack} className="flex items-center text-ink-soft hover:text-ink">
             <FaArrowLeft className="mr-2" />
             Quay lại
           </button>
 
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900">Trồng cây xanh</h2>
-            <p className="text-sm text-gray-600 mt-1">{isSaving ? '💾 Đang lưu...' : 'Chăm sóc cây để nó lớn lên!'}</p>
+            <h2 className="text-xl font-semibold text-ink">Trồng cây xanh</h2>
+            <p className="text-sm text-ink-soft mt-1">{isSaving ? '💾 Đang lưu...' : 'Chăm sóc cây để nó lớn lên!'}</p>
           </div>
 
           <div className="text-right">
-            <div className="text-xs text-gray-500">Điểm của bạn</div>
-            <div className="text-lg font-semibold text-green-600">{points.total}</div>
+            <div className="text-xs text-ink-faint">Điểm của bạn</div>
+            <div className="text-lg font-semibold text-brand">{points.total}</div>
           </div>
         </div>
       </div>
 
       {/* Tree Display */}
-      <div className="bg-white/80 rounded-xl shadow-sm border border-gray-200 p-8 relative overflow-hidden">
+      <div className="bg-paper rounded-card border border-line p-8 relative overflow-hidden">
         <div className="relative text-center">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">{currentStage.name}</h3>
-            <p className="text-sm text-gray-600">{currentStage.description}</p>
+            <h3 className="text-lg font-semibold text-ink">{currentStage.name}</h3>
+            <p className="text-sm text-ink-soft">{currentStage.description}</p>
           </div>
 
           <div className="my-8 relative">
@@ -1110,81 +1110,81 @@ export default function TreeGrowthGame({ onBack }) {
             {lastAction === 'fertilizer' && (<div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 animate-bounce">✨</div>)}
           </div>
 
-          {message && (<div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm animate-pulse">{message}</div>)}
+          {message && (<div className="mt-4 p-3 bg-brand-wash border border-green-200 rounded-lg text-ink text-sm animate-pulse">{message}</div>)}
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white/80 rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="bg-paper rounded-card border border-line p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600 flex items-center"><FaHeart className="text-red-500 mr-1" />Sức khỏe</span>
-            <span className="text-sm font-semibold text-gray-900">{Math.round(treeHealth)}%</span>
+            <span className="text-sm text-ink-soft flex items-center"><FaHeart className="text-red-500 mr-1" />Sức khỏe</span>
+            <span className="text-sm font-semibold text-ink">{Math.round(treeHealth)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div className="bg-gradient-to-r from-red-500 to-green-500 h-2 rounded-full transition-all duration-500" style={{ width: `${treeHealth}%` }}></div>
           </div>
         </div>
 
-        <div className="bg-white/80 rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="bg-paper rounded-card border border-line p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600 flex items-center"><FaTint className="text-blue-500 mr-1" />Nước</span>
-            <span className="text-sm font-semibold text-gray-900">{Math.round(waterLevel)}%</span>
+            <span className="text-sm text-ink-soft flex items-center"><FaTint className="text-blue-500 mr-1" />Nước</span>
+            <span className="text-sm font-semibold text-ink">{Math.round(waterLevel)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-blue-500 h-2 rounded-full transition-all duration-500" style={{ width: `${waterLevel}%` }}></div>
+            <div className="bg-sky-wash0 h-2 rounded-full transition-all duration-500" style={{ width: `${waterLevel}%` }}></div>
           </div>
         </div>
 
-        <div className="bg-white/80 rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="bg-paper rounded-card border border-line p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600 flex items-center"><FaSun className="text-yellow-500 mr-1" />Ánh sáng</span>
-            <span className="text-sm font-semibold text-gray-900">{Math.round(sunLevel)}%</span>
+            <span className="text-sm text-ink-soft flex items-center"><FaSun className="text-yellow-500 mr-1" />Ánh sáng</span>
+            <span className="text-sm font-semibold text-ink">{Math.round(sunLevel)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-yellow-500 h-2 rounded-full transition-all duration-500" style={{ width: `${sunLevel}%` }}></div>
+            <div className="bg-sun-wash0 h-2 rounded-full transition-all duration-500" style={{ width: `${sunLevel}%` }}></div>
           </div>
         </div>
       </div>
 
       {/* Actions */}
       <div className="grid grid-cols-3 gap-4">
-        <button onClick={handleWater} className="bg-white/80 rounded-xl shadow-sm border border-blue-200 p-4 hover:shadow-md transition-all hover:scale-105 active:scale-95">
+        <button onClick={handleWater} className="bg-paper rounded-card border border-line p-4 transition-all hover:scale-105 active:scale-95">
           <div className="text-center">
             <FaTint className="text-blue-500 text-3xl mx-auto mb-2" />
-            <div className="text-sm font-medium text-gray-900">Tưới nước</div>
-            <div className="text-xs text-gray-600 mt-1">+30% nước</div>
+            <div className="text-sm font-medium text-ink">Tưới nước</div>
+            <div className="text-xs text-ink-soft mt-1">+30% nước</div>
           </div>
         </button>
 
-        <button onClick={handleSun} className="bg-white/80 rounded-xl shadow-sm border border-yellow-200 p-4 hover:shadow-md transition-all hover:scale-105 active:scale-95">
+        <button onClick={handleSun} className="bg-paper rounded-card border border-line p-4 transition-all hover:scale-105 active:scale-95">
           <div className="text-center">
             <FaSun className="text-yellow-500 text-3xl mx-auto mb-2" />
-            <div className="text-sm font-medium text-gray-900">Phơi nắng</div>
-            <div className="text-xs text-gray-600 mt-1">+30% ánh sáng</div>
+            <div className="text-sm font-medium text-ink">Phơi nắng</div>
+            <div className="text-xs text-ink-soft mt-1">+30% ánh sáng</div>
           </div>
         </button>
 
-        <button onClick={handleFertilize} disabled={fertilizer === 0} className={`bg-white/80 rounded-xl shadow-sm border border-green-200 p-4 transition-all ${fertilizer > 0 ? 'hover:shadow-md hover:scale-105 active:scale-95' : 'opacity-50 cursor-not-allowed'}`}>
+        <button onClick={handleFertilize} disabled={fertilizer === 0} className={`bg-paper rounded-card border border-green-200 p-4 transition-all ${fertilizer > 0 ? ' hover:scale-105 active:scale-95' : 'opacity-50 cursor-not-allowed'}`}>
           <div className="text-center">
             <FaLeaf className="text-green-500 text-3xl mx-auto mb-2" />
-            <div className="text-sm font-medium text-gray-900">Bón phân</div>
-            <div className="text-xs text-gray-600 mt-1">{fertilizer > 0 ? `Còn ${fertilizer} lần` : 'Hết phân'}</div>
+            <div className="text-sm font-medium text-ink">Bón phân</div>
+            <div className="text-xs text-ink-soft mt-1">{fertilizer > 0 ? `Còn ${fertilizer} lần` : 'Hết phân'}</div>
           </div>
         </button>
       </div>
 
       {/* Shop phân bón */}
-      <div className="bg-white/80 rounded-xl shadow-sm border border-amber-200 p-4">
+      <div className="bg-paper rounded-card border border-amber-200 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <FaShoppingCart className="text-amber-600 mr-2" />
             <div>
-              <div className="text-sm font-medium text-gray-900">Cửa hàng phân bón</div>
-              <div className="text-xs text-gray-600">1 phân bón = {FERTILIZER_COST} điểm xanh</div>
+              <div className="text-sm font-medium text-ink">Cửa hàng phân bón</div>
+              <div className="text-xs text-ink-soft">1 phân bón = {FERTILIZER_COST} điểm xanh</div>
             </div>
           </div>
-          <button onClick={handleBuyFertilizer} disabled={points.total < FERTILIZER_COST || isSaving} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${points.total >= FERTILIZER_COST && !isSaving ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
+          <button onClick={handleBuyFertilizer} disabled={points.total < FERTILIZER_COST || isSaving} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${points.total >= FERTILIZER_COST && !isSaving ? 'bg-brand text-white hover:bg-brand' : 'bg-gray-300 text-ink-faint cursor-not-allowed'}`}>
             {isSaving ? 'Đang xử lý...' : 'Mua phân'}
           </button>
         </div>
@@ -1192,27 +1192,27 @@ export default function TreeGrowthGame({ onBack }) {
 
       {/* Complete/Reset */}
       {gameCompleted ? (
-        <div className="bg-white/80 rounded-xl shadow-sm border border-green-200 p-6">
+        <div className="bg-paper rounded-card border border-green-200 p-6">
           <div className="text-center">
             <FaTrophy className="text-yellow-500 text-5xl mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-green-800 mb-2">Chúc mừng! Bạn đã trồng cây thành công!</h3>
-            <p className="text-gray-600 mb-4">Cây của bạn đã trưởng thành và sẽ giúp làm sạch không khí!</p>
+            <h3 className="text-xl font-bold text-ink mb-2">Chúc mừng! Bạn đã trồng cây thành công!</h3>
+            <p className="text-ink-soft mb-4">Cây của bạn đã trưởng thành và sẽ giúp làm sạch không khí!</p>
             <div className="space-y-3">
               {!rewardClaimed ? (
-                <button onClick={handleClaimReward} disabled={isSaving || claimLock} className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all disabled:opacity-50">
+                <button onClick={handleClaimReward} disabled={isSaving || claimLock} className="w-full py-3 px-4 sx-btn sx-btn-primary disabled:opacity-50">
                   {isSaving ? 'Đang xử lý...' : 'Nhận thưởng (+10 điểm)'}
                 </button>
               ) : (
-                <div className="w-full py-3 px-4 bg-green-100 text-green-800 rounded-lg font-medium text-center">✓ Đã nhận thưởng cho cây này</div>
+                <div className="w-full py-3 px-4 bg-brand-wash text-ink rounded-lg font-medium text-center">✓ Đã nhận thưởng cho cây này</div>
               )}
-              <button onClick={handleReset} disabled={isSaving} className="w-full py-3 px-4 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50">Trồng cây mới</button>
+              <button onClick={handleReset} disabled={isSaving} className="w-full py-3 px-4 bg-paper border border-line text-ink-soft rounded-lg font-medium hover:bg-canvas transition-colors disabled:opacity-50">Trồng cây mới</button>
             </div>
           </div>
         </div>
       ) : (
-        <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
+        <div className="bg-sky-wash rounded-xl border border-line p-4">
           <h4 className="font-semibold text-blue-900 mb-2 flex items-center"><FaBolt className="mr-2" />Hướng dẫn chơi</h4>
-          <ul className="text-sm text-blue-800 space-y-1 pl-5 list-disc">
+          <ul className="text-sm text-sky space-y-1 pl-5 list-disc">
             <li>Luôn giữ mức nước và ánh sáng trên 30%</li>
             <li>Làm nhiệm vụ xanh để kiếm điểm mua phân bón</li>
             <li>Phân bón giúp cây phát triển nhanh hơn (+15% sức khỏe)</li>

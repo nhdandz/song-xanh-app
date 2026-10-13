@@ -432,14 +432,14 @@ export default function BarcodeScan() {
   };
 
   const getScoreColor = (score) => {
-    if (score >= 8) return 'text-green-600';
+    if (score >= 8) return 'text-brand';
     if (score >= 5) return 'text-yellow-600';
     return 'text-red-600';
   };
 
   const getScoreBg = (score) => {
-    if (score >= 8) return 'bg-green-50';
-    if (score >= 5) return 'bg-yellow-50';
+    if (score >= 8) return 'bg-brand-wash';
+    if (score >= 5) return 'bg-sun-wash';
     return 'bg-red-50';
   };
 
@@ -448,13 +448,13 @@ export default function BarcodeScan() {
   const renderScanView = () => (
     <div className="space-y-6 pb-20">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-green-800">Quét mã sản phẩm</h1>
-        <p className="text-gray-600 mt-1">Kiểm tra mức độ thân thiện với môi trường</p>
+        <h1 className="text-2xl font-bold text-ink">Quét mã sản phẩm</h1>
+        <p className="text-ink-soft mt-1">Kiểm tra mức độ thân thiện với môi trường</p>
       </div>
 
       {/* Camera Scanner */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-gray-900">
+      <div className="bg-paper p-4 rounded-card">
+        <div className="border-2 border-dashed border-line rounded-lg overflow-hidden bg-gray-900">
           <div id="reader" className={`w-full ${scanning ? 'min-h-[280px]' : 'h-48'} flex items-center justify-center relative`}>
             {scanning ? (
               <video
@@ -464,8 +464,8 @@ export default function BarcodeScan() {
               />
             ) : (
               <div className="text-center p-6">
-                <FaCamera className="text-gray-400 text-4xl mx-auto mb-3" />
-                <p className="text-gray-400 text-sm">Nhấn nút bên dưới để quét</p>
+                <FaCamera className="text-ink-faint text-4xl mx-auto mb-3" />
+                <p className="text-ink-faint text-sm">Nhấn nút bên dưới để quét</p>
               </div>
             )}
           </div>
@@ -496,7 +496,7 @@ export default function BarcodeScan() {
           {!scanning ? (
             <button
               onClick={handleCameraButton}
-              className="col-span-2 flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700"
+              className="col-span-2 flex items-center justify-center gap-2 bg-brand text-white py-3 rounded-lg font-semibold hover:bg-brand"
             >
               <FaCamera />
               Mở camera quét
@@ -539,21 +539,21 @@ export default function BarcodeScan() {
         </div>
 
         {!scannerAvailable && (
-          <div className="mt-3 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-sm text-yellow-800">
+          <div className="mt-3 p-3 bg-sun-wash border-l-4 border-sun text-sm text-sun">
             <strong>Lưu ý:</strong> Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập hoặc thử chọn ảnh từ máy.
           </div>
         )}
       </div>
 
       {/* Search Input */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="bg-paper p-4 rounded-card">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
             <input
               type="text"
               placeholder="Nhập mã vạch thủ công..."
-              className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full pl-10 pr-3 py-2.5 border border-line rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -561,7 +561,7 @@ export default function BarcodeScan() {
           </div>
           <button
             onClick={handleSearch}
-            className="px-5 py-2.5 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700"
+            className="px-5 py-2.5 bg-brand text-white rounded-lg font-semibold hover:bg-brand"
           >
             Tìm
           </button>
@@ -569,12 +569,12 @@ export default function BarcodeScan() {
       </div>
 
       {/* Tips */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+      <div className="bg-sky-wash p-4 rounded-xl border border-line">
         <div className="flex items-start gap-3">
-          <FaLightbulb className="text-blue-600 text-xl mt-0.5 flex-shrink-0" />
+          <FaLightbulb className="text-sky text-xl mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="font-semibold text-blue-800 mb-2">Mẹo mua sắm xanh</h3>
-            <ul className="text-sm text-blue-700 space-y-1">
+            <h3 className="font-semibold text-sky mb-2">Mẹo mua sắm xanh</h3>
+            <ul className="text-sm text-sky space-y-1">
               <li>• Chọn sản phẩm có điểm xanh cao (từ 8.0 trở lên)</li>
               <li>• Ưu tiên bao bì có thể tái chế</li>
               <li>• Giảm sử dụng sản phẩm nhựa dùng một lần</li>
@@ -586,15 +586,15 @@ export default function BarcodeScan() {
 
       {/* Recent History */}
       {scanHistory.length > 0 && (
-        <div className="bg-white p-4 rounded-lg shadow-md">
+        <div className="bg-paper p-4 rounded-card">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-700 flex items-center gap-2">
-              <FaHistory className="text-gray-500" />
+            <h2 className="font-semibold text-ink-soft flex items-center gap-2">
+              <FaHistory className="text-ink-faint" />
               Quét gần đây
             </h2>
             <button
               onClick={() => setViewMode('history')}
-              className="text-sm text-green-600 hover:text-green-700"
+              className="text-sm text-brand hover:text-brand"
             >
               Xem tất cả
             </button>
@@ -607,16 +607,16 @@ export default function BarcodeScan() {
                 <div
                   key={idx}
                   onClick={() => handleViewHistoryProduct(item)}
-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
+                  className="flex items-center gap-3 p-3 bg-canvas rounded-lg hover:bg-gray-100 cursor-pointer"
                 >
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <FaBarcode className="text-green-600" />
+                  <div className="w-10 h-10 bg-brand-wash rounded-lg flex items-center justify-center">
+                    <FaBarcode className="text-brand" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-800 truncate text-sm">
+                    <h3 className="font-medium text-ink truncate text-sm">
                       {product?.name || item.name || 'Sản phẩm'}
                     </h3>
-                    <p className="text-xs text-gray-500">{item.timestamp}</p>
+                    <p className="text-xs text-ink-faint">{item.timestamp}</p>
                   </div>
                   {product && (
                     <div className={`px-2 py-0.5 rounded text-xs font-semibold ${getScoreColor(product.greenScore)}`}>
@@ -640,13 +640,13 @@ export default function BarcodeScan() {
         <div className="flex items-center mb-4">
           <button
             onClick={() => { setViewMode('scan'); if (scanning) stopScanner(); }}
-            className="mr-3 text-gray-600 hover:text-gray-800"
+            className="mr-3 text-ink-soft hover:text-ink"
           >
             <FaArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-bold text-green-800">Kết quả đánh giá</h1>
+          <h1 className="text-xl font-bold text-ink">Kết quả đánh giá</h1>
           {evaluating && (
-            <div className="ml-auto flex items-center gap-2 text-xs text-blue-600">
+            <div className="ml-auto flex items-center gap-2 text-xs text-sky">
               <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
                 <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
@@ -657,23 +657,23 @@ export default function BarcodeScan() {
         </div>
 
         {/* Product Info */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-paper rounded-card overflow-hidden">
           <div className={`p-4 ${getScoreBg(scannedProduct.greenScore || 0)}`}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h2 className="text-lg font-bold text-gray-800">{scannedProduct.name}</h2>
-                {scannedProduct.brand && <p className="text-sm text-gray-600">{scannedProduct.brand}</p>}
-                <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                <h2 className="text-lg font-bold text-ink">{scannedProduct.name}</h2>
+                {scannedProduct.brand && <p className="text-sm text-ink-soft">{scannedProduct.brand}</p>}
+                <div className="flex items-center gap-2 text-xs text-ink-faint mt-1">
                   <FaBarcode />
                   <span>{scannedProduct.barcode}</span>
                 </div>
               </div>
               <div className="text-center ml-3">
-                <p className="text-xs text-gray-500">Điểm xanh</p>
+                <p className="text-xs text-ink-faint">Điểm xanh</p>
                 <p className={`text-3xl font-bold ${getScoreColor(scannedProduct.greenScore || 0)}`}>
                   {scannedProduct.greenScore !== null ? scannedProduct.greenScore.toFixed(1) : '?'}
                 </p>
-                <p className="text-xs text-gray-500">/ 10</p>
+                <p className="text-xs text-ink-faint">/ 10</p>
               </div>
             </div>
           </div>
@@ -681,67 +681,67 @@ export default function BarcodeScan() {
           <div className="p-4 space-y-4">
             {/* Category & Packaging */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-500">Danh mục</p>
-                <p className="font-semibold text-sm text-gray-800">{scannedProduct.category || '-'}</p>
+              <div className="text-center p-3 bg-canvas rounded-lg">
+                <p className="text-xs text-ink-faint">Danh mục</p>
+                <p className="font-semibold text-sm text-ink">{scannedProduct.category || '-'}</p>
               </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-500">Bao bì</p>
-                <p className="font-semibold text-sm text-gray-800">{scannedProduct.packaging || '-'}</p>
+              <div className="text-center p-3 bg-canvas rounded-lg">
+                <p className="text-xs text-ink-faint">Bao bì</p>
+                <p className="font-semibold text-sm text-ink">{scannedProduct.packaging || '-'}</p>
               </div>
             </div>
 
             {/* Features */}
             <div className="space-y-2">
-              <div className={`flex items-center gap-3 p-3 rounded-lg ${scannedProduct.recyclable ? 'bg-green-50' : 'bg-gray-50'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${scannedProduct.recyclable ? 'bg-green-500' : 'bg-gray-300'}`}>
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${scannedProduct.recyclable ? 'bg-brand-wash' : 'bg-canvas'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${scannedProduct.recyclable ? 'bg-brand-bright' : 'bg-gray-300'}`}>
                   <FaRecycle className="text-white text-sm" />
                 </div>
-                <span className={`text-sm font-medium ${scannedProduct.recyclable ? 'text-green-800' : 'text-gray-600'}`}>
+                <span className={`text-sm font-medium ${scannedProduct.recyclable ? 'text-ink' : 'text-ink-soft'}`}>
                   {scannedProduct.recyclable ? 'Có thể tái chế' : 'Không thể tái chế'}
                 </span>
               </div>
 
-              <div className={`flex items-center gap-3 p-3 rounded-lg ${scannedProduct.biodegradable ? 'bg-green-50' : 'bg-gray-50'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${scannedProduct.biodegradable ? 'bg-green-500' : 'bg-gray-300'}`}>
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${scannedProduct.biodegradable ? 'bg-brand-wash' : 'bg-canvas'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${scannedProduct.biodegradable ? 'bg-brand-bright' : 'bg-gray-300'}`}>
                   <FaLeaf className="text-white text-sm" />
                 </div>
-                <span className={`text-sm font-medium ${scannedProduct.biodegradable ? 'text-green-800' : 'text-gray-600'}`}>
+                <span className={`text-sm font-medium ${scannedProduct.biodegradable ? 'text-ink' : 'text-ink-soft'}`}>
                   {scannedProduct.biodegradable ? 'Phân hủy sinh học' : 'Không phân hủy sinh học'}
                 </span>
               </div>
 
-              <div className={`flex items-center gap-3 p-3 rounded-lg ${scannedProduct.plasticFree ? 'bg-green-50' : 'bg-gray-50'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${scannedProduct.plasticFree ? 'bg-green-500' : 'bg-gray-300'}`}>
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${scannedProduct.plasticFree ? 'bg-brand-wash' : 'bg-canvas'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${scannedProduct.plasticFree ? 'bg-brand-bright' : 'bg-gray-300'}`}>
                   {scannedProduct.plasticFree ? <FaCheckCircle className="text-white text-sm" /> : <FaTimesCircle className="text-white text-sm" />}
                 </div>
-                <span className={`text-sm font-medium ${scannedProduct.plasticFree ? 'text-green-800' : 'text-gray-600'}`}>
+                <span className={`text-sm font-medium ${scannedProduct.plasticFree ? 'text-ink' : 'text-ink-soft'}`}>
                   {scannedProduct.plasticFree ? 'Không chứa nhựa' : 'Có chứa nhựa'}
                 </span>
               </div>
             </div>
 
             {/* Recommendation */}
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <div className="p-4 bg-sky-wash rounded-xl border border-line">
               <div className="flex items-start gap-2">
-                <FaExclamationTriangle className="text-blue-600 mt-0.5 flex-shrink-0" />
+                <FaExclamationTriangle className="text-sky mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-blue-800 text-sm mb-1">Gợi ý</h3>
-                  <p className="text-sm text-blue-700">{scannedProduct.recommendation}</p>
+                  <h3 className="font-semibold text-sky text-sm mb-1">Gợi ý</h3>
+                  <p className="text-sm text-sky">{scannedProduct.recommendation}</p>
                 </div>
               </div>
             </div>
 
             {/* AI Analysis */}
             {scannedProduct.analysis && (
-              <div className="p-4 bg-green-50 rounded-lg border border-green-100">
+              <div className="p-4 bg-brand-wash rounded-lg border border-line">
                 <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 bg-green-600 rounded flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 bg-brand rounded flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-xs font-bold">AI</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-green-800 text-sm mb-1">Phân tích AI</h3>
-                    <p className="text-sm text-green-700 whitespace-pre-wrap">{scannedProduct.analysis}</p>
+                    <h3 className="font-semibold text-ink text-sm mb-1">Phân tích AI</h3>
+                    <p className="text-sm text-brand whitespace-pre-wrap">{scannedProduct.analysis}</p>
                   </div>
                 </div>
               </div>
@@ -765,9 +765,9 @@ export default function BarcodeScan() {
           p.category === scannedProduct.category &&
           (scannedProduct.greenScore === null ? p.greenScore >= 0 : p.greenScore > scannedProduct.greenScore)
         ).length > 0 && (
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-              <FaLeaf className="text-green-600" />
+          <div className="bg-paper p-4 rounded-card">
+            <h3 className="font-semibold text-ink-soft mb-3 flex items-center gap-2">
+              <FaLeaf className="text-brand" />
               Sản phẩm thay thế tốt hơn
             </h3>
             <div className="space-y-2">
@@ -776,13 +776,13 @@ export default function BarcodeScan() {
                 p.category === scannedProduct.category &&
                 (scannedProduct.greenScore === null ? p.greenScore >= 0 : p.greenScore > scannedProduct.greenScore)
               ).slice(0, 3).map(product => (
-                <div key={product.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <FaLeaf className="text-green-600" />
+                <div key={product.id} className="flex items-center gap-3 p-3 bg-canvas rounded-lg">
+                  <div className="w-10 h-10 bg-brand-wash rounded-lg flex items-center justify-center">
+                    <FaLeaf className="text-brand" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm text-gray-800 truncate">{product.name}</h4>
-                    <p className="text-xs text-gray-500">{product.brand}</p>
+                    <h4 className="font-medium text-sm text-ink truncate">{product.name}</h4>
+                    <p className="text-xs text-ink-faint">{product.brand}</p>
                   </div>
                   <div className={`px-2 py-1 rounded text-xs font-bold ${getScoreColor(product.greenScore)}`}>
                     {product.greenScore.toFixed(1)}
@@ -796,7 +796,7 @@ export default function BarcodeScan() {
         {/* Action */}
         <button
           onClick={() => { setViewMode('scan'); if (scanning) stopScanner(); }}
-          className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700"
+          className="w-full flex items-center justify-center gap-2 bg-brand text-white py-3 rounded-lg font-semibold hover:bg-brand"
         >
           <FaBarcode />
           Quét sản phẩm khác
@@ -810,14 +810,14 @@ export default function BarcodeScan() {
       <div className="flex items-center mb-4">
         <button
           onClick={() => setViewMode('scan')}
-          className="mr-3 text-gray-600 hover:text-gray-800"
+          className="mr-3 text-ink-soft hover:text-ink"
         >
           <FaArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-green-800">Lịch sử quét</h1>
+        <h1 className="text-xl font-bold text-ink">Lịch sử quét</h1>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="bg-paper p-4 rounded-card">
         {scanHistory.length > 0 ? (
           <>
             <div className="space-y-2 mb-4">
@@ -826,17 +826,17 @@ export default function BarcodeScan() {
                 return (
                   <div
                     key={index}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
+                    className="flex items-center gap-3 p-3 bg-canvas rounded-lg hover:bg-gray-100 cursor-pointer"
                     onClick={() => handleViewHistoryProduct(item)}
                   >
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                      <FaBarcode className="text-green-600" />
+                    <div className="w-10 h-10 bg-brand-wash rounded-lg flex items-center justify-center">
+                      <FaBarcode className="text-brand" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm text-gray-800 truncate">
+                      <h3 className="font-medium text-sm text-ink truncate">
                         {product?.name || item.name || 'Sản phẩm'}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-ink-faint">
                         {product?.brand} {product && '•'} {item.timestamp}
                       </p>
                     </div>
@@ -864,10 +864,10 @@ export default function BarcodeScan() {
         ) : (
           <div className="text-center py-12">
             <FaHistory className="text-gray-300 text-5xl mx-auto mb-4" />
-            <p className="text-gray-500 mb-4">Chưa có lịch sử quét</p>
+            <p className="text-ink-faint mb-4">Chưa có lịch sử quét</p>
             <button
               onClick={() => setViewMode('scan')}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-6 py-2 bg-brand text-white rounded-lg hover:bg-brand"
             >
               Bắt đầu quét
             </button>
