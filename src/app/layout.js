@@ -101,9 +101,11 @@ export default function RootLayout({ children }) {
                 {children}
               </main>
 
-              {/* Footer bản quyền - xuất hiện ở cuối mọi trang và responsive */}
+              {/* Footer bản quyền - xuất hiện ở cuối mọi trang và responsive.
+                  Không dùng w-full: cộng với lg:ml-72 sẽ thành 100% + 288px
+                  và làm cả trang tràn ngang. */}
               <footer
-                className={`w-full border-t border-line ${isAdminPath ? '' : 'lg:ml-72'}`}
+                className={`border-t border-line ${isAdminPath ? '' : 'lg:ml-72'}`}
               >
                 <div className="max-w-6xl mx-auto px-4 py-5">
                   <p className="text-center text-ink-faint text-xs sm:text-sm">
