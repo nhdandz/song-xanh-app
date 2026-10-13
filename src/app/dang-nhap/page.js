@@ -8,59 +8,44 @@ import { useAppContext } from '@/context/AppContext';
 
 export default function Login() {
   const router = useRouter();
-  const { login, isLoading } = useAppContext();
+  const { login, loginDemo, isLoading } = useAppContext();
   const isNavigating = useRef(false);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // === CẤU HÌNH ADMIN NGAY Ở ĐÂY (THAY BẰNG EMAIL + PASS BẠN MUỐN) ===
-  // CẢNH BÁO: KHÔNG AN TOÀN CHO PRODUCTION — CHỈ DÙNG CHO DEMO/TẠM THỜI
-  const ADMIN_EMAIL = 'test123@gmail.com';
-  const ADMIN_PASS = '12345678';
-  // ==================================================================
+  // Sau khi đăng nhập, admin vào khu quản trị, người dùng thường về trang chủ.
+  // Vai trò lấy từ phiên do server cấp, không phải do client tự quyết.
+  const redirectAfterLogin = (user) => {
+    const next = new URLSearchParams(window.location.search).get('next');
+    const isAdmin = user?.role === 'ADMIN';
+
+    if (isAdmin) {
+      router.replace(next || '/admin');
+    } else {
+      router.replace(next && !next.startsWith('/admin') ? next : '/');
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // --- KIỂM TRA NHANH ADMIN CHỈ TRÊN CLIENT (SIÊU NHANH) ---
-    if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
-    try {
-    // nếu muốn gọi login để backend set session thì giữ dòng này
-    await login(email, password);
-    } catch (err) {
-    console.warn('Admin quick login: backend login error (ignored)', err);
-    }
 
-    // --- SET COOKIE isAdmin = '1' (không httpOnly) ---
-    // đặt path=/ để cookie có hiệu lực toàn site, max-age tính bằng giây
-    document.cookie = 'isAdmin=1; path=/; max-age=' + 8 * 60 * 60 + ';';
-    // --------------------------------------------------
-
-    router.replace('/admin');
-  return;
-}
-
-    // ---------------------------------------------------------
-
-    // Ngăn chặn đăng nhập trùng lặp
     if (isNavigating.current || isLoading) return;
-    
+
     if (!email || !password) {
       setError('Vui lòng nhập đầy đủ thông tin');
       return;
     }
-    
+
     try {
       setError('');
       isNavigating.current = true;
-      
-      // Gọi hàm đăng nhập từ context
-      const success = await login(email, password);
-      
-      if (success) {
-        // Chuyển hướng về trang chủ sử dụng replace thay vì push
-        router.replace('/');
+
+      const user = await login(email, password);
+
+      if (user) {
+        redirectAfterLogin(user);
       } else {
         setError('Email hoặc mật khẩu không đúng');
         isNavigating.current = false;
@@ -71,36 +56,31 @@ export default function Login() {
       isNavigating.current = false;
     }
   };
-  
-  // Mô phỏng đăng nhập demo (không cần API thực tế)
-  const handleDemoLogin = async () => {
-    // Ngăn chặn đăng nhập trùng lặp
+
+  // Đăng nhập nhanh bằng tài khoản mẫu. Thông tin tài khoản nằm ở server
+  // (xem /api/auth/demo), trang này không giữ mật khẩu nào.
+  const handleDemoLogin = async (as) => {
     if (isNavigating.current || isLoading) return;
-    
+
     try {
-      // Demo sử dụng tài khoản mẫu
-      setEmail('hocsinh@example.com');
-      setPassword('password123');
-      
+      setError('');
       isNavigating.current = true;
-      
-      // Gọi API đăng nhập với tài khoản demo
-      const success = await login('hocsinh@example.com', 'password123');
-      
-      if (success) {
-        // Chuyển hướng về trang chủ sử dụng replace
-        router.replace('/');
+
+      const user = await loginDemo(as);
+
+      if (user) {
+        redirectAfterLogin(user);
       } else {
-        setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại hoặc tạo tài khoản mới.');
+        setError('Không thể đăng nhập demo. Hãy chạy: npm run prisma:seed');
         isNavigating.current = false;
       }
     } catch (error) {
       console.error('Demo login error:', error);
-      setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại.');
+      setError(error.message || 'Không thể đăng nhập demo.');
       isNavigating.current = false;
     }
   };
-  
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-green-50">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
@@ -213,13 +193,22 @@ export default function Login() {
             </div>
           </div>
           
-          <div className="mt-6">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             <button
-              onClick={handleDemoLogin}
+              type="button"
+              onClick={() => handleDemoLogin('user')}
               className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               disabled={isLoading || isNavigating.current}
             >
-              {isLoading ? 'Đang xử lý...' : 'Đăng nhập Demo'}
+              {isLoading ? 'Đang xử lý...' : 'Demo Học sinh'}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDemoLogin('admin')}
+              className="w-full flex justify-center py-2 px-4 border border-green-300 rounded-md shadow-sm bg-green-50 text-sm font-medium text-green-700 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              disabled={isLoading || isNavigating.current}
+            >
+              {isLoading ? 'Đang xử lý...' : 'Demo Quản trị'}
             </button>
           </div>
         </div>
