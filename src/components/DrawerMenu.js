@@ -78,25 +78,25 @@ export default function DrawerMenu({ isOpen, onClose }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm lg:max-w-md bg-white h-full overflow-y-auto animate-slide-left"
+        className="w-full max-w-sm lg:max-w-md bg-paper h-full overflow-y-auto animate-slide-left"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 bg-white border-b border-gray-200 flex justify-between items-center">
+        <div className="p-6 bg-paper border-b border-line flex justify-between items-center">
           <div className="flex items-center">
-            <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-3">
-              <FaLeaf className="text-green-700" size={24} />
+            <div className="w-12 h-12 rounded-lg bg-brand-wash flex items-center justify-center mr-3">
+              <FaLeaf className="text-brand" size={24} />
             </div>
             <div>
-              <h2 className="font-semibold text-gray-900">{user.name}</h2>
-              <p className="text-sm text-gray-600">{points.total} điểm</p>
+              <h2 className="font-semibold text-ink">{user.name}</h2>
+              <p className="text-sm text-ink-soft">{points.total} điểm</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
           >
-            <FaTimes className="text-gray-600" />
+            <FaTimes className="text-ink-soft" />
           </button>
         </div>
 
@@ -104,18 +104,18 @@ export default function DrawerMenu({ isOpen, onClose }) {
         <div className="py-2">
           {menuItems.map((item, index) =>
             item.divider ? (
-              <div key={index} className="border-t border-gray-200 my-2"></div>
+              <div key={index} className="border-t border-line my-2"></div>
             ) : (
               <Link
                 key={index}
                 href={item.path}
                 onClick={onClose}
-                className="flex items-center px-6 py-3 hover:bg-gray-50 transition-colors"
+                className="flex items-center px-6 py-3 hover:bg-canvas transition-colors"
               >
-                <div className="w-6 text-gray-600">
+                <div className="w-6 text-ink-soft">
                   {item.icon}
                 </div>
-                <span className="ml-4 text-gray-800">{item.label}</span>
+                <span className="ml-4 text-ink">{item.label}</span>
               </Link>
             )
           )}
@@ -133,11 +133,11 @@ export default function DrawerMenu({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="mt-auto p-6 border-t border-gray-200 bg-gray-50">
-          <div className="text-xs text-gray-500 mb-2 font-medium">
+        <div className="mt-auto p-6 border-t border-line bg-canvas">
+          <div className="text-xs text-ink-faint mb-2 font-medium">
             Phiên bản 1.0.0
           </div>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-xs text-ink-faint leading-relaxed">
             © 2025 Ứng dụng Sống Xanh
           </p>
         </div>

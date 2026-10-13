@@ -1,168 +1,134 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+const data = require('./seed-data');
+
 const prisma = new PrismaClient();
 
-async function main() {
-  console.log('Bắt đầu tạo dữ liệu mẫu...');
+// Tài khoản mẫu lấy từ biến môi trường; có mặc định để clone về chạy được ngay.
+// Mật khẩu luôn được hash trước khi ghi vào DB.
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || 'admin@songxanh.local';
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'admin-doi-mat-khau';
+const USER_EMAIL = process.env.SEED_USER_EMAIL || 'hocsinh@example.com';
+const USER_PASSWORD = process.env.SEED_USER_PASSWORD || 'hocsinh-doi-mat-khau';
 
-  // Khởi tạo người dùng mẫu
-  const user1 = await prisma.user.upsert({
-    where: { email: 'hocsinh@example.com' },
-    update: {},
+/**
+ * Tạo bản ghi nếu chưa có, cập nhật nếu đã có.
+ * Dùng cho các model không có khóa duy nhất ngoài id — tìm theo một field
+ * làm "khóa nghiệp vụ" (vd: tên, tiêu đề) để chạy lại seed không bị nhân đôi.
+ */
+async function upsertBy(model, key, rows, label) {
+  let created = 0;
+  let updated = 0;
+
+  for (const row of rows) {
+    const existing = await model.findFirst({ where: { [key]: row[key] } });
+
+    if (existing) {
+      await model.update({ where: { id: existing.id }, data: row });
+      updated += 1;
+    } else {
+      await model.create({ data: row });
+      created += 1;
+    }
+  }
+
+  console.log(`${label}: thêm mới ${created}, cập nhật ${updated}`);
+}
+
+async function main() {
+  console.log('Bắt đầu cập nhật dữ liệu mẫu...\n');
+
+  // --- Tài khoản học sinh mẫu ---
+  // update cũng đặt lại mật khẩu + vai trò, để chạy lại seed là chuẩn hoá
+  // được tài khoản cũ (ví dụ mật khẩu còn lưu dạng plaintext).
+  const userPasswordHash = await bcrypt.hash(USER_PASSWORD, 10);
+  const user = await prisma.user.upsert({
+    where: { email: USER_EMAIL },
+    update: { password: userPasswordHash, role: 'USER' },
     create: {
       name: 'Học Sinh',
-      email: 'hocsinh@example.com',
-      password: 'password123',
+      email: USER_EMAIL,
+      password: userPasswordHash,
+      role: 'USER',
       school: 'THPT Nguyễn Huệ',
       points: 0,
       level: 'Người khởi đầu xanh',
       settings: {
-        create: {
-          reminderOn: true,
-          reminderTime: '18:00',
-        },
+        create: { reminderOn: true, reminderTime: '18:00' },
       },
     },
   });
+  console.log(`Tài khoản học sinh: ${user.email}`);
 
-  console.log('Đã tạo người dùng mẫu:', user1.name);
+  // --- Tài khoản quản trị ---
+  const adminPasswordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+  const admin = await prisma.user.upsert({
+    where: { email: ADMIN_EMAIL },
+    update: { password: adminPasswordHash, role: 'ADMIN' },
+    create: {
+      name: 'Quản trị viên',
+      email: ADMIN_EMAIL,
+      password: adminPasswordHash,
+      role: 'ADMIN',
+      points: 0,
+      settings: {
+        create: { reminderOn: false, reminderTime: '18:00' },
+      },
+    },
+  });
+  console.log(`Tài khoản quản trị: ${admin.email}\n`);
 
-  // Khởi tạo các hoạt động xanh
-  const activities = [
-    { name: 'Mang chai nước cá nhân', description: 'Giảm sử dụng chai nhựa dùng một lần', points: 1, icon: 'water-bottle' },
-    { name: 'Tắt điện khi ra khỏi phòng', description: 'Tiết kiệm năng lượng điện', points: 1, icon: 'light-off' },
-    { name: 'Phân loại rác đúng cách', description: 'Giúp tái chế hiệu quả', points: 1, icon: 'recycle-bin' },
-    { name: 'Không dùng ống hút nhựa', description: 'Giảm rác thải nhựa', points: 1, icon: 'no-straw' },
-    { name: 'Đi học bằng xe đạp/đi bộ', description: 'Giảm khí thải carbon', points: 1, icon: 'bicycle' },
-    { name: 'Trồng một cây xanh', description: 'Tăng cường không gian xanh', points: 3, icon: 'plant' },
-    { name: 'Tham gia dọn rác cộng đồng', description: 'Dọn dẹp môi trường', points: 5, icon: 'cleanup' },
-  ];
+  // --- Nhóm / lớp ---
+  await upsertBy(
+    prisma.group,
+    'name',
+    [
+      { name: 'Lớp 10A1', description: 'Nhóm học sinh lớp 10A1', type: 'class' },
+      { name: 'Lớp 10A2', description: 'Nhóm học sinh lớp 10A2', type: 'class' },
+      { name: 'CLB Môi trường', description: 'Câu lạc bộ Môi trường của trường', type: 'club' },
+    ],
+    'Nhóm'
+  );
 
-  for (const activity of activities) {
-    const createdActivity = await prisma.greenActivity.create({
-      data: activity,
+  // --- Nội dung chính ---
+  await upsertBy(prisma.greenActivity, 'name', data.GREEN_ACTIVITIES, 'Hoạt động xanh');
+  await upsertBy(prisma.badge, 'title', data.BADGES, 'Huy hiệu');
+  await upsertBy(prisma.challenge, 'title', data.CHALLENGES, 'Thách thức');
+  await upsertBy(prisma.dailyMission, 'title', data.DAILY_MISSIONS, 'Nhiệm vụ hằng ngày');
+  await upsertBy(prisma.device, 'name', data.DEVICES, 'Thiết bị');
+  await upsertBy(prisma.reward, 'title', data.REWARDS, 'Quà tặng');
+
+  // --- Sản phẩm: barcode là khóa duy nhất nên dùng upsert thẳng ---
+  let productCreated = 0;
+  let productUpdated = 0;
+  for (const product of data.PRODUCTS) {
+    const existing = await prisma.product.findUnique({ where: { barcode: product.barcode } });
+    await prisma.product.upsert({
+      where: { barcode: product.barcode },
+      update: product,
+      create: product,
     });
-    console.log(`Đã tạo hoạt động: ${createdActivity.name}`);
+    existing ? (productUpdated += 1) : (productCreated += 1);
   }
+  console.log(`Sản phẩm: thêm mới ${productCreated}, cập nhật ${productUpdated}`);
 
-  console.log(`Đã tạo ${activities.length} hoạt động xanh`);
+  // --- Bài viết: giữ nguyên ngày tạo nếu đã có ---
+  let articleCreated = 0;
+  let articleUpdated = 0;
+  for (const article of data.ARTICLES) {
+    const existing = await prisma.article.findFirst({ where: { title: article.title } });
 
-  // Khởi tạo các huy hiệu
-  const badges = [
-    { title: 'Người khởi đầu xanh', description: 'Đạt 10 điểm xanh đầu tiên', points: 10 },
-    { title: 'Nhà môi trường nhỏ', description: 'Đạt 30 điểm xanh', points: 30 },
-    { title: 'Chiến binh xanh', description: 'Đạt 50 điểm xanh', points: 50 },
-    { title: 'Đại sứ môi trường', description: 'Đạt 100 điểm xanh', points: 100 },
-    { title: 'Người bảo vệ trái đất', description: 'Đạt 200 điểm xanh', points: 200 },
-  ];
-
-  for (const badge of badges) {
-    const createdBadge = await prisma.badge.create({
-      data: badge,
-    });
-    console.log(`Đã tạo huy hiệu: ${createdBadge.title}`);
+    if (existing) {
+      await prisma.article.update({ where: { id: existing.id }, data: article });
+      articleUpdated += 1;
+    } else {
+      await prisma.article.create({ data: { ...article, date: new Date() } });
+      articleCreated += 1;
+    }
   }
+  console.log(`Bài viết: thêm mới ${articleCreated}, cập nhật ${articleUpdated}`);
 
-  console.log(`Đã tạo ${badges.length} huy hiệu`);
-
-  // Khởi tạo các thách thức
-  const challenges = [
-    {
-      title: 'Tuần không túi ni-lông',
-      description: 'Không sử dụng túi ni-lông trong 7 ngày liên tiếp.',
-      points: 50,
-      days: 7,
-      difficulty: 'Trung bình',
-      category: 'Giảm rác thải',
-    },
-    {
-      title: 'Người tiết kiệm điện',
-      description: 'Tắt điện khi không sử dụng trong 5 ngày liên tiếp.',
-      points: 30,
-      days: 5,
-      difficulty: 'Dễ',
-      category: 'Tiết kiệm năng lượng',
-    },
-    {
-      title: '30 ngày sống xanh',
-      description: 'Thực hiện ít nhất 3 hành vi xanh mỗi ngày trong 30 ngày.',
-      points: 200,
-      days: 30,
-      difficulty: 'Khó',
-      category: 'Tổng hợp',
-      requiredPoints: 100,
-    },
-  ];
-
-  for (const challenge of challenges) {
-    const createdChallenge = await prisma.challenge.create({
-      data: challenge,
-    });
-    console.log(`Đã tạo thách thức: ${createdChallenge.title}`);
-  }
-
-  console.log(`Đã tạo ${challenges.length} thách thức`);
-
-  // Khởi tạo các nhóm
-  const groups = [
-    {
-      name: 'Lớp 10A1',
-      description: 'Nhóm học sinh lớp 10A1',
-      type: 'class',
-    },
-    {
-      name: 'CLB Môi trường',
-      description: 'Câu lạc bộ Môi trường của trường',
-      type: 'club',
-    },
-  ];
-
-  for (const group of groups) {
-    const createdGroup = await prisma.group.create({
-      data: group,
-    });
-    console.log(`Đã tạo nhóm: ${createdGroup.name}`);
-  }
-
-  console.log(`Đã tạo ${groups.length} nhóm`);
-
-  // Khởi tạo sản phẩm mẫu
-  const products = [
-    {
-      barcode: '8938507968047',
-      name: 'Nước khoáng Lavie 500ml',
-      brand: 'Lavie',
-      category: 'Đồ uống',
-      packaging: 'Chai nhựa',
-      greenScore: 6.5,
-      recyclable: true,
-      biodegradable: false,
-      plasticFree: false,
-      recommendation: 'Tái chế vỏ chai sau khi sử dụng. Hoặc thay thế bằng bình nước cá nhân.',
-    },
-    {
-      barcode: '8934563138165',
-      name: 'Ống hút giấy ECO 100 cái',
-      brand: 'ECO',
-      category: 'Đồ dùng',
-      packaging: 'Hộp giấy',
-      greenScore: 8.7,
-      recyclable: true,
-      biodegradable: true,
-      plasticFree: true,
-      recommendation: 'Sản phẩm thân thiện với môi trường, thay thế tốt cho ống hút nhựa.',
-    },
-  ];
-
-  for (const product of products) {
-    const createdProduct = await prisma.product.create({
-      data: product,
-    });
-    console.log(`Đã tạo sản phẩm: ${createdProduct.name}`);
-  }
-
-  console.log(`Đã tạo ${products.length} sản phẩm`);
-
-  console.log('Tạo dữ liệu mẫu hoàn tất!');
+  console.log('\nCập nhật dữ liệu hoàn tất!');
 }
 
 main()

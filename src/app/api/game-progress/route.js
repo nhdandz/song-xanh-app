@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { requireAuth } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
@@ -47,6 +48,9 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const body = await request.json();
     const { userId, gameType, data, pointsEarned } = body;
@@ -97,6 +101,9 @@ export async function POST(request) {
 }
 
 export async function PUT(request) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const body = await request.json();
     const { userId, gameType, pointsEarned, data } = body;

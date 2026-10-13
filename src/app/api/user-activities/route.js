@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireAuth } from "@/lib/auth";
 
 // POST /api/user-activities - Ghi nhận hoạt động của người dùng
 export async function POST(request) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const data = await request.json();
     const { userId, activities } = data;
@@ -226,6 +230,9 @@ export async function GET(request) {
 
 // DELETE /api/user-activities - Xóa một hoạt động đã thực hiện
 export async function DELETE(request) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const { searchParams } = new URL(request.url);
     const activityId = searchParams.get('activityId');

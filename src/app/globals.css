@@ -1,52 +1,272 @@
 @import "tailwindcss";
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 240, 249, 244;
+/* ============================================================
+   SỐNG XANH — hệ thiết kế
+   Nguyên tắc: nền kem ấm (không phải xanh nhạt) để màu xanh lá
+   nổi lên; viền rõ + shadow "cứng" kiểu sticker thay cho shadow
+   mờ; chữ đậm, số to; màu nhấn ấm cho điểm thưởng.
+   ============================================================ */
+
+@theme {
+  --font-sans: var(--font-be-vietnam), ui-sans-serif, system-ui, sans-serif;
+
+  /* Mực - dùng cho chữ, viền. Ám xanh lá nhẹ chứ không xám trung tính */
+  --color-ink: #11241c;
+  --color-ink-soft: #55675d;
+  --color-ink-faint: #8a9992;
+  --color-line: #e2e6e0;
+  --color-line-strong: #11241c;
+
+  /* Nền */
+  --color-canvas: #f6f5ef;
+  --color-paper: #ffffff;
+
+  /* Thương hiệu */
+  --color-brand: #157f3c;
+  --color-brand-bright: #27b357;
+  --color-brand-dark: #0b3d23;
+  --color-brand-wash: #e8f5ec;
+
+  /* Màu nhấn */
+  --color-sun: #e8900c;
+  --color-sun-wash: #fdf0db;
+  --color-sky: #0a7fb8;
+  --color-sky-wash: #e2f1f9;
+  --color-coral: #e04a5f;
+  --color-coral-wash: #fdeaec;
+  --color-grape: #7b5bd6;
+  --color-grape-wash: #efeafc;
+
+  --radius-card: 18px;
+  --radius-pill: 999px;
+
+  /* Shadow cứng: tạo cảm giác sticker/arcade, khác hẳn shadow mờ mặc định */
+  --shadow-pop: 0 3px 0 0 var(--color-line);
+  --shadow-pop-lg: 0 5px 0 0 var(--color-line);
+  --shadow-pop-ink: 0 4px 0 0 var(--color-brand-dark);
+  --shadow-lift: 0 10px 24px -14px rgba(17, 36, 28, 0.45);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Chừa chỗ cho thanh điều hướng cố định dưới đáy trên mobile */
+@media (max-width: 1023px) {
+  body { padding-bottom: 4.75rem; }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  padding-bottom: 4rem; /* Để tránh nội dung bị che bởi thanh điều hướng */
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-canvas);
+  /* Hoa văn chấm rất nhạt để nền không bị "phẳng chết" */
+  background-image: radial-gradient(circle at 1px 1px, rgba(17, 36, 28, 0.055) 1px, transparent 0);
+  background-size: 22px 22px;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Hiệu ứng chuyển tiếp nhẹ nhàng */
-* {
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s, opacity 0.3s;
+/* Tiêu đề: đậm, chữ sát nhau — tạo sự chắc chắn, không "mềm oặt" */
+h1, h2, h3, h4 {
+  letter-spacing: -0.02em;
+  font-weight: 800;
 }
 
-/* Animation cho drawer menu */
-@keyframes slide-left {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+/* ---------- Thẻ ---------- */
+.sx-card {
+  background: var(--color-paper);
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-pop);
 }
 
-.animate-slide-left {
-  animation: slide-left 0.3s ease-out;
+.sx-card-tint {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-pop);
 }
 
-/* Ghi đè rule toàn cục: đặt kích thước rõ ràng cho heading trong khu vực nội dung bài viết */
-.ql-editor h1 {
-  font-size: 1.9rem;    /* tương đương ~30px nếu root font-size = 16px */
-  line-height: 1.15;
+/* Thẻ bấm được: nhấc lên khi hover, lún xuống khi nhấn */
+.sx-tap {
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.sx-tap:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-pop-lg);
+}
+.sx-tap:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 0 var(--color-line);
+}
+
+/* ---------- Nút ---------- */
+.sx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   font-weight: 700;
+  border-radius: var(--radius-pill);
+  padding: 0.75rem 1.4rem;
+  border: 1.5px solid transparent;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+  cursor: pointer;
+}
+.sx-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.sx-btn-primary {
+  background: var(--color-brand);
+  color: #fff;
+  box-shadow: var(--shadow-pop-ink);
+}
+.sx-btn-primary:hover:not(:disabled) {
+  background: var(--color-brand-bright);
+  transform: translateY(-2px);
+}
+.sx-btn-primary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 0 var(--color-brand-dark);
+}
+
+.sx-btn-sun {
+  background: var(--color-sun);
+  color: #fff;
+  box-shadow: 0 4px 0 0 #a9660a;
+}
+.sx-btn-sun:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.sx-btn-sun:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 0 #a9660a;
+}
+
+.sx-btn-outline {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border-color: var(--color-line);
+  box-shadow: var(--shadow-pop);
+}
+.sx-btn-outline:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+.sx-btn-outline:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 0 var(--color-line);
+}
+
+/* ---------- Nhãn tròn ---------- */
+.sx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+/* ---------- Thanh tiến độ ---------- */
+.sx-track {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: #e6e9e3;
+  overflow: hidden;
+}
+/* Rãnh đặt trên khối nền đậm thì phải trong suốt, không dùng màu sáng */
+.sx-track-dark {
+  background: rgba(255, 255, 255, 0.16);
+}
+.sx-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--color-brand), var(--color-brand-bright));
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Khối nền đậm ---------- */
+.sx-dark {
+  background: var(--color-brand-dark);
+  color: #eaf6ee;
+  border-radius: var(--radius-card);
+  position: relative;
+  overflow: hidden;
+}
+/* Vòng tròn trang trí chìm trong khối đậm */
+.sx-dark::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  top: -70px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(39, 179, 87, 0.22);
+  pointer-events: none;
+}
+
+/* ---------- Số liệu ---------- */
+.sx-figure {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Animation ---------- */
+@keyframes slide-left {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-left {
+  animation: slide-left 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes sx-pop-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.sx-enter {
+  animation: sx-pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sx-enter, .animate-slide-left { animation: none; }
+  .sx-tap, .sx-btn { transition: none; }
+}
+
+/* ---------- Thanh cuộn ngang gọn ---------- */
+.sx-scroll-x {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sx-scroll-x::-webkit-scrollbar { display: none; }
+
+/* ---------- Nội dung bài viết (trình soạn thảo Quill) ---------- */
+.ql-editor h1 {
+  font-size: 1.9rem;
+  line-height: 1.15;
+  font-weight: 800;
   margin: 0.6em 0;
 }
 
 .ql-editor h2 {
-  font-size: 1.5rem;    /* nhỏ hơn h1 */
+  font-size: 1.5rem;
   line-height: 1.2;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0.55em 0;
 }
 
 .ql-editor h3 {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0.5em 0;
 }

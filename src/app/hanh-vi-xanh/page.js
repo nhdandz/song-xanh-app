@@ -182,27 +182,37 @@ export default function GreenActions() {
   };
 
   const normalized = normalizeVideo(selectedLink);
+  const doneCount = todayActions.filter((action) => action.completed).length;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-5 pb-32">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400 to-emerald-400 opacity-10 rounded-full blur-2xl"></div>
-        <div className="relative flex items-center">
-          <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center mr-4">
-            <FaLeaf className="text-green-600 text-xl" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Hành động xanh hôm nay</h1>
-            <p className="text-sm text-gray-600 mt-1">Đánh dấu những hành động bạn đã thực hiện trong ngày</p>
-          </div>
-        </div>
-      </div>
+      <header className="sx-enter">
+        <span className="sx-chip bg-brand-wash text-brand">
+          <FaLeaf size={11} />
+          Hôm nay
+        </span>
+        <h1 className="text-2xl sm:text-3xl text-ink mt-2.5">Hành động xanh hôm nay</h1>
+        <p className="text-ink-soft mt-1">
+          Đánh dấu những việc bạn đã làm — mỗi việc là một điểm xanh.
+        </p>
+      </header>
 
       {/* Video random (chỉ hiển thị nếu có link) */}
       {normalized && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <div className="w-full aspect-video bg-black rounded-md overflow-hidden">
+        <div className="sx-card sx-enter p-3" style={{ animationDelay: '60ms' }}>
+          <div className="flex items-center justify-between px-1.5 pb-2.5">
+            <h2 className="text-sm font-bold text-ink-soft">Xem 1 phút để sống xanh hơn</h2>
+            {poolLinks.length > 1 && (
+              <button
+                onClick={pickAnother}
+                className="text-xs font-bold text-brand hover:underline"
+              >
+                Video khác
+              </button>
+            )}
+          </div>
+          <div className="w-full aspect-video bg-black rounded-xl overflow-hidden">
             {normalized.kind === 'mp4' && (
               <video
                 controls
@@ -237,31 +247,47 @@ export default function GreenActions() {
       )}
 
       {todayActions.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
-          <div className="flex flex-col items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600 mb-4"></div>
-            <p className="text-gray-600">Đang tải danh sách hành động...</p>
-          </div>
+        <div className="sx-card p-12 flex flex-col items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-[3px] border-line border-t-brand mb-4" />
+          <p className="text-ink-soft font-medium">Đang tải danh sách hành động...</p>
         </div>
       ) : (
         <>
-          <div className="space-y-3">
-            {todayActions.map((action) => (
-              <ActionCard
+          {/* Hai cột trên máy tính để không phải cuộn dài */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {todayActions.map((action, i) => (
+              <div
                 key={action.id}
-                action={action}
-                onChange={(completed) => updateAction(action.id, completed)}
-              />
+                className="sx-enter"
+                style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
+              >
+                <ActionCard
+                  action={action}
+                  onChange={(completed) => updateAction(action.id, completed)}
+                />
+              </div>
             ))}
           </div>
 
-          <div className="sticky bottom-20 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 p-4">
-            <button
-              onClick={handleSave}
-              className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-            >
-              Lưu hành động
-            </button>
+          {/* Thanh lưu cố định đáy màn hình, nằm trên thanh điều hướng mobile */}
+          <div className="fixed left-0 right-0 bottom-0 lg:left-72 z-30 px-4 pb-[calc(4.75rem+env(safe-area-inset-bottom))] lg:pb-5 pointer-events-none">
+            <div className="max-w-4xl mx-auto sm:px-6">
+              <div className="sx-card pointer-events-auto flex items-center gap-3 p-3 pl-4" style={{ boxShadow: 'var(--shadow-lift)' }}>
+                <p className="text-sm font-bold text-ink-soft flex-1 min-w-0">
+                  Đã chọn{' '}
+                  <span className="text-brand">
+                    {doneCount}/{todayActions.length}
+                  </span>{' '}
+                  <span className="hidden sm:inline">hành động</span>
+                </p>
+                <button
+                  onClick={handleSave}
+                  className="sx-btn sx-btn-primary shrink-0"
+                >
+                  Lưu hành động
+                </button>
+              </div>
+            </div>
           </div>
         </>
       )}

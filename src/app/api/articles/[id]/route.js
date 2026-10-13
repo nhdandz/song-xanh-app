@@ -1,6 +1,7 @@
 // File: src/app/api/articles/[id]/route.js
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth";
 
 // Article IDs are cuid strings, not numbers
 function parseId(params) {
@@ -28,6 +29,9 @@ export async function GET(req, { params }) {
 }
 
 export async function PUT(req, { params }) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   const id = parseId(params);
   if (!id) {
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
@@ -74,6 +78,9 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
+  const { error } = await requireAdmin();
+  if (error) return error;
+
   const id = parseId(params);
   if (!id) {
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });

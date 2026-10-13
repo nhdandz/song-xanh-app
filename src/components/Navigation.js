@@ -2,107 +2,149 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaLeaf, FaChartBar, FaUsers, FaBars, FaGift, FaGamepad } from 'react-icons/fa';
+import { useAppContext } from '@/context/AppContext';
+import {
+  FaHome,
+  FaLeaf,
+  FaChartBar,
+  FaUsers,
+  FaBars,
+  FaGift,
+  FaGamepad,
+} from 'react-icons/fa';
+
+const NAV_ITEMS = [
+  { path: '/', label: 'Trang chủ', icon: FaHome },
+  { path: '/hanh-vi-xanh', label: 'Hành động', icon: FaLeaf },
+  { path: '/tro-choi', label: 'Trò chơi', icon: FaGamepad },
+  { path: '/thong-ke', label: 'Thống kê', icon: FaChartBar },
+  { path: '/so-sanh', label: 'Cộng đồng', icon: FaUsers },
+  { path: '/doi-qua', label: 'Đổi quà', icon: FaGift },
+];
+
+// Thanh dưới trên mobile chỉ đủ chỗ cho 4 mục + nút menu
+const MOBILE_ITEMS = NAV_ITEMS.filter((item) =>
+  ['/', '/hanh-vi-xanh', '/tro-choi', '/doi-qua'].includes(item.path)
+);
 
 export default function Navigation({ onMenuClick }) {
   const pathname = usePathname();
+  const { user } = useAppContext();
 
-  const navItems = [
-    { path: '/', label: 'Trang chủ', icon: <FaHome size={20} /> },
-    { path: '/hanh-vi-xanh', label: 'Hành động', icon: <FaLeaf size={19} /> },
-    // { path: '/tro-choi', label: 'Trò chơi', icon: <FaGamepad size={20} /> },
-    { path: '/thong-ke', label: 'Thống kê', icon: <FaChartBar size={19} /> },
-    { path: '/so-sanh', label: 'Cộng đồng', icon: <FaUsers size={19} /> },
-    { path: '/doi-qua', label: 'Đổi quà', icon: <FaGift size={19} /> },
-  ];
+  const points = user?.points ?? 0;
 
   return (
     <>
-      {/* Desktop Sidebar Navigation */}
-      <nav className="hidden lg:block fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-green-50 via-white to-emerald-50 border-r border-gray-200 z-40 shadow-sm">
-        <div className="relative h-full">
-          {/* Decorative circles */}
-          <div className="absolute top-10 right-10 w-24 h-24 bg-green-100 rounded-full opacity-20 blur-2xl"></div>
-          <div className="absolute bottom-20 left-5 w-32 h-32 bg-emerald-100 rounded-full opacity-20 blur-2xl"></div>
+      {/* ---------------- Sidebar (máy tính) ---------------- */}
+      <nav className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-72 bg-paper border-r border-line z-40">
+        <div className="p-5">
+          <Link href="/" className="flex items-center gap-2.5 mb-6">
+            <span className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shrink-0">
+              <FaLeaf className="text-white" size={19} />
+            </span>
+            <span className="text-xl font-extrabold tracking-tight text-ink">
+              Sống Xanh
+            </span>
+          </Link>
 
-          <div className="relative p-6">
-            {/* Logo section with icon */}
-            <div className="mb-8 flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-sm">
-                <FaLeaf className="text-white" size={20} />
-              </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">
-                Sống Xanh
-              </h1>
-            </div>
+          {/* Thẻ điểm: cho học sinh thấy tiến độ ngay, không phải bấm vào đâu */}
+          <Link
+            href="/thong-ke"
+            className="sx-dark sx-tap block p-4 mb-6"
+            style={{ boxShadow: 'var(--shadow-lift)' }}
+          >
+            <p className="relative text-[11px] uppercase tracking-widest font-bold text-brand-bright/90">
+              Điểm xanh của bạn
+            </p>
+            <p className="relative sx-figure text-4xl mt-1.5 text-white">
+              {points.toLocaleString('vi-VN')}
+            </p>
+            <p className="relative text-xs mt-1.5 text-white/70 truncate">
+              {user?.level || 'Người khởi đầu xanh'}
+            </p>
+          </Link>
 
-            <ul className="space-y-2">
-              {navItems.map((item) => (
+          <ul className="space-y-1">
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const active = pathname === item.path;
+              return (
                 <li key={item.path}>
                   <Link
                     href={item.path}
-                    className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
-                      pathname === item.path
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md transform scale-105'
-                        : 'text-gray-700 hover:bg-white hover:shadow-sm'
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-[15px] transition-colors ${
+                      active
+                        ? 'bg-brand-wash text-brand'
+                        : 'text-ink-soft hover:bg-canvas hover:text-ink'
                     }`}
                   >
-                    <span className="mr-3">{item.icon}</span>
-                    <span className={pathname === item.path ? 'font-medium' : ''}>{item.label}</span>
+                    <Icon size={18} className="shrink-0" />
+                    <span>{item.label}</span>
+                    {active && (
+                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-brand" />
+                    )}
                   </Link>
                 </li>
-              ))}
-            </ul>
+              );
+            })}
+          </ul>
+        </div>
 
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <button
-                onClick={onMenuClick}
-                className="flex items-center px-4 py-3 rounded-lg text-gray-700 hover:bg-white hover:shadow-sm transition-all duration-200 w-full"
-              >
-                <FaBars className="mr-3" size={20} />
-                <span>Tất cả menu</span>
-              </button>
-            </div>
-
-            {/* Decorative bottom section */}
-            <div className="mt-12 pt-6 border-t border-gray-200">
-              <div className="flex items-center space-x-2 text-xs text-gray-500">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>Bảo vệ môi trường</span>
-              </div>
-            </div>
-          </div>
+        <div className="mt-auto p-5 pt-0">
+          <button
+            onClick={onMenuClick}
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-ink-soft hover:bg-canvas hover:text-ink font-semibold text-[15px] w-full transition-colors"
+          >
+            <FaBars size={17} className="shrink-0" />
+            <span>Tất cả menu</span>
+          </button>
         </div>
       </nav>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
-        <div className="container mx-auto">
-          <ul className="flex justify-between">
-            {navItems.map((item) => (
+      {/* ---------------- Thanh dưới (điện thoại) ---------------- */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-paper border-t border-line z-40 pb-[env(safe-area-inset-bottom)]">
+        <ul className="flex">
+          {MOBILE_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const active = pathname === item.path;
+            return (
               <li key={item.path} className="flex-1">
                 <Link
                   href={item.path}
-                  className={`flex flex-col items-center py-2 ${
-                    pathname === item.path ? 'text-green-600' : 'text-gray-500'
-                  }`}
+                  aria-current={active ? 'page' : undefined}
+                  className="flex flex-col items-center gap-0.5 pt-2 pb-1.5"
                 >
-                  {item.icon}
-                  <span className="text-xs mt-1">{item.label}</span>
+                  <span
+                    className={`flex items-center justify-center h-8 w-14 rounded-full transition-colors ${
+                      active ? 'bg-brand-wash text-brand' : 'text-ink-faint'
+                    }`}
+                  >
+                    <Icon size={18} />
+                  </span>
+                  <span
+                    className={`text-[11px] font-semibold ${
+                      active ? 'text-brand' : 'text-ink-faint'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
                 </Link>
               </li>
-            ))}
-            <li className="flex-1">
-              <button
-                onClick={onMenuClick}
-                className="flex flex-col items-center py-2 text-gray-500 w-full"
-              >
-                <FaBars size={20} />
-                <span className="text-xs mt-1">Menu</span>
-              </button>
-            </li>
-          </ul>
-        </div>
+            );
+          })}
+          <li className="flex-1">
+            <button
+              onClick={onMenuClick}
+              className="flex flex-col items-center gap-0.5 pt-2 pb-1.5 w-full"
+            >
+              <span className="flex items-center justify-center h-8 w-14 rounded-full text-ink-faint">
+                <FaBars size={18} />
+              </span>
+              <span className="text-[11px] font-semibold text-ink-faint">Menu</span>
+            </button>
+          </li>
+        </ul>
       </nav>
     </>
   );

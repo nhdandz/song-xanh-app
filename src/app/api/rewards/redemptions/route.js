@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { requireSelfOrAdmin } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
@@ -7,6 +8,11 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
+
+    const { error } = await requireSelfOrAdmin(userId);
+
+    if (error) return error;
+
 
     if (!userId) {
       return NextResponse.json(

@@ -1,5 +1,9 @@
+import { requireAuth } from "@/lib/auth";
 // app/api/evaluate-product/route.js
 export async function POST(req) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const raw = await req.text();
 

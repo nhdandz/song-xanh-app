@@ -8,59 +8,44 @@ import { useAppContext } from '@/context/AppContext';
 
 export default function Login() {
   const router = useRouter();
-  const { login, isLoading } = useAppContext();
+  const { login, loginDemo, isLoading } = useAppContext();
   const isNavigating = useRef(false);
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // === CẤU HÌNH ADMIN NGAY Ở ĐÂY (THAY BẰNG EMAIL + PASS BẠN MUỐN) ===
-  // CẢNH BÁO: KHÔNG AN TOÀN CHO PRODUCTION — CHỈ DÙNG CHO DEMO/TẠM THỜI
-  const ADMIN_EMAIL = 'test123@gmail.com';
-  const ADMIN_PASS = '12345678';
-  // ==================================================================
+  // Sau khi đăng nhập, admin vào khu quản trị, người dùng thường về trang chủ.
+  // Vai trò lấy từ phiên do server cấp, không phải do client tự quyết.
+  const redirectAfterLogin = (user) => {
+    const next = new URLSearchParams(window.location.search).get('next');
+    const isAdmin = user?.role === 'ADMIN';
+
+    if (isAdmin) {
+      router.replace(next || '/admin');
+    } else {
+      router.replace(next && !next.startsWith('/admin') ? next : '/');
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // --- KIỂM TRA NHANH ADMIN CHỈ TRÊN CLIENT (SIÊU NHANH) ---
-    if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
-    try {
-    // nếu muốn gọi login để backend set session thì giữ dòng này
-    await login(email, password);
-    } catch (err) {
-    console.warn('Admin quick login: backend login error (ignored)', err);
-    }
 
-    // --- SET COOKIE isAdmin = '1' (không httpOnly) ---
-    // đặt path=/ để cookie có hiệu lực toàn site, max-age tính bằng giây
-    document.cookie = 'isAdmin=1; path=/; max-age=' + 8 * 60 * 60 + ';';
-    // --------------------------------------------------
-
-    router.replace('/admin');
-  return;
-}
-
-    // ---------------------------------------------------------
-
-    // Ngăn chặn đăng nhập trùng lặp
     if (isNavigating.current || isLoading) return;
-    
+
     if (!email || !password) {
       setError('Vui lòng nhập đầy đủ thông tin');
       return;
     }
-    
+
     try {
       setError('');
       isNavigating.current = true;
-      
-      // Gọi hàm đăng nhập từ context
-      const success = await login(email, password);
-      
-      if (success) {
-        // Chuyển hướng về trang chủ sử dụng replace thay vì push
-        router.replace('/');
+
+      const user = await login(email, password);
+
+      if (user) {
+        redirectAfterLogin(user);
       } else {
         setError('Email hoặc mật khẩu không đúng');
         isNavigating.current = false;
@@ -71,158 +56,158 @@ export default function Login() {
       isNavigating.current = false;
     }
   };
-  
-  // Mô phỏng đăng nhập demo (không cần API thực tế)
-  const handleDemoLogin = async () => {
-    // Ngăn chặn đăng nhập trùng lặp
+
+  // Đăng nhập nhanh bằng tài khoản mẫu. Thông tin tài khoản nằm ở server
+  // (xem /api/auth/demo), trang này không giữ mật khẩu nào.
+  const handleDemoLogin = async (as) => {
     if (isNavigating.current || isLoading) return;
-    
+
     try {
-      // Demo sử dụng tài khoản mẫu
-      setEmail('hocsinh@example.com');
-      setPassword('password123');
-      
+      setError('');
       isNavigating.current = true;
-      
-      // Gọi API đăng nhập với tài khoản demo
-      const success = await login('hocsinh@example.com', 'password123');
-      
-      if (success) {
-        // Chuyển hướng về trang chủ sử dụng replace
-        router.replace('/');
+
+      const user = await loginDemo(as);
+
+      if (user) {
+        redirectAfterLogin(user);
       } else {
-        setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại hoặc tạo tài khoản mới.');
+        setError('Không thể đăng nhập demo. Hãy chạy: npm run prisma:seed');
         isNavigating.current = false;
       }
     } catch (error) {
       console.error('Demo login error:', error);
-      setError('Không thể đăng nhập với tài khoản demo. Vui lòng thử lại.');
+      setError(error.message || 'Không thể đăng nhập demo.');
       isNavigating.current = false;
     }
   };
-  
+
+  const busy = isLoading || isNavigating.current;
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-green-50">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
-        <div className="text-center">
-          <div className="mx-auto h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
-            <FaLeaf className="text-green-600 text-3xl" />
-          </div>
-          <h2 className="mt-6 text-3xl font-bold text-green-800">
-            Đăng nhập
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            hoặc{' '}
-            <Link href="/dang-ky" className="font-medium text-green-600 hover:text-green-500">
-              đăng ký tài khoản mới
-            </Link>
-          </p>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md sx-enter">
+        {/* Nhãn thương hiệu */}
+        <div className="text-center mb-7">
+          <span className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand mb-4">
+            <FaLeaf className="text-white" size={28} />
+          </span>
+          <h1 className="text-3xl text-ink">Sống Xanh</h1>
+          <p className="text-ink-soft mt-1.5">Mỗi hành động nhỏ, một thay đổi lớn.</p>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 text-sm">
-              {error}
-            </div>
-          )}
-          
-          <div className="rounded-md space-y-4">
+
+        <div className="sx-card p-6 sm:p-7">
+          <h2 className="text-xl text-ink mb-5">Đăng nhập</h2>
+
+          <form className="space-y-4" onSubmit={handleLogin}>
+            {error && (
+              <div className="bg-coral-wash border border-coral/30 text-coral rounded-xl p-3 text-sm font-medium">
+                {error}
+              </div>
+            )}
+
             <div>
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor="email" className="block text-sm font-bold text-ink-soft mb-1.5">
                 Email
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaUser className="text-gray-400" />
-                </div>
+                <FaUser
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint"
+                  size={14}
+                />
                 <input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  placeholder="Email"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-[1.5px] border-line bg-paper text-ink placeholder:text-ink-faint focus:outline-none focus:border-brand transition-colors"
+                  placeholder="ten@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="password" className="block text-sm font-bold text-ink-soft mb-1.5">
                 Mật khẩu
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="text-gray-400" />
-                </div>
+                <FaLock
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint"
+                  size={14}
+                />
                 <input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  placeholder="Mật khẩu"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-[1.5px] border-line bg-paper text-ink placeholder:text-ink-faint focus:outline-none focus:border-brand transition-colors"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember_me"
-                name="remember_me"
-                type="checkbox"
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember_me" className="ml-2 block text-sm text-gray-900">
-                Ghi nhớ đăng nhập
+
+            <div className="flex items-center justify-between pt-1">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  id="remember_me"
+                  name="remember_me"
+                  type="checkbox"
+                  className="h-4 w-4 accent-[var(--color-brand)] rounded"
+                />
+                <span className="text-sm font-medium text-ink-soft">Ghi nhớ</span>
               </label>
-            </div>
-            
-            <div className="text-sm">
-              <a href="#" className="font-medium text-green-600 hover:text-green-500">
+              <a href="#" className="text-sm font-bold text-brand hover:underline">
                 Quên mật khẩu?
               </a>
             </div>
-          </div>
-          
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              disabled={isLoading || isNavigating.current}
-            >
-              {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
+
+            <button type="submit" className="sx-btn sx-btn-primary w-full" disabled={busy}>
+              {busy ? 'Đang xử lý...' : 'Đăng nhập'}
             </button>
-          </div>
-        </form>
-        
-        <div className="mt-4">
-          <div className="relative">
+          </form>
+
+          <div className="relative my-5">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+              <div className="w-full border-t border-line" />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Hoặc tiếp tục với</span>
+            <div className="relative flex justify-center">
+              <span className="px-3 bg-paper text-xs font-bold text-ink-faint uppercase tracking-wider">
+                Tài khoản mẫu
+              </span>
             </div>
           </div>
-          
-          <div className="mt-6">
+
+          <div className="grid grid-cols-2 gap-2.5">
             <button
-              onClick={handleDemoLogin}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              disabled={isLoading || isNavigating.current}
+              type="button"
+              onClick={() => handleDemoLogin('user')}
+              className="sx-btn sx-btn-outline w-full"
+              disabled={busy}
             >
-              {isLoading ? 'Đang xử lý...' : 'Đăng nhập Demo'}
+              Học sinh
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDemoLogin('admin')}
+              className="sx-btn sx-btn-outline w-full"
+              disabled={busy}
+            >
+              Quản trị
             </button>
           </div>
         </div>
+
+        <p className="text-center text-sm text-ink-soft mt-5">
+          Chưa có tài khoản?{' '}
+          <Link href="/dang-ky" className="font-bold text-brand hover:underline">
+            Đăng ký ngay
+          </Link>
+        </p>
       </div>
     </div>
   );

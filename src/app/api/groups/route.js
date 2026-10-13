@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireAuth } from "@/lib/auth";
 
 // GET /api/groups - Lấy danh sách nhóm và xếp hạng
 export async function GET(request) {
@@ -59,6 +60,9 @@ export async function GET(request) {
 
 // POST /api/groups - Tham gia nhóm
 export async function POST(request) {
+  const { error } = await requireAuth();
+  if (error) return error;
+
   try {
     const data = await request.json();
     const { userId, groupId, action } = data;
