@@ -162,6 +162,75 @@ async function main() {
 
   console.log(`Đã tạo ${products.length} sản phẩm`);
 
+  // Khởi tạo quà tặng cho trang Đổi quà
+  const rewards = [
+    {
+      title: 'Bút chì gỗ tái chế',
+      description: 'Bộ 5 bút chì làm từ gỗ tái chế, thân thiện với môi trường.',
+      points: 20,
+      category: 'Văn phòng phẩm',
+      stock: 50,
+    },
+    {
+      title: 'Sổ tay giấy tái chế',
+      description: 'Sổ tay 100 trang làm từ giấy tái chế 100%.',
+      points: 40,
+      category: 'Văn phòng phẩm',
+      stock: 30,
+    },
+    {
+      title: 'Bình nước cá nhân',
+      description: 'Bình nước inox 500ml, dùng thay cho chai nhựa một lần.',
+      points: 120,
+      category: 'Đồ dùng',
+      stock: 20,
+    },
+    {
+      title: 'Túi vải canvas Sống Xanh',
+      description: 'Túi vải dùng nhiều lần, thay thế túi ni-lông khi đi mua sắm.',
+      points: 80,
+      category: 'Đồ dùng',
+      stock: 25,
+    },
+    {
+      title: 'Hạt giống cây xanh',
+      description: 'Gói hạt giống kèm hướng dẫn trồng và chăm sóc.',
+      points: 30,
+      category: 'Cây xanh',
+      stock: 60,
+    },
+    {
+      title: 'Cây xương rồng mini',
+      description: 'Chậu xương rồng mini để bàn học, dễ chăm sóc.',
+      points: 90,
+      category: 'Cây xanh',
+      stock: 15,
+    },
+    {
+      title: 'Voucher nhà sách 50.000đ',
+      description: 'Phiếu mua sách giảm giá 50.000đ tại nhà sách liên kết.',
+      points: 200,
+      category: 'Voucher',
+      stock: 10,
+    },
+    {
+      title: 'Bộ dụng cụ học tập xanh',
+      description: 'Bộ thước, gọt bút và cục gôm làm từ vật liệu tái chế.',
+      points: 150,
+      category: 'Dụng cụ học tập',
+      stock: 12,
+    },
+  ];
+
+  for (const reward of rewards) {
+    const createdReward = await prisma.reward.create({
+      data: reward,
+    });
+    console.log(`Đã tạo quà tặng: ${createdReward.title}`);
+  }
+
+  console.log(`Đã tạo ${rewards.length} quà tặng`);
+
   console.log('Tạo dữ liệu mẫu hoàn tất!');
 }
 

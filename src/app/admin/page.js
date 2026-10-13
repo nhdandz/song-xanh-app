@@ -10,8 +10,11 @@ import {
   FlagIcon,
   ChartBarIcon,
   LightBulbIcon,
-  TrophyIcon
+  TrophyIcon,
+  GiftIcon,
+  CircleStackIcon
 } from "@heroicons/react/24/outline";
+import { ADMIN_MODELS } from "@/lib/adminModels";
 
 export default function AdminPage() {
   const [stats, setStats] = useState({
@@ -21,6 +24,7 @@ export default function AdminPage() {
     events: 0,
     reports: 0,
     ideas: 0,
+    rewards: 0,
     loading: true
   });
 
@@ -91,6 +95,22 @@ export default function AdminPage() {
       color: "yellow"
     },
     {
+      title: "Quản lý Quà tặng",
+      description: "Thêm quà để trang Đổi quà có dữ liệu",
+      icon: GiftIcon,
+      href: "/admin/du-lieu/qua-tang",
+      count: stats.rewards,
+      color: "pink"
+    },
+    {
+      title: "Quản lý Dữ liệu",
+      description: `Thêm, sửa, xóa ${ADMIN_MODELS.length} bảng dữ liệu còn lại`,
+      icon: CircleStackIcon,
+      href: "/admin/du-lieu",
+      count: null,
+      color: "teal"
+    },
+    {
       title: "Thống kê",
       description: "Xem báo cáo và phân tích dữ liệu",
       icon: ChartBarIcon,
@@ -108,7 +128,9 @@ export default function AdminPage() {
       orange: "bg-orange-50 border-orange-200 hover:bg-orange-100",
       red: "bg-red-50 border-red-200 hover:bg-red-100",
       yellow: "bg-yellow-50 border-yellow-200 hover:bg-yellow-100",
-      indigo: "bg-indigo-50 border-indigo-200 hover:bg-indigo-100"
+      indigo: "bg-indigo-50 border-indigo-200 hover:bg-indigo-100",
+      pink: "bg-pink-50 border-pink-200 hover:bg-pink-100",
+      teal: "bg-teal-50 border-teal-200 hover:bg-teal-100"
     };
     return colors[color] || colors.blue;
   };
@@ -121,7 +143,9 @@ export default function AdminPage() {
       orange: "text-orange-600",
       red: "text-red-600",
       yellow: "text-yellow-600",
-      indigo: "text-indigo-600"
+      indigo: "text-indigo-600",
+      pink: "text-pink-600",
+      teal: "text-teal-600"
     };
     return colors[color] || colors.blue;
   };
