@@ -4,8 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeftIcon, NewspaperIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { NewspaperIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -200,49 +199,45 @@ export default function AdminTinTuc() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-7xl mx-auto">
       <div className="mb-6">
-        <Link href="/admin" className="inline-flex items-center text-green-600 hover:text-green-700 mb-4">
-          <ArrowLeftIcon className="w-5 h-5 mr-2" />
-          Quay lại Dashboard
-        </Link>
         <div className="flex items-center gap-3">
-          <NewspaperIcon className="w-10 h-10 text-green-600" />
+          <NewspaperIcon className="w-10 h-10 text-brand" />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Quản lý Tin Tức</h1>
-            <p className="text-gray-600 mt-1">Tạo, chỉnh sửa và xóa bài viết</p>
+            <h1 className="text-3xl font-bold text-ink">Quản lý Tin Tức</h1>
+            <p className="text-ink-soft mt-1">Tạo, chỉnh sửa và xóa bài viết</p>
           </div>
         </div>
       </div>
 
-      <section className="mb-8 bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Danh sách bài viết ({articles.length})</h2>
+      <section className="mb-8 sx-card p-6">
+        <h2 className="text-xl font-bold text-ink mb-4">Danh sách bài viết ({articles.length})</h2>
         {loadingArticles ? (
           <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-green-500 border-t-transparent"></div>
-            <p className="mt-2 text-gray-600">Đang tải...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand border-t-transparent"></div>
+            <p className="mt-2 text-ink-soft">Đang tải...</p>
           </div>
         ) : (
           <div className="space-y-3">
             {articles.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                <NewspaperIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+              <div className="text-center py-8 text-ink-faint">
+                <NewspaperIcon className="w-12 h-12 mx-auto mb-2 text-ink-faint" />
                 Chưa có bài viết nào
               </div>
             )}
             {articles.map((a) => (
-              <div key={a.id} className="flex items-center gap-4 border border-gray-200 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+              <div key={a.id} className="flex items-center gap-4 border border-line p-4 rounded-lg hover:bg-canvas transition-colors">
                 {a.image && (
                   <img src={a.image} alt={a.title} className="w-20 h-20 object-cover rounded" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-gray-900 truncate">{a.title}</div>
-                  <div className="text-sm text-gray-500 line-clamp-2">{a.excerpt || "Không có tóm tắt"}</div>
+                  <div className="font-semibold text-ink truncate">{a.title}</div>
+                  <div className="text-sm text-ink-faint line-clamp-2">{a.excerpt || "Không có tóm tắt"}</div>
                   <div className="flex gap-2 mt-1">
                     {a.category && (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">{a.category}</span>
+                      <span className="text-xs bg-brand-wash text-brand px-2 py-1 rounded">{a.category}</span>
                     )}
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-ink-faint">
                       {new Date(a.createdAt).toLocaleDateString("vi-VN")}
                     </span>
                   </div>
@@ -251,7 +246,7 @@ export default function AdminTinTuc() {
                   <button
                     type="button"
                     onClick={() => router.push(`/admin/tin-tuc/edit/${a.id}`)}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="inline-flex items-center px-3 py-2 border border-line rounded-lg hover:bg-canvas transition-colors"
                   >
                     <PencilIcon className="w-4 h-4 mr-1" />
                     Sửa
@@ -272,54 +267,54 @@ export default function AdminTinTuc() {
         )}
       </section>
 
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Tạo bài viết mới</h2>
+      <div className="sx-card p-6">
+        <h2 className="text-xl font-bold text-ink mb-6">Tạo bài viết mới</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
+            <label className="block text-sm font-medium text-ink-soft mb-2">Tiêu đề *</label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Nhập tiêu đề bài viết"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-line rounded-lg focus:ring-2 focus:border-brand focus:border-transparent"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tóm tắt</label>
+            <label className="block text-sm font-medium text-ink-soft mb-2">Tóm tắt</label>
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               placeholder="Nhập tóm tắt ngắn gọn về bài viết"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-line rounded-lg focus:ring-2 focus:border-brand focus:border-transparent"
               rows="3"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Link ảnh đại diện</label>
+              <label className="block text-sm font-medium text-ink-soft mb-2">Link ảnh đại diện</label>
               <input
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 placeholder="/images/article.jpg"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-line rounded-lg focus:ring-2 focus:border-brand focus:border-transparent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+              <label className="block text-sm font-medium text-ink-soft mb-2">Danh mục</label>
               <input
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="Môi trường, Tái chế, ..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-line rounded-lg focus:ring-2 focus:border-brand focus:border-transparent"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Nội dung bài viết *</label>
+            <label className="block text-sm font-medium text-ink-soft mb-2">Nội dung bài viết *</label>
             <div className="mb-3 flex flex-wrap gap-2">
               <button
                 type="button"
@@ -331,12 +326,12 @@ export default function AdminTinTuc() {
               <button
                 type="button"
                 onClick={appendCardsToContent}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                className="px-4 py-2 border border-line rounded-lg hover:bg-canvas transition-colors text-sm"
               >
                 Chèn cards vào cuối nội dung
               </button>
             </div>
-            <div className="border border-gray-300 rounded-lg overflow-hidden">
+            <div className="border border-line rounded-lg overflow-hidden">
               <ReactQuill
                 ref={quillRef}
                 theme="snow"
@@ -344,28 +339,28 @@ export default function AdminTinTuc() {
                 onChange={(v) => setContent(v)}
                 modules={quillModules}
                 formats={quillFormats}
-                className="bg-white"
+                className="bg-paper"
               />
             </div>
           </div>
 
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tạo bộ thẻ thông tin (Cards)</h3>
+            <h3 className="text-lg font-semibold text-ink mb-4">Tạo bộ thẻ thông tin (Cards)</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề card</label>
+                <label className="block text-sm font-medium text-ink-soft mb-2">Tiêu đề card</label>
                 <input
                   ref={cardTitleRef}
                   placeholder="Ví dụ: Lợi ích của tái chế"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-line rounded-lg focus:ring-2 focus:border-brand focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nội dung (mỗi dòng một bullet point)</label>
+                <label className="block text-sm font-medium text-ink-soft mb-2">Nội dung (mỗi dòng một bullet point)</label>
                 <textarea
                   ref={cardBulletsRef}
                   placeholder="Giảm lượng rác thải&#10;Tiết kiệm tài nguyên thiên nhiên&#10;Bảo vệ môi trường"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-line rounded-lg focus:ring-2 focus:border-brand focus:border-transparent"
                   rows={4}
                 />
               </div>
@@ -374,7 +369,7 @@ export default function AdminTinTuc() {
                 <button
                   type="button"
                   onClick={addCard}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-bright transition-colors"
                 >
                   Thêm card
                 </button>
@@ -390,7 +385,7 @@ export default function AdminTinTuc() {
                   onClick={() => {
                     if (confirm("Xoá tất cả card preview?")) clearCards();
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-line rounded-lg hover:bg-canvas transition-colors"
                 >
                   Xoá tất cả
                 </button>
@@ -398,12 +393,12 @@ export default function AdminTinTuc() {
 
               {cards.length > 0 && (
                 <div className="mt-6">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Preview Cards ({cards.length})</h4>
+                  <h4 className="text-sm font-medium text-ink-soft mb-3">Preview Cards ({cards.length})</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {cards.map((c, i) => (
-                      <div key={c.id} className="border-2 border-green-200 p-4 rounded-lg bg-green-50">
+                      <div key={c.id} className="border-2 border-line p-4 rounded-lg bg-brand-wash">
                         <div className="flex items-start gap-3 mb-3">
-                          <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-bold flex-shrink-0">
                             {i + 1}
                           </div>
                           <div className="flex-1 font-semibold text-green-900">{c.title}</div>
@@ -417,8 +412,8 @@ export default function AdminTinTuc() {
                         </div>
                         <ul className="space-y-1 ml-11">
                           {c.bullets.map((b, idx) => (
-                            <li key={idx} className="text-sm text-gray-700 flex items-start">
-                              <span className="text-green-600 mr-2">•</span>
+                            <li key={idx} className="text-sm text-ink-soft flex items-start">
+                              <span className="text-brand mr-2">•</span>
                               <span>{b}</span>
                             </li>
                           ))}
@@ -434,7 +429,7 @@ export default function AdminTinTuc() {
           <div className="flex gap-3 pt-6 border-t">
             <button
               type="submit"
-              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-lg"
+              className="px-8 py-3 bg-brand text-white rounded-lg hover:bg-brand-bright transition-colors font-semibold"
             >
               Đăng bài viết
             </button>
@@ -450,7 +445,7 @@ export default function AdminTinTuc() {
                   clearCards();
                 }
               }}
-              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-6 py-3 border border-line rounded-lg hover:bg-canvas transition-colors"
             >
               Làm mới
             </button>

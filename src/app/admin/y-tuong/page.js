@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { ArrowLeftIcon, LightBulbIcon } from "@heroicons/react/24/outline";
+import { LightBulbIcon } from "@heroicons/react/24/outline";
 
 export default function AdminIdeasPage() {
   const [ideas, setIdeas] = useState([]);
@@ -76,25 +75,21 @@ export default function AdminIdeasPage() {
     const colors = {
       "Mới đề xuất": "bg-blue-100 text-blue-800",
       "Đang xem xét": "bg-yellow-100 text-yellow-800",
-      "Chấp nhận": "bg-green-100 text-green-800",
+      "Chấp nhận": "bg-brand-wash text-ink",
       "Từ chối": "bg-red-100 text-red-800",
       "Đang thực hiện": "bg-purple-100 text-purple-800",
-      "Hoàn thành": "bg-gray-100 text-gray-800"
+      "Hoàn thành": "bg-canvas text-ink"
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-canvas text-ink";
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-7xl mx-auto">
       <div className="mb-6">
-        <Link href="/admin" className="inline-flex items-center text-green-600 hover:text-green-700 mb-4">
-          <ArrowLeftIcon className="w-5 h-5 mr-2" />
-          Quay lại Dashboard
-        </Link>
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Quản lý Ý tưởng</h1>
-            <p className="text-gray-600 mt-1">Tổng số: {ideas.length} ý tưởng</p>
+            <h1 className="text-3xl font-bold text-ink">Quản lý Ý tưởng</h1>
+            <p className="text-ink-soft mt-1">Tổng số: {ideas.length} ý tưởng</p>
           </div>
         </div>
       </div>
@@ -103,7 +98,7 @@ export default function AdminIdeasPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          className="px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
         >
           <option value="all">Tất cả trạng thái</option>
           {statuses.map(status => (
@@ -114,45 +109,45 @@ export default function AdminIdeasPage() {
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
-          <p className="mt-4 text-gray-600">Đang tải danh sách ý tưởng...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
+          <p className="mt-4 text-ink-soft">Đang tải danh sách ý tưởng...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredIdeas.length === 0 ? (
-            <div className="col-span-2 text-center py-12 bg-white rounded-lg shadow">
-              <LightBulbIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-              <p className="text-gray-500">Không tìm thấy ý tưởng nào</p>
+            <div className="col-span-2 text-center py-12 sx-card">
+              <LightBulbIcon className="w-12 h-12 mx-auto mb-2 text-ink-faint" />
+              <p className="text-ink-faint">Không tìm thấy ý tưởng nào</p>
             </div>
           ) : (
             filteredIdeas.map((idea) => (
-              <div key={idea.id} className="bg-white rounded-lg shadow-lg p-6">
+              <div key={idea.id} className="sx-card p-6">
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-xl font-bold text-gray-900 flex-1">{idea.title}</h3>
+                  <h3 className="text-xl font-bold text-ink flex-1">{idea.title}</h3>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(idea.status)}`}>
                     {idea.status}
                   </span>
                 </div>
 
-                <p className="text-gray-700 mb-4 line-clamp-3">{idea.description}</p>
+                <p className="text-ink-soft mb-4 line-clamp-3">{idea.description}</p>
 
                 <div className="grid grid-cols-3 gap-2 mb-4 text-sm">
                   <div>
-                    <span className="text-gray-500">Danh mục:</span>
-                    <div className="font-semibold text-green-700">{idea.category}</div>
+                    <span className="text-ink-faint">Danh mục:</span>
+                    <div className="font-semibold text-brand">{idea.category}</div>
                   </div>
                   <div>
-                    <span className="text-gray-500">Độ khó:</span>
+                    <span className="text-ink-faint">Độ khó:</span>
                     <div className="font-semibold">{idea.difficulty}</div>
                   </div>
                   <div>
-                    <span className="text-gray-500">Tác động:</span>
+                    <span className="text-ink-faint">Tác động:</span>
                     <div className="font-semibold">{idea.impact}</div>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t">
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-ink-faint">
                     <div>Người đề xuất: {idea.user?.name || "Unknown"}</div>
                     <div className="text-xs mt-1">
                       {idea._count?.likes || 0} lượt thích | {idea._count?.comments || 0} bình luận
@@ -164,7 +159,7 @@ export default function AdminIdeasPage() {
                   <select
                     value={idea.status}
                     onChange={(e) => updateStatus(idea.id, e.target.value)}
-                    className="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500"
+                    className="flex-1 px-3 py-1 border border-line rounded text-sm focus:ring-2 focus:border-brand"
                   >
                     {statuses.map(status => (
                       <option key={status} value={status}>{status}</option>

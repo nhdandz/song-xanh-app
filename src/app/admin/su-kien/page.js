@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { ArrowLeftIcon, PlusIcon, CalendarIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, CalendarIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/outline";
 
 export default function AdminEventsPage() {
   const [events, setEvents] = useState([]);
@@ -92,20 +91,16 @@ export default function AdminEventsPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-7xl mx-auto">
       <div className="mb-6">
-        <Link href="/admin" className="inline-flex items-center text-green-600 hover:text-green-700 mb-4">
-          <ArrowLeftIcon className="w-5 h-5 mr-2" />
-          Quay lại Dashboard
-        </Link>
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Quản lý Sự kiện</h1>
-            <p className="text-gray-600 mt-1">Tổng số: {events.length} sự kiện</p>
+            <h1 className="text-3xl font-bold text-ink">Quản lý Sự kiện</h1>
+            <p className="text-ink-soft mt-1">Tổng số: {events.length} sự kiện</p>
           </div>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="sx-btn sx-btn-primary"
           >
             <PlusIcon className="w-5 h-5 mr-2" />
             Tạo sự kiện mới
@@ -114,7 +109,7 @@ export default function AdminEventsPage() {
       </div>
 
       {showAddForm && (
-        <div className="mb-6 bg-white rounded-lg shadow-lg p-6">
+        <div className="mb-6 sx-card p-6">
           <h2 className="text-xl font-bold mb-4">Tạo sự kiện mới</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
@@ -122,7 +117,7 @@ export default function AdminEventsPage() {
               placeholder="Tiêu đề sự kiện *"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
               required
             />
 
@@ -130,7 +125,7 @@ export default function AdminEventsPage() {
               placeholder="Mô tả sự kiện *"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
               rows="4"
               required
             />
@@ -140,29 +135,29 @@ export default function AdminEventsPage() {
               placeholder="Địa điểm *"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
               required
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Ngày giờ tổ chức *</label>
+                <label className="block text-sm text-ink-soft mb-1">Ngày giờ tổ chức *</label>
                 <input
                   type="datetime-local"
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Số lượng tham gia tối đa (tùy chọn)</label>
+                <label className="block text-sm text-ink-soft mb-1">Số lượng tham gia tối đa (tùy chọn)</label>
                 <input
                   type="number"
                   placeholder="Để trống nếu không giới hạn"
                   value={formData.maxParticipants}
                   onChange={(e) => setFormData({ ...formData, maxParticipants: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
                 />
               </div>
             </div>
@@ -170,14 +165,14 @@ export default function AdminEventsPage() {
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="sx-btn sx-btn-primary"
               >
                 Tạo sự kiện
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="sx-btn sx-btn-outline"
               >
                 Hủy
               </button>
@@ -188,37 +183,37 @@ export default function AdminEventsPage() {
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
-          <p className="mt-4 text-gray-600">Đang tải danh sách sự kiện...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
+          <p className="mt-4 text-ink-soft">Đang tải danh sách sự kiện...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {events.length === 0 ? (
-            <div className="col-span-2 text-center py-12 bg-white rounded-lg shadow">
-              <CalendarIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-              <p className="text-gray-500">Chưa có sự kiện nào</p>
+            <div className="col-span-2 text-center py-12 sx-card">
+              <CalendarIcon className="w-12 h-12 mx-auto mb-2 text-ink-faint" />
+              <p className="text-ink-faint">Chưa có sự kiện nào</p>
             </div>
           ) : (
             events.map((event) => (
-              <div key={event.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+              <div key={event.id} className="sx-card overflow-hidden hover:shadow-xl transition-shadow">
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{event.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{event.description}</p>
+                  <h3 className="text-xl font-bold text-ink mb-2">{event.title}</h3>
+                  <p className="text-ink-soft mb-4 line-clamp-3">{event.description}</p>
 
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-gray-700">
-                      <CalendarIcon className="w-5 h-5 mr-2 text-green-600" />
+                    <div className="flex items-center text-ink-soft">
+                      <CalendarIcon className="w-5 h-5 mr-2 text-brand" />
                       {new Date(event.date).toLocaleString("vi-VN", {
                         dateStyle: "long",
                         timeStyle: "short"
                       })}
                     </div>
-                    <div className="flex items-center text-gray-700">
-                      <MapPinIcon className="w-5 h-5 mr-2 text-green-600" />
+                    <div className="flex items-center text-ink-soft">
+                      <MapPinIcon className="w-5 h-5 mr-2 text-brand" />
                       {event.location}
                     </div>
-                    <div className="flex items-center text-gray-700">
-                      <UsersIcon className="w-5 h-5 mr-2 text-green-600" />
+                    <div className="flex items-center text-ink-soft">
+                      <UsersIcon className="w-5 h-5 mr-2 text-brand" />
                       {event._count?.participants || 0} người tham gia
                       {event.maxParticipants && ` / ${event.maxParticipants} tối đa`}
                     </div>

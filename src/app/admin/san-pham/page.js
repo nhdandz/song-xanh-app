@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { ArrowLeftIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -110,26 +109,22 @@ export default function AdminProductsPage() {
   );
 
   const getScoreColor = (score) => {
-    if (score >= 8) return "text-green-600 bg-green-100";
+    if (score >= 8) return "text-brand bg-brand-wash";
     if (score >= 5) return "text-yellow-600 bg-yellow-100";
     return "text-red-600 bg-red-100";
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-7xl mx-auto">
       <div className="mb-6">
-        <Link href="/admin" className="inline-flex items-center text-green-600 hover:text-green-700 mb-4">
-          <ArrowLeftIcon className="w-5 h-5 mr-2" />
-          Quay lại Dashboard
-        </Link>
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Quản lý Sản phẩm</h1>
-            <p className="text-gray-600 mt-1">Tổng số: {products.length} sản phẩm</p>
+            <h1 className="text-3xl font-bold text-ink">Quản lý Sản phẩm</h1>
+            <p className="text-ink-soft mt-1">Tổng số: {products.length} sản phẩm</p>
           </div>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="sx-btn sx-btn-primary"
           >
             <PlusIcon className="w-5 h-5 mr-2" />
             Thêm sản phẩm mới
@@ -138,7 +133,7 @@ export default function AdminProductsPage() {
       </div>
 
       {showAddForm && (
-        <div className="mb-6 bg-white rounded-lg shadow-lg p-6">
+        <div className="mb-6 sx-card p-6">
           <h2 className="text-xl font-bold mb-4">Thêm sản phẩm mới</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -147,7 +142,7 @@ export default function AdminProductsPage() {
                 placeholder="Barcode *"
                 value={formData.barcode}
                 onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                className="px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
                 required
               />
               <input
@@ -155,7 +150,7 @@ export default function AdminProductsPage() {
                 placeholder="Tên sản phẩm *"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                className="px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
                 required
               />
               <input
@@ -163,24 +158,24 @@ export default function AdminProductsPage() {
                 placeholder="Thương hiệu"
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                className="px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
               />
               <input
                 type="text"
                 placeholder="Danh mục"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                className="px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
               />
               <input
                 type="text"
                 placeholder="Bao bì"
                 value={formData.packaging}
                 onChange={(e) => setFormData({ ...formData, packaging: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                className="px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
               />
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Điểm xanh (0-10)</label>
+                <label className="block text-sm text-ink-soft mb-1">Điểm xanh (0-10)</label>
                 <input
                   type="number"
                   min="0"
@@ -188,7 +183,7 @@ export default function AdminProductsPage() {
                   step="0.1"
                   value={formData.greenScore}
                   onChange={(e) => setFormData({ ...formData, greenScore: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
                 />
               </div>
             </div>
@@ -199,7 +194,7 @@ export default function AdminProductsPage() {
                   type="checkbox"
                   checked={formData.recyclable}
                   onChange={(e) => setFormData({ ...formData, recyclable: e.target.checked })}
-                  className="mr-2 w-4 h-4 text-green-600"
+                  className="mr-2 w-4 h-4 text-brand"
                 />
                 Tái chế được
               </label>
@@ -208,7 +203,7 @@ export default function AdminProductsPage() {
                   type="checkbox"
                   checked={formData.biodegradable}
                   onChange={(e) => setFormData({ ...formData, biodegradable: e.target.checked })}
-                  className="mr-2 w-4 h-4 text-green-600"
+                  className="mr-2 w-4 h-4 text-brand"
                 />
                 Phân hủy sinh học
               </label>
@@ -217,7 +212,7 @@ export default function AdminProductsPage() {
                   type="checkbox"
                   checked={formData.plasticFree}
                   onChange={(e) => setFormData({ ...formData, plasticFree: e.target.checked })}
-                  className="mr-2 w-4 h-4 text-green-600"
+                  className="mr-2 w-4 h-4 text-brand"
                 />
                 Không nhựa
               </label>
@@ -227,21 +222,21 @@ export default function AdminProductsPage() {
               placeholder="Khuyến nghị"
               value={formData.recommendation}
               onChange={(e) => setFormData({ ...formData, recommendation: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors"
               rows="3"
             />
 
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="sx-btn sx-btn-primary"
               >
                 Thêm sản phẩm
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="sx-btn sx-btn-outline"
               >
                 Hủy
               </button>
@@ -252,60 +247,60 @@ export default function AdminProductsPage() {
 
       <div className="mb-6">
         <div className="relative">
-          <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-ink-faint" />
           <input
             type="text"
             placeholder="Tìm kiếm theo tên, barcode, hoặc thương hiệu..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-line rounded-lg focus:ring-2 focus:border-brand focus:border-transparent"
           />
         </div>
       </div>
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
-          <p className="mt-4 text-gray-600">Đang tải danh sách sản phẩm...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
+          <p className="mt-4 text-ink-soft">Đang tải danh sách sản phẩm...</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="sx-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-canvas">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Barcode</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sản phẩm</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thương hiệu</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Danh mục</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Điểm xanh</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thuộc tính</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase">Barcode</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase">Sản phẩm</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase">Thương hiệu</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase">Danh mục</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase">Điểm xanh</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase">Thuộc tính</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-ink-faint uppercase">Hành động</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-paper divide-y divide-gray-200">
                 {filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan="7" className="px-6 py-12 text-center text-ink-faint">
                       Không tìm thấy sản phẩm nào
                     </td>
                   </tr>
                 ) : (
                   filteredProducts.map((product) => (
-                    <tr key={product.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                    <tr key={product.id} className="hover:bg-canvas">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-ink">
                         {product.barcode}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                        <div className="text-sm font-medium text-ink">{product.name}</div>
                         {product.packaging && (
-                          <div className="text-xs text-gray-500">Bao bì: {product.packaging}</div>
+                          <div className="text-xs text-ink-faint">Bao bì: {product.packaging}</div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                         {product.brand || "-"}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                         {product.category || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -319,7 +314,7 @@ export default function AdminProductsPage() {
                             <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">Tái chế</span>
                           )}
                           {product.biodegradable && (
-                            <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">Phân hủy</span>
+                            <span className="px-2 py-1 text-xs bg-brand-wash text-brand rounded">Phân hủy</span>
                           )}
                           {product.plasticFree && (
                             <span className="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded">Không nhựa</span>
