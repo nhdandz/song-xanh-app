@@ -84,7 +84,13 @@ export default function RootLayout({ children }) {
   };
 
   const isAdminPath = pathname?.startsWith('/admin');
-  const showNavigation = !noNavPaths.includes(pathname) && !isAdminPath;
+  const isAuthPage = noNavPaths.includes(pathname);
+  const showNavigation = !isAuthPage && !isAdminPath;
+
+  // Lề trái phải bám theo việc CÓ sidebar hay không, chứ không phải theo
+  // "có phải trang admin không". Trang đăng nhập/đăng ký không có sidebar
+  // nào cả, nếu vẫn đẩy lg:ml-72 thì nội dung lệch hẳn sang phải 288px.
+  const contentOffset = showNavigation ? 'lg:ml-72' : isAdminPath ? 'lg:ml-64' : '';
 
   return (
     <html lang="vi" className={beVietnam.variable}>
@@ -96,23 +102,25 @@ export default function RootLayout({ children }) {
               {/* Navigation (nếu có) */}
               {showNavigation && <Navigation onMenuClick={toggleDrawer} />}
 
-              {/* Nội dung chính */}
-              <main className={`${isAdminPath ? '' : 'lg:ml-72'} flex-grow`}>
+              {/* Nội dung chính. Trang đăng nhập/đăng ký tự lo chiều cao
+                  nên bỏ flex-grow để không bị đẩy thêm khoảng trống. */}
+              <main className={`${contentOffset} ${isAuthPage ? '' : 'flex-grow'}`}>
                 {children}
               </main>
 
-              {/* Footer bản quyền - xuất hiện ở cuối mọi trang và responsive.
-                  Không dùng w-full: cộng với lg:ml-72 sẽ thành 100% + 288px
-                  và làm cả trang tràn ngang. */}
-              <footer
-                className={`border-t border-line ${isAdminPath ? '' : 'lg:ml-72'}`}
-              >
-                <div className="max-w-6xl mx-auto px-4 py-5">
-                  <p className="text-center text-ink-faint text-xs sm:text-sm">
-                    © {new Date().getFullYear()} Ngọc Tú — Nhật Minh
-                  </p>
-                </div>
-              </footer>
+              {/* Footer bản quyền. Không dùng w-full: cộng với lg:ml-72 sẽ
+                  thành 100% + 288px và làm cả trang tràn ngang.
+                  Trang đăng nhập/đăng ký là màn hình toàn khung nên không có
+                  footer. */}
+              {!isAuthPage && (
+                <footer className={`border-t border-line ${contentOffset}`}>
+                  <div className="max-w-6xl mx-auto px-4 py-5">
+                    <p className="text-center text-ink-faint text-xs sm:text-sm">
+                      © {new Date().getFullYear()} Ngọc Tú — Nhật Minh
+                    </p>
+                  </div>
+                </footer>
+              )}
 
               {/* Drawer menu (nếu có) */}
               {showNavigation && <DrawerMenu isOpen={isDrawerOpen} onClose={toggleDrawer} />}
