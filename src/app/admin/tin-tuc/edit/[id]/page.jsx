@@ -158,7 +158,7 @@ export default function EditArticlePage() {
                 <div className="text-sm text-yellow-600">Link không phải file ảnh hợp lệ — vẫn sẽ lưu nhưng có thể không hiển thị.</div>
               )
             ) : (
-              <div className="text-sm text-gray-500">Chưa có ảnh cover.</div>
+              <div className="text-sm text-ink-faint">Chưa có ảnh cover.</div>
             )}
           </div>
         </div>
@@ -171,7 +171,7 @@ export default function EditArticlePage() {
         </div>
 
         <div className="flex gap-2">
-          <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded">
+          <button type="submit" className="bg-brand text-white px-6 py-2 rounded">
             Lưu
           </button>
           <button type="button" onClick={() => router.push("/admin/tin-tuc")} className="px-4 py-2 border rounded">

@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 const INPUT_CLASS =
-  "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent";
+  "w-full px-4 py-2.5 rounded-xl border-[1.5px] border-line bg-paper focus:outline-none focus:border-brand transition-colors";
 
 /** Lấy giá trị theo đường dẫn lồng nhau, ví dụ "user.name" hoặc "_count.likes". */
 function getPath(row, path) {
@@ -231,15 +231,15 @@ export default function AdminDataModelPage() {
             type="checkbox"
             checked={Boolean(value)}
             onChange={(e) => onChange(e.target.checked)}
-            className="h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
+            className="h-4 w-4 text-brand rounded border-line focus:border-brand"
           />
-          <span className="text-sm text-gray-700">{field.label}</span>
+          <span className="text-sm text-ink-soft">{field.label}</span>
         </label>
       );
     }
 
     const label = (
-      <label className="block text-sm text-gray-600 mb-1">
+      <label className="block text-sm text-ink-soft mb-1">
         {field.label}
         {field.required && <span className="text-red-500"> *</span>}
       </label>
@@ -324,11 +324,11 @@ export default function AdminDataModelPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-7xl mx-auto">
       <div className="mb-6">
         <Link
           href="/admin/du-lieu"
-          className="inline-flex items-center text-green-600 hover:text-green-700 mb-4"
+          className="inline-flex items-center text-brand mb-4"
         >
           <ArrowLeftIcon className="w-5 h-5 mr-2" />
           Quay lại Quản lý Dữ liệu
@@ -336,10 +336,10 @@ export default function AdminDataModelPage() {
 
         <div className="flex justify-between items-start gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-ink">
               {meta?.label || "Đang tải..."}
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-ink-soft mt-1">
               {meta?.description}
               {meta && ` · Tổng số: ${total.toLocaleString("vi-VN")}`}
             </p>
@@ -348,7 +348,7 @@ export default function AdminDataModelPage() {
           {meta && (
             <button
               onClick={openCreateForm}
-              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="sx-btn sx-btn-primary"
             >
               <PlusIcon className="w-5 h-5 mr-2" />
               Thêm mới
@@ -360,7 +360,7 @@ export default function AdminDataModelPage() {
       {meta?.searchable && (
         <form onSubmit={handleSearch} className="mb-6 flex gap-2">
           <div className="flex-1 min-w-[260px] relative">
-            <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
             <input
               type="text"
               placeholder="Tìm kiếm..."
@@ -371,7 +371,7 @@ export default function AdminDataModelPage() {
           </div>
           <button
             type="submit"
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="sx-btn sx-btn-primary"
           >
             Tìm
           </button>
@@ -379,7 +379,7 @@ export default function AdminDataModelPage() {
       )}
 
       {showForm && meta && (
-        <div className="mb-6 bg-white rounded-lg shadow-lg p-6">
+        <div className="mb-6 sx-card p-6">
           <h2 className="text-xl font-bold mb-4">
             {editingId ? `Sửa ${meta.label}` : `Thêm ${meta.label}`}
           </h2>
@@ -403,14 +403,14 @@ export default function AdminDataModelPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300"
+                className="sx-btn sx-btn-primary disabled:bg-gray-300"
               >
                 {saving ? "Đang lưu..." : editingId ? "Lưu thay đổi" : "Thêm mới"}
               </button>
               <button
                 type="button"
                 onClick={closeForm}
-                className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="sx-btn sx-btn-outline"
               >
                 Hủy
               </button>
@@ -427,46 +427,46 @@ export default function AdminDataModelPage() {
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
-          <p className="mt-4 text-gray-600">Đang tải dữ liệu...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
+          <p className="mt-4 text-ink-soft">Đang tải dữ liệu...</p>
         </div>
       ) : meta ? (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="sx-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-canvas">
                 <tr>
                   {meta.columns.map((column) => (
                     <th
                       key={column.key}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase tracking-wider"
                     >
                       {column.label}
                     </th>
                   ))}
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-ink-faint uppercase tracking-wider">
                     Hành động
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-paper divide-y divide-gray-200">
                 {rows.length === 0 ? (
                   <tr>
                     <td
                       colSpan={meta.columns.length + 1}
-                      className="px-6 py-12 text-center text-gray-500"
+                      className="px-6 py-12 text-center text-ink-faint"
                     >
-                      <CircleStackIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                      <CircleStackIcon className="w-12 h-12 mx-auto mb-2 text-ink-faint" />
                       Chưa có dữ liệu
                     </td>
                   </tr>
                 ) : (
                   rows.map((row) => (
-                    <tr key={row.id} className="hover:bg-gray-50">
+                    <tr key={row.id} className="hover:bg-canvas">
                       {meta.columns.map((column) => (
                         <td
                           key={column.key}
-                          className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap"
+                          className="px-6 py-4 text-sm text-ink whitespace-nowrap"
                         >
                           {formatCell(getPath(row, column.key), column.type)}
                         </td>
@@ -474,7 +474,7 @@ export default function AdminDataModelPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
                           onClick={() => openEditForm(row)}
-                          className="text-green-600 hover:text-green-900"
+                          className="text-brand hover:text-green-900"
                         >
                           Sửa
                         </button>
@@ -493,22 +493,22 @@ export default function AdminDataModelPage() {
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
-              <span className="text-sm text-gray-600">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-line">
+              <span className="text-sm text-ink-soft">
                 Trang {page} / {totalPages}
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40"
+                  className="px-4 py-2 border border-line rounded-lg hover:bg-canvas disabled:opacity-40"
                 >
                   Trước
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40"
+                  className="px-4 py-2 border border-line rounded-lg hover:bg-canvas disabled:opacity-40"
                 >
                   Sau
                 </button>
