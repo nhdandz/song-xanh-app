@@ -30,9 +30,12 @@ export async function POST(req) {
       apiKey: process.env.GROQ_API_KEY,
     });
 
-    // MODEL MỚI NHẤT
+    // Groq hay khai tử model, nên để đổi được qua biến môi trường mà không
+    // phải sửa code. llama-3.3-70b-versatile đã ngừng phục vụ gói free/dev
+    // từ 16/08/2026, Groq khuyến nghị thay bằng openai/gpt-oss-120b.
+    // Danh sách cập nhật: https://console.groq.com/docs/deprecations
     const completion = await client.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
       messages,
       max_tokens: 2048,
     });
