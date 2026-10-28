@@ -17,6 +17,7 @@ import {
   FaInfoCircle,
   FaLightbulb
 } from 'react-icons/fa';
+import { compressImageToBase64 } from '@/lib/image';
 
 // Dữ liệu mẫu cho sản phẩm
 const PRODUCTS = [
@@ -79,6 +80,25 @@ export default function BarcodeScan() {
 
   const [evaluating, setEvaluating] = useState(false);
   const [processingImage, setProcessingImage] = useState(false);
+  // Luồng nhận diện sản phẩm từ ảnh bằng mô hình thị giác - ngôn ngữ.
+  const [recognizing, setRecognizing] = useState(false);
+
+  // Danh mục sản phẩm lấy từ database để quản trị viên thêm ở /admin/san-pham
+  // là hiện được ngay. Mảng PRODUCTS cắm cứng bên trên chỉ là dự phòng.
+  const [products, setProducts] = useState(PRODUCTS);
+
+  useEffect(() => {
+    let huy = false;
+
+    fetch('/api/products')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!huy && d?.products?.length) setProducts(d.products);
+      })
+      .catch((err) => console.warn('Không tải được danh mục sản phẩm:', err));
+
+    return () => { huy = true; };
+  }, []);
 
   useEffect(() => {
     try {
@@ -100,7 +120,7 @@ export default function BarcodeScan() {
     }
   }, [scanHistory]);
 
-  const getProductByBarcode = (barcode) => PRODUCTS.find(p => p.barcode === barcode);
+  const getProductByBarcode = (barcode) => products.find(p => p.barcode === barcode);
 
   const pushHistory = (productOrRaw) => {
     const entry = {
@@ -162,6 +182,77 @@ export default function BarcodeScan() {
     } finally {
       setEvaluating(false);
     }
+  };
+
+  // Gửi ảnh cho mô hình thị giác - ngôn ngữ để nhận ra sản phẩm rồi chấm độ
+  // xanh. Dùng khi sản phẩm không có mã vạch, hoặc mã bị che, mờ, rách.
+  const recognizeProductFromImage = async (file) => {
+    setRecognizing(true);
+    setViewMode('result');
+    setScannedProduct({
+      id: null,
+      barcode: null,
+      name: 'Đang nhận diện ảnh...',
+      brand: '',
+      category: '',
+      packaging: '',
+      greenScore: null,
+      recyclable: false,
+      biodegradable: false,
+      plasticFree: false,
+      recommendation: 'Mô hình đang đọc ảnh sản phẩm, chờ một chút nhé.'
+    });
+
+    try {
+      const { base64, mimeType } = await compressImageToBase64(file);
+
+      const response = await fetch('/api/nhan-dien-san-pham', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mimeType })
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || `API trả lỗi ${response.status}`);
+
+      setScannedProduct({ id: null, ...result });
+
+      if (result.detected) {
+        pushHistory({ id: null, barcode: null, name: result.name });
+      }
+    } catch (err) {
+      console.error('Lỗi nhận diện ảnh:', err);
+      setScannedProduct({
+        id: null,
+        barcode: null,
+        name: 'Không nhận diện được',
+        brand: '',
+        category: 'Chưa xác định',
+        packaging: 'Chưa xác định',
+        greenScore: null,
+        recyclable: false,
+        biodegradable: false,
+        plasticFree: false,
+        recommendation: 'Hãy thử chụp lại gần hơn, đủ sáng và thấy rõ bao bì sản phẩm.',
+        aiError: err.message
+      });
+    } finally {
+      setRecognizing(false);
+    }
+  };
+
+  const handleRecognizeFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Vui lòng chọn file ảnh hợp lệ (JPG, PNG, v.v.)');
+      return;
+    }
+
+    if (scanning) await stopScanner();
+    await recognizeProductFromImage(file);
   };
 
   const onScanResult = async (decodedText) => {
@@ -403,17 +494,18 @@ export default function BarcodeScan() {
       }
     }
 
-    // Nếu không tìm thấy mã nào
-    if (!detectionSuccess) {
-      alert('Không tìm thấy mã vạch/QR code trong ảnh này.\n\nGợi ý:\n- Đảm bảo ảnh rõ nét và mã dễ nhìn\n- Thử chụp lại với ánh sáng tốt hơn\n- Hoặc sử dụng camera để quét trực tiếp');
-    }
-
+    // Không đọc được mã vạch thì chuyển sang nhận diện bằng mô hình thị
+    // giác: nhiều sản phẩm không có mã, hoặc mã bị che, mờ, rách.
     setProcessingImage(false);
     e.target.value = '';
+
+    if (!detectionSuccess) {
+      await recognizeProductFromImage(file);
+    }
   };
 
   const getProductFromHistory = (historyItem) => {
-    if (historyItem.productId) return PRODUCTS.find(p => p.id === historyItem.productId) || null;
+    if (historyItem.productId) return products.find(p => p.id === historyItem.productId) || null;
     return null;
   };
 
@@ -534,6 +626,32 @@ export default function BarcodeScan() {
               onChange={handleFileChange}
               className="hidden"
               disabled={processingImage}
+            />
+          </label>
+
+          <label className={`col-span-2 ${recognizing ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
+            <div className="flex items-center justify-center gap-2 bg-brand text-white py-3 rounded-lg font-semibold hover:bg-brand">
+              {recognizing ? (
+                <>
+                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
+                    <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                  Đang nhận diện bằng AI...
+                </>
+              ) : (
+                <>
+                  <FaLeaf />
+                  Nhận diện sản phẩm bằng ảnh (AI)
+                </>
+              )}
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleRecognizeFileChange}
+              className="hidden"
+              disabled={recognizing}
             />
           </label>
         </div>
@@ -747,6 +865,39 @@ export default function BarcodeScan() {
               </div>
             )}
 
+            {/* Thông tin riêng của luồng nhận diện bằng ảnh */}
+            {scannedProduct.source === 'image' && (
+              <div className="p-3 bg-brand-wash rounded-lg border border-brand/20 space-y-2">
+                <p className="text-sm font-semibold text-brand flex items-center gap-2">
+                  <FaImage />
+                  Nhận diện từ ảnh bằng AI
+                  {typeof scannedProduct.confidence === 'number' && (
+                    <span className="ml-auto text-xs font-normal text-ink-faint">
+                      độ chắc chắn {Math.round(scannedProduct.confidence * 100)}%
+                    </span>
+                  )}
+                </p>
+
+                {scannedProduct.materials?.length > 0 && (
+                  <p className="text-sm text-ink-soft">
+                    <span className="font-medium">Chất liệu nhìn thấy: </span>
+                    {scannedProduct.materials.join(', ')}
+                  </p>
+                )}
+
+                {scannedProduct.alternatives?.length > 0 && (
+                  <div className="text-sm text-ink-soft">
+                    <span className="font-medium">Thay thế xanh hơn:</span>
+                    <ul className="list-disc list-inside mt-1 space-y-0.5">
+                      {scannedProduct.alternatives.map((alt, i) => (
+                        <li key={i}>{alt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Error */}
             {scannedProduct.aiError && (
               <div className="p-3 bg-red-50 rounded-lg border border-red-200">
@@ -760,7 +911,7 @@ export default function BarcodeScan() {
         </div>
 
         {/* Alternative Products */}
-        {PRODUCTS.filter(p =>
+        {products.filter(p =>
           p.id !== scannedProduct.id &&
           p.category === scannedProduct.category &&
           (scannedProduct.greenScore === null ? p.greenScore >= 0 : p.greenScore > scannedProduct.greenScore)
@@ -771,7 +922,7 @@ export default function BarcodeScan() {
               Sản phẩm thay thế tốt hơn
             </h3>
             <div className="space-y-2">
-              {PRODUCTS.filter(p =>
+              {products.filter(p =>
                 p.id !== scannedProduct.id &&
                 p.category === scannedProduct.category &&
                 (scannedProduct.greenScore === null ? p.greenScore >= 0 : p.greenScore > scannedProduct.greenScore)
