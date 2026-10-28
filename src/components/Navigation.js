@@ -11,11 +11,13 @@ import {
   FaBars,
   FaGift,
   FaGamepad,
+  FaCamera,
 } from 'react-icons/fa';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Trang chủ', icon: FaHome },
   { path: '/hanh-vi-xanh', label: 'Hành động', icon: FaLeaf },
+  { path: '/quet-ma', label: 'Quét sản phẩm', icon: FaCamera },
   { path: '/tro-choi', label: 'Trò chơi', icon: FaGamepad },
   { path: '/thong-ke', label: 'Thống kê', icon: FaChartBar },
   { path: '/so-sanh', label: 'Cộng đồng', icon: FaUsers },
