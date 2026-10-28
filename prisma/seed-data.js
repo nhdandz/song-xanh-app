@@ -355,7 +355,378 @@ const ARTICLES = [
   },
 ];
 
+// --- Nội dung trò chơi, trước đây cắm cứng trong mã nguồn ---
+
+const QUIZ_QUESTIONS = [
+  {
+    "question": "Loại rác nào dưới đây mất thời gian phân hủy lâu nhất?",
+    "options": [
+      "Vỏ chuối",
+      "Hộp giấy",
+      "Chai nhựa",
+      "Túi ni-lông"
+    ],
+    "correctAnswer": 3,
+    "explanation": "• Vỏ chuối: phân hủy rất nhanh, chỉ mất vài ngày đến vài tuần.\n• Hộp giấy: phân hủy trong vài tháng.\n• Chai nhựa: mất hàng trăm năm để phân hủy.\n• Túi ni-lông: có thể mất từ 500 đến 1.000 năm, thậm chí không phân hủy hoàn toàn, mà chỉ vỡ thành vi nhựa gây ô nhiễm lâu dài.\n👉 Vì vậy, Túi ni-lông là loại rác mất thời gian phân hủy lâu nhất.",
+    "topic": "Chung",
+    "order": 1
+  },
+  {
+    "question": "Khí nào là nguyên nhân chính gây ra hiệu ứng nhà kính trên Trái Đất?",
+    "options": [
+      "CO2",
+      "Ozone",
+      "H2O",
+      "Nitơ"
+    ],
+    "correctAnswer": 0,
+    "explanation": "•\tCO₂ là khí nhà kính chủ yếu do con người thải ra từ việc đốt nhiên liệu hóa thạch (than, dầu, khí đốt), phá rừng, sản xuất công nghiệp...\n•\tCác khí nhà kính khác như CH₄ (mêtan), N₂O (nitơ oxit), và hơi nước (H₂O) cũng góp phần, nhưng CO₂ là nguyên nhân chính và ổn định lâu dài nhất trong khí quyển.\n•\tOzone (O₃) và Nitơ (N₂) không phải là nguyên nhân chính gây ra hiệu ứng nhà kính.",
+    "topic": "Chung",
+    "order": 2
+  },
+  {
+    "question": "Lượng nước uống tối thiểu mà mỗi người trưởng thành cần cung cấp cho cơ thể một ngày là bao nhiêu?",
+    "options": [
+      "0,5 lít",
+      "1 lít",
+      "1,5-2 lít",
+      "3-4 lít"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Theo WHO, một người trưởng thành cần uống khoảng 1,5 đến 2 lít nước mỗi ngày (tương đương 6–8 ly) để duy trì hoạt động trao đổi chất, điều hòa thân nhiệt và loại bỏ chất thải.",
+    "topic": "Chung",
+    "order": 3
+  },
+  {
+    "question": "Chất thải nào sau đây không nên xả vào bồn cầu để tránh gây tắc nghẽn và ô nhiễm môi trường?",
+    "options": [
+      "Giấy vệ sinh",
+      "Dầu ăn đã qua sử dụng",
+      "Nước tiểu",
+      "Nước thải tắm gội"
+    ],
+    "correctAnswer": 1,
+    "explanation": "•\tDầu ăn cũ có thể đông đặc, bám vào thành ống thoát nước, gây tắc nghẽn đường ống và ô nhiễm nguồn nước.\n•\tGiấy vệ sinh, nước tiểu và nước tắm gội đều có thể xả được vì chúng dễ phân hủy hoặc được xử lý trong hệ thống nước thải.",
+    "topic": "Chung",
+    "order": 4
+  },
+  {
+    "question": "Loại năng lượng nào dưới đây là năng lượng tái tạo?",
+    "options": [
+      "Than đá",
+      "Dầu mỏ",
+      "Năng lượng mặt trời",
+      "Khí đốt tự nhiên"
+    ],
+    "correctAnswer": 2,
+    "explanation": "•\tNăng lượng mặt trời là nguồn năng lượng tái tạo, vì có thể khai thác liên tục và không cạn kiệt theo thời gian.\n•\tTrong khi đó, than đá, dầu mỏ và khí đốt tự nhiên đều là nhiên liệu hóa thạch, hình thành trong hàng triệu năm và sẽ cạn kiệt nếu khai thác quá mức.",
+    "topic": "Chung",
+    "order": 5
+  },
+  {
+    "question": "Ký hiệu vòng đồi (Mobius loop) trên sản phẩm có nghĩa là gì?",
+    "options": [
+      "Sản phẩm có thể được tái chế",
+      "Sản phẩm có thể phân hủy nhanh",
+      "Sản phẩm nguy hiểm, cần chú ý",
+      "Sản phẩm dùng một lần"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Mobius loop là ký hiệu biểu thị sản phẩm/hộp có thể đưa vào quy trình tái chế.",
+    "topic": "Chung",
+    "order": 6
+  },
+  {
+    "question": "Loại chất thải nào phù hợp nhất để ủ phân (compost)?",
+    "options": [
+      "Vỏ rau củ, lá cây",
+      "Thịt, dầu mỡ",
+      "Nhựa, túi ni-lông",
+      "Pin, ắc quy"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Vỏ rau củ và lá cây là chất hữu cơ dễ phân hủy, phù hợp để ủ compost.",
+    "topic": "Chung",
+    "order": 7
+  },
+  {
+    "question": "Nguyên nhân chính dẫn đến phá rừng trên diện rộng là gì?",
+    "options": [
+      "Mở rộng diện tích nông nghiệp và chăn nuôi",
+      "Sự thay đổi khí hậu tự nhiên",
+      "Sóng thần và động đất",
+      "Du lịch"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Mở rộng canh tác nông nghiệp và chăn nuôi là nguyên nhân phổ biến nhất gây mất rừng.",
+    "topic": "Chung",
+    "order": 8
+  },
+  {
+    "question": "Nguồn năng lượng nào dưới đây hầu như không tạo trực tiếp khí CO₂ khi phát điện?",
+    "options": [
+      "Đốt than",
+      "Khí tự nhiên",
+      "Năng lượng gió",
+      "Dầu mỏ"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Tua-bin gió không đốt nhiên liệu nên không thải CO₂ trực tiếp khi phát điện.",
+    "topic": "Chung",
+    "order": 9
+  },
+  {
+    "question": "“Bảo tồn đa dạng sinh học” nghĩa là gì?",
+    "options": [
+      "Bảo vệ sự đa dạng về loài, hệ sinh thái và nguồn gen",
+      "Tăng số lượng cây trồng thương mại",
+      "Xây dựng nhiều khu công nghiệp hơn",
+      "Chỉ bảo vệ các loài động vật to lớn"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Bảo tồn đa dạng sinh học là bảo vệ nhiều dạng sống và hệ sinh thái khác nhau.",
+    "topic": "Chung",
+    "order": 10
+  },
+  {
+    "question": "Hành động nào sau đây giúp tiết kiệm nước trong sinh hoạt hàng ngày?",
+    "options": [
+      "Tắt vòi khi đánh răng",
+      "Rửa xe bằng vòi xả liên tục",
+      "Tắm vòi phun liên tục 30 phút",
+      "Rửa chén bằng vòi nước mở to"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Tắt vòi khi đánh răng là một cách đơn giản nhưng hiệu quả để tiết kiệm nước.",
+    "topic": "Chung",
+    "order": 11
+  },
+  {
+    "question": "Khí nào sau đây có tiềm năng gây hiệu ứng nhà kính (GWP) lớn hơn CO₂ trên mỗi đơn vị khối lượng?",
+    "options": [
+      "O₂ (oxy)",
+      "CH₄ (methane)",
+      "N₂ (nitơ)",
+      "He (heli)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Methane (CH₄) có GWP lớn hơn CO₂ trên cùng khối lượng trong khoảng thời gian ngắn hạn.",
+    "topic": "Chung",
+    "order": 12
+  },
+  {
+    "question": "Khoảng thời gian để 1 lon nhôm phân hủy trong môi trường tự nhiên thường là bao lâu?",
+    "options": [
+      "50 năm",
+      "200 - 500 năm",
+      "10 năm",
+      "1 năm"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Lon nhôm có thể tồn tại hàng trăm năm nếu không được tái chế.",
+    "topic": "Chung",
+    "order": 13
+  },
+  {
+    "question": "Biện pháp nào hiệu quả nhất để giảm rác nhựa dùng một lần khi đi mua sắm?",
+    "options": [
+      "Mang theo túi vải/túi tái sử dụng",
+      "Yêu cầu túi nhựa lớn hơn",
+      "Mua nhiều hơn một loại sản phẩm",
+      "Dùng bao nilon miễn phí ở cửa hàng"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Mang túi vải/túi tái sử dụng giảm nhu cầu dùng túi nhựa mới mỗi lần mua sắm.",
+    "topic": "Chung",
+    "order": 14
+  },
+  {
+    "question": "Khái niệm “kinh tế tuần hoàn” (circular economy) nhấn mạnh điều gì?",
+    "options": [
+      "Tăng tiêu dùng để phát triển kinh tế",
+      "Giảm, tái sử dụng và tái chế để giữ nguyên giá trị tài nguyên",
+      "Tập trung khai thác tài nguyên tự nhiên nhiều hơn",
+      "Sử dụng càng nhiều đồ dùng một lần càng tốt"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Kinh tế tuần hoàn hướng đến giảm rác thải bằng cách giữ tài nguyên trong sử dụng lâu hơn (reduce-reuse-recycle).",
+    "topic": "Chung",
+    "order": 15
+  }
+];
+
+const WASTE_ITEMS = [
+  {
+    "name": "Chai nhựa",
+    "emoji": "🍾",
+    "category": "recyclable",
+    "order": 1
+  },
+  {
+    "name": "Vỏ chuối",
+    "emoji": "🍌",
+    "category": "organic",
+    "order": 2
+  },
+  {
+    "name": "Pin",
+    "emoji": "🔋",
+    "category": "hazardous",
+    "order": 3
+  },
+  {
+    "name": "Giấy báo",
+    "emoji": "📰",
+    "category": "recyclable",
+    "order": 4
+  },
+  {
+    "name": "Vỏ trứng",
+    "emoji": "🥚",
+    "category": "organic",
+    "order": 5
+  },
+  {
+    "name": "Bóng đèn",
+    "emoji": "💡",
+    "category": "hazardous",
+    "order": 6
+  },
+  {
+    "name": "Hộp carton",
+    "emoji": "📦",
+    "category": "recyclable",
+    "order": 7
+  },
+  {
+    "name": "Lá cây",
+    "emoji": "🍂",
+    "category": "organic",
+    "order": 8
+  },
+  {
+    "name": "Thuốc trừ sâu",
+    "emoji": "🧪",
+    "category": "hazardous",
+    "order": 9
+  },
+  {
+    "name": "Túi nilon",
+    "emoji": "🛍️",
+    "category": "general",
+    "order": 10
+  },
+  {
+    "name": "Lon nhôm",
+    "emoji": "🥫",
+    "category": "recyclable",
+    "order": 11
+  },
+  {
+    "name": "Thức ăn thừa",
+    "emoji": "🍱",
+    "category": "organic",
+    "order": 12
+  },
+  {
+    "name": "Khẩu trang y tế",
+    "emoji": "😷",
+    "category": "hazardous",
+    "order": 13
+  },
+  {
+    "name": "Bao bì",
+    "emoji": "📄",
+    "category": "general",
+    "order": 14
+  },
+  {
+    "name": "Chai thủy tinh",
+    "emoji": "🍶",
+    "category": "recyclable",
+    "order": 15
+  }
+];
+
+const BEHAVIOR_ITEMS = [
+  {
+    "text": "Mang bình nước cá nhân đi học thay vì mua chai nhựa",
+    "label": "tot",
+    "explain": "Một bình dùng lại thay thế hàng trăm chai nhựa mỗi năm.",
+    "order": 1
+  },
+  {
+    "text": "Vứt pin cũ chung với rác sinh hoạt",
+    "label": "xau",
+    "explain": "Pin là rác nguy hại, kim loại nặng trong pin có thể ngấm vào đất và nước.",
+    "order": 2
+  },
+  {
+    "text": "Tắt đèn và quạt khi là người cuối cùng rời phòng",
+    "label": "tot",
+    "explain": "Giảm điện năng lãng phí mà không tốn công sức gì.",
+    "order": 3
+  },
+  {
+    "text": "Để vòi nước chảy suốt lúc đánh răng",
+    "label": "xau",
+    "explain": "Mỗi lần đánh răng có thể lãng phí vài lít nước sạch.",
+    "order": 4
+  },
+  {
+    "text": "Mang túi vải khi đi siêu thị",
+    "label": "tot",
+    "explain": "Từ chối túi ni-lông, loại rác cần 500–1.000 năm để phân hủy.",
+    "order": 5
+  },
+  {
+    "text": "Đốt rác trong vườn nhà",
+    "label": "xau",
+    "explain": "Đốt rác thải ra khói độc và bụi mịn, ảnh hưởng hô hấp của cả xóm.",
+    "order": 6
+  },
+  {
+    "text": "Đi bộ hoặc đạp xe cho quãng đường ngắn",
+    "label": "tot",
+    "explain": "Không phát thải, lại tốt cho sức khỏe.",
+    "order": 7
+  },
+  {
+    "text": "Mua đồ ăn mang về đựng trong hộp xốp dùng một lần",
+    "label": "xau",
+    "explain": "Hộp xốp rất khó tái chế và gần như không phân hủy.",
+    "order": 8
+  },
+  {
+    "text": "Tách riêng chai lọ, lon đã rửa sạch để tái chế",
+    "label": "tot",
+    "explain": "Rác tái chế sạch mới được thu gom, dính thức ăn thường bị loại.",
+    "order": 9
+  },
+  {
+    "text": "Lấy nhiều thức ăn rồi bỏ thừa",
+    "label": "xau",
+    "explain": "Lãng phí cả thực phẩm lẫn nước, đất và năng lượng đã dùng để làm ra nó.",
+    "order": 10
+  },
+  {
+    "text": "Dùng giấy cả hai mặt khi làm bài nháp",
+    "label": "tot",
+    "explain": "Giảm một nửa lượng giấy, tức giảm số cây phải chặt.",
+    "order": 11
+  },
+  {
+    "text": "Xả dầu ăn thừa xuống bồn rửa",
+    "label": "xau",
+    "explain": "Dầu đông lại gây tắc ống và ô nhiễm nguồn nước.",
+    "order": 12
+  }
+];
+
 module.exports = {
+  QUIZ_QUESTIONS,
+  WASTE_ITEMS,
+  BEHAVIOR_ITEMS,
   GREEN_ACTIVITIES,
   BADGES,
   CHALLENGES,

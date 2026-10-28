@@ -98,6 +98,12 @@ async function main() {
   await upsertBy(prisma.device, 'name', data.DEVICES, 'Thiết bị');
   await upsertBy(prisma.reward, 'title', data.REWARDS, 'Quà tặng');
 
+  // --- Nội dung trò chơi: trước nằm cắm cứng trong mã nguồn, nay nằm ở DB
+  // để quản trị viên tự thêm/sửa được ---
+  await upsertBy(prisma.quizQuestion, 'question', data.QUIZ_QUESTIONS, 'Câu hỏi trắc nghiệm');
+  await upsertBy(prisma.wasteItem, 'name', data.WASTE_ITEMS, 'Món rác phân loại');
+  await upsertBy(prisma.behaviorItem, 'text', data.BEHAVIOR_ITEMS, 'Hành vi xanh');
+
   // --- Sản phẩm: barcode là khóa duy nhất nên dùng upsert thẳng ---
   let productCreated = 0;
   let productUpdated = 0;
