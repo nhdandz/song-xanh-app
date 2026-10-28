@@ -15,7 +15,8 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaInfoCircle,
-  FaLightbulb
+  FaLightbulb,
+  FaMagic
 } from 'react-icons/fa';
 import { compressImageToBase64 } from '@/lib/image';
 
@@ -630,7 +631,7 @@ export default function BarcodeScan() {
           </label>
 
           <label className={`col-span-2 ${recognizing ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
-            <div className="flex items-center justify-center gap-2 bg-brand text-white py-3 rounded-lg font-semibold hover:bg-brand">
+            <div className="flex items-center justify-center gap-2 bg-grape text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-md">
               {recognizing ? (
                 <>
                   <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -641,8 +642,11 @@ export default function BarcodeScan() {
                 </>
               ) : (
                 <>
-                  <FaLeaf />
+                  <FaMagic />
                   Nhận diện sản phẩm bằng ảnh (AI)
+                  <span className="ml-1 text-[10px] font-bold uppercase tracking-wider bg-white/25 px-1.5 py-0.5 rounded">
+                    Mới
+                  </span>
                 </>
               )}
             </div>
