@@ -552,6 +552,162 @@ const QUIZ_QUESTIONS = [
     "explanation": "Kinh tế tuần hoàn hướng đến giảm rác thải bằng cách giữ tài nguyên trong sử dụng lâu hơn (reduce-reuse-recycle).",
     "topic": "Chung",
     "order": 15
+  },
+  {
+    "question": "Nhựa PET (ký hiệu số 1 trong tam giác tái chế) thường được làm từ gì và có thể tái chế thành gì?",
+    "options": [
+      "Làm chai nước uống, tái chế thành sợi vải hoặc chai mới",
+      "Làm hộp thức ăn, tái chế thành xăng",
+      "Làm ống nước, không thể tái chế",
+      "Làm túi nhựa, tái chế thành phân bón"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Nhựa PET (số 1) phổ biến trong chai nước uống và có thể tái chế thành sợi vải polyester hoặc chai mới.",
+    "topic": "Chung",
+    "order": 16
+  },
+  {
+    "question": "Rác điện tử (e-waste) như điện thoại cũ, máy tính cần được xử lý như thế nào?",
+    "options": [
+      "Vứt vào thùng rác thông thường",
+      "Đốt để giảm thể tích",
+      "Đưa đến trung tâm thu gom rác điện tử chuyên dụng",
+      "Chôn lấp trong vườn"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Rác điện tử chứa kim loại nặng độc hại như chì, thủy ngân. Cần đưa đến điểm thu gom chuyên dụng để tái chế an toàn.",
+    "topic": "Chung",
+    "order": 17
+  },
+  {
+    "question": "Loại rác nào KHÔNG nên cho vào thùng ủ phân (compost)?",
+    "options": [
+      "Vỏ trái cây",
+      "Cà phê bã",
+      "Xương thịt, mỡ động vật",
+      "Lá cây"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Xương và mỡ động vật phân hủy chậm, tạo mùi hôi và thu hút côn trùng có hại. Chỉ nên ủ phân rác hữu cơ từ thực vật.",
+    "topic": "Chung",
+    "order": 18
+  },
+  {
+    "question": "Nguyên tắc \"3R\" trong bảo vệ môi trường là gì?",
+    "options": [
+      "Recycle – Reuse – Reduce (Tái chế – Tái sử dụng – Giảm thiểu)",
+      "Repair – Replace – Renew (Sửa chữa – Thay thế – Đổi mới)",
+      "Refuse – Remove – Restore (Từ chối – Loại bỏ – Phục hồi)",
+      "Rethink – Rebuild – Rehome (Suy nghĩ lại – Xây dựng lại – Tái định cư)"
+    ],
+    "correctAnswer": 0,
+    "explanation": "3R là Reduce (giảm rác phát sinh), Reuse (tái sử dụng sản phẩm), Recycle (tái chế vật liệu). Thứ tự ưu tiên giảm dần.",
+    "topic": "Chung",
+    "order": 19
+  },
+  {
+    "question": "Bãi chôn lấp rác thải (landfill) tạo ra khí gì gây hiệu ứng nhà kính?",
+    "options": [
+      "Khí oxy (O₂)",
+      "Khí methane (CH₄)",
+      "Khí nitrogen (N₂)",
+      "Hơi nước (H₂O)"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Rác hữu cơ trong bãi chôn lấp phân hủy yếm khí tạo ra khí methane (CH₄) – có tác động nhà kính gấp 25 lần CO₂.",
+    "topic": "Chung",
+    "order": 20
+  },
+  {
+    "question": "Hành vi nào sau đây thể hiện \"tiêu dùng bền vững\" nhất?",
+    "options": [
+      "Mua nhiều hàng giảm giá dù không cần thiết",
+      "Ưu tiên mua sản phẩm có bao bì ít nhựa, nguồn gốc địa phương",
+      "Đặt hàng online mỗi ngày để được giao hàng nhanh",
+      "Thay điện thoại mới mỗi năm để theo xu hướng"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Tiêu dùng bền vững là chọn sản phẩm thân thiện môi trường, ít bao bì, nguồn gốc địa phương để giảm khí thải vận chuyển.",
+    "topic": "Chung",
+    "order": 21
+  },
+  {
+    "question": "Sử dụng phương tiện nào giúp giảm lượng khí thải carbon cá nhân nhiều nhất khi đi lại trong thành phố?",
+    "options": [
+      "Xe máy xăng",
+      "Xe ô tô cá nhân",
+      "Xe đạp hoặc đi bộ",
+      "Xe taxi"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Xe đạp và đi bộ không phát thải CO₂ trực tiếp, đồng thời tốt cho sức khỏe và giảm tắc đường.",
+    "topic": "Chung",
+    "order": 22
+  },
+  {
+    "question": "Hành động nào sau đây tiết kiệm điện năng nhất trong gia đình?",
+    "options": [
+      "Tắt đèn khi ra khỏi phòng",
+      "Để thiết bị điện ở chế độ standby thay vì tắt hẳn",
+      "Mở điều hòa 24/7",
+      "Sạc điện thoại qua đêm mỗi ngày"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Tắt đèn và thiết bị điện khi không dùng là thói quen đơn giản nhưng có thể tiết kiệm đáng kể điện năng theo thời gian.",
+    "topic": "Chung",
+    "order": 23
+  },
+  {
+    "question": "Thùng rác màu xanh lá thường dùng để chứa loại rác nào?",
+    "options": [
+      "Rác tái chế (nhựa, giấy, kim loại)",
+      "Rác hữu cơ (thức ăn thừa, lá cây)",
+      "Rác nguy hại (pin, hóa chất)",
+      "Rác thông thường"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Theo quy chuẩn phân loại rác tại nhiều địa phương Việt Nam, thùng xanh lá dùng cho rác hữu cơ có thể ủ phân.",
+    "topic": "Chung",
+    "order": 24
+  },
+  {
+    "question": "Vỏ hộp sữa giấy (như Tetra Pak) thuộc nhóm rác thải nào?",
+    "options": [
+      "Rác hữu cơ",
+      "Rác nguy hại",
+      "Rác tái chế",
+      "Rác thông thường không tái chế được"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Hộp Tetra Pak làm từ giấy, nhựa và nhôm có thể được tái chế tại các điểm thu gom chuyên dụng để tận dụng nguyên liệu.",
+    "topic": "Chung",
+    "order": 25
+  },
+  {
+    "question": "Lượng nước uống tối thiểu mà mỗi người trưởng thành cần một ngày là bao nhiêu?",
+    "options": [
+      "0,5 lít",
+      "1 lít",
+      "1,5-2 lít",
+      "3-4 lít"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Theo WHO, một người trưởng thành cần uống khoảng 1,5 đến 2 lít nước mỗi ngày.",
+    "topic": "Chung",
+    "order": 26
+  },
+  {
+    "question": "Chất thải nào không nên xả vào bồn cầu để tránh tắc nghẽn và ô nhiễm?",
+    "options": [
+      "Giấy vệ sinh",
+      "Dầu ăn đã qua sử dụng",
+      "Nước tiểu",
+      "Nước thải tắm gội"
+    ],
+    "correctAnswer": 1,
+    "explanation": "Dầu ăn cũ có thể đông đặc, bám vào thành ống thoát nước gây tắc nghẽn.",
+    "topic": "Chung",
+    "order": 27
   }
 ];
 
@@ -645,6 +801,96 @@ const WASTE_ITEMS = [
     "emoji": "🍶",
     "category": "recyclable",
     "order": 15
+  },
+  {
+    "name": "Bìa cứng",
+    "emoji": "🗃️",
+    "category": "recyclable",
+    "order": 16
+  },
+  {
+    "name": "Vỏ lon nước ngọt",
+    "emoji": "🥤",
+    "category": "recyclable",
+    "order": 17
+  },
+  {
+    "name": "Báo cũ",
+    "emoji": "📜",
+    "category": "recyclable",
+    "order": 18
+  },
+  {
+    "name": "Bình xịt hóa chất",
+    "emoji": "🧴",
+    "category": "hazardous",
+    "order": 19
+  },
+  {
+    "name": "Vỏ ốc sò",
+    "emoji": "🐚",
+    "category": "organic",
+    "order": 20
+  },
+  {
+    "name": "Túi trà đã dùng",
+    "emoji": "🍵",
+    "category": "organic",
+    "order": 21
+  },
+  {
+    "name": "Nến đã dùng",
+    "emoji": "🕯️",
+    "category": "general",
+    "order": 22
+  },
+  {
+    "name": "Dầu nhớt",
+    "emoji": "🛢️",
+    "category": "hazardous",
+    "order": 23
+  },
+  {
+    "name": "Máy tính bỏ túi",
+    "emoji": "🧮",
+    "category": "hazardous",
+    "order": 24
+  },
+  {
+    "name": "Lõi giấy vệ sinh",
+    "emoji": "🧻",
+    "category": "recyclable",
+    "order": 25
+  },
+  {
+    "name": "Cành cây khô",
+    "emoji": "🌿",
+    "category": "organic",
+    "order": 26
+  },
+  {
+    "name": "Bình ắc quy xe",
+    "emoji": "⚡",
+    "category": "hazardous",
+    "order": 27
+  },
+  {
+    "name": "Màng bọc thực phẩm",
+    "emoji": "🎁",
+    "category": "general",
+    "order": 28
+  },
+  {
+    "name": "Hộp sữa giấy",
+    "emoji": "🥛",
+    "category": "recyclable",
+    "order": 29
+  },
+  {
+    "name": "Giày cũ",
+    "emoji": "👟",
+    "category": "general",
+    "order": 30
   }
 ];
 
