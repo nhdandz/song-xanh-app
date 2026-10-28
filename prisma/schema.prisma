@@ -395,3 +395,49 @@ model PointTransaction {
 
   @@index([userId, createdAt])
 }
+
+// ---------------------------------------------------------------------------
+// Nội dung trò chơi.
+//
+// Trước đây ba bộ dữ liệu này nằm cắm cứng trong mã nguồn nên muốn thêm một
+// câu hỏi là phải sửa file rồi build lại. Đưa vào database để quản trị viên
+// tự thêm/sửa/xoá được ở /admin/du-lieu.
+// ---------------------------------------------------------------------------
+
+// Câu hỏi trắc nghiệm ở trang /tro-choi.
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  question      String
+  options       Json // mảng các đáp án, thường là 4
+  correctAnswer Int // chỉ số đáp án đúng trong options, đếm từ 0
+  explanation   String?
+  topic         String   @default("Chung")
+  order         Int      @default(0)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Món rác trong trò chơi phân loại rác.
+model WasteItem {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  emoji     String
+  category  String // recyclable | organic | hazardous | general
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Hành vi trong trò chơi phân loại hành vi xanh.
+model BehaviorItem {
+  id        String   @id @default(cuid())
+  text      String   @unique
+  label     String // tot | xau
+  explain   String
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

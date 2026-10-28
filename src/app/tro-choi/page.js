@@ -286,6 +286,23 @@ export default function Games() {
   const [timeLeft, setTimeLeft] = useState(120); // 2 phút
   const [quizCompleted, setQuizCompleted] = useState(false);
 
+  // Ngân hàng câu hỏi lấy từ database để quản trị viên tự thêm/sửa được.
+  // Mảng QUESTIONS cắm cứng bên trên chỉ còn là phương án dự phòng.
+  const [questionBank, setQuestionBank] = useState(QUESTIONS);
+
+  useEffect(() => {
+    let huy = false;
+
+    fetch('/api/noi-dung-tro-choi')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!huy && d?.questions?.length) setQuestionBank(d.questions);
+      })
+      .catch((err) => console.warn('Không tải được ngân hàng câu hỏi:', err));
+
+    return () => { huy = true; };
+  }, []);
+
   // Xử lý đếm ngược thời gian
   useEffect(() => {
     if (selectedGame && selectedGame.type === 'quiz' && !quizCompleted) {
@@ -308,11 +325,11 @@ export default function Games() {
 
   // tạo bộ quiz ngẫu nhiên gồm N câu (ở đây N=5)
   const buildRandomQuiz = (N = 5) => {
-    const total = QUESTIONS.length;
+    const total = questionBank.length;
     if (total <= N) {
-      return shuffleArray(QUESTIONS); // shuffle toàn bộ nếu tổng <= N
+      return shuffleArray(questionBank); // shuffle toàn bộ nếu tổng <= N
     }
-    const shuffled = shuffleArray(QUESTIONS);
+    const shuffled = shuffleArray(questionBank);
     return shuffled.slice(0, N);
   };
 

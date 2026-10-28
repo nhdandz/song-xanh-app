@@ -5,6 +5,7 @@
 //   mode = "cham" -> người chơi mô tả hành vi của mình, AI chấm
 import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
 const MAX_INPUT = 300;
 
@@ -24,9 +25,24 @@ const FALLBACK_BANK = [
   { text: 'Xả dầu ăn thừa xuống bồn rửa', label: 'xau', explain: 'Dầu đông lại gây tắc ống và ô nhiễm nguồn nước.' },
 ];
 
-function pickFallback(exclude = []) {
-  const pool = FALLBACK_BANK.filter((item) => !exclude.includes(item.text));
-  const list = pool.length ? pool : FALLBACK_BANK;
+// Ngân hàng hành vi nay nằm trong database để quản trị viên tự sửa được.
+// FALLBACK_BANK bên trên chỉ dùng khi bảng còn rỗng hoặc đọc lỗi.
+async function pickFallback(exclude = []) {
+  let bank = FALLBACK_BANK;
+
+  try {
+    const rows = await prisma.behaviorItem.findMany({
+      where: { active: true },
+      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+      select: { text: true, label: true, explain: true },
+    });
+    if (rows.length) bank = rows;
+  } catch (err) {
+    console.error('Không đọc được BehaviorItem, dùng ngân hàng dự phòng:', err?.message || err);
+  }
+
+  const pool = bank.filter((item) => !exclude.includes(item.text));
+  const list = pool.length ? pool : bank;
   return { ...list[Math.floor(Math.random() * list.length)], source: 'bank' };
 }
 
@@ -119,7 +135,7 @@ export async function POST(request) {
       const exclude = Array.isArray(body.exclude) ? body.exclude.slice(0, 10) : [];
 
       if (!key) {
-        return NextResponse.json(pickFallback(exclude));
+        return NextResponse.json(await pickFallback(exclude));
       }
 
       try {
@@ -142,7 +158,7 @@ export async function POST(request) {
       } catch (err) {
         // AI lỗi thì vẫn cho chơi tiếp bằng bộ câu có sẵn
         console.warn('classify-behavior (de) fallback:', err.message);
-        return NextResponse.json(pickFallback(exclude));
+        return NextResponse.json(await pickFallback(exclude));
       }
     }
 

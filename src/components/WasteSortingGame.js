@@ -67,6 +67,28 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
 
+  // Danh sách món rác lấy từ database để quản trị viên tự thêm/sửa được.
+  // Mảng WASTE_ITEMS cắm cứng bên trên chỉ còn là phương án dự phòng khi
+  // chưa gọi được API.
+  const [wasteItems, setWasteItems] = useState(WASTE_ITEMS);
+
+  useEffect(() => {
+    let huy = false;
+
+    fetch('/api/noi-dung-tro-choi')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (huy || !d?.wasteItems?.length) return;
+        setWasteItems(d.wasteItems);
+        // Bốc lại lượt chơi ngay bằng danh sách vừa tải, nếu không người
+        // chơi sẽ thấy lượt đầu dựng từ dữ liệu dự phòng.
+        setCurrentItems([...d.wasteItems].sort(() => Math.random() - 0.5).slice(0, itemsPerRound));
+      })
+      .catch((err) => console.warn('Không tải được danh sách món rác:', err));
+
+    return () => { huy = true; };
+  }, [itemsPerRound]);
+
   // Load saved game
   useEffect(() => {
     const savedGame = localStorage.getItem(`waste_game_${userId}`);
@@ -101,7 +123,7 @@ const WasteSortingGame = ({ onComplete, onBack }) => {
   }, [score, correctSorts, totalAttempts, level, bestStreak]);
 
   const generateNewRound = () => {
-    const shuffled = [...WASTE_ITEMS].sort(() => Math.random() - 0.5);
+    const shuffled = [...wasteItems].sort(() => Math.random() - 0.5);
     setCurrentItems(shuffled.slice(0, itemsPerRound));
     setFeedback(null);
   };
