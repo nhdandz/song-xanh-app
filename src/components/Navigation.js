@@ -3,37 +3,39 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
+import { APP_NAME, USER_FEATURES } from '@/lib/app-config';
 import {
   FaHome,
   FaLeaf,
-  FaChartBar,
-  FaUsers,
-  FaBars,
-  FaGift,
   FaGamepad,
   FaCamera,
+  FaSignOutAlt,
+  FaSeedling,
 } from 'react-icons/fa';
+
+// Icon cho từng nội dung chính. Đường dẫn và nhãn nằm ở app-config để
+// thanh điều hướng và phần chặn truy cập không bị lệch nhau.
+const ICONS = {
+  '/hanh-vi-xanh': FaLeaf,
+  '/quet-ma': FaCamera,
+  '/tro-choi': FaGamepad,
+};
 
 const NAV_ITEMS = [
   { path: '/', label: 'Trang chủ', icon: FaHome },
-  { path: '/hanh-vi-xanh', label: 'Hành động', icon: FaLeaf },
-  { path: '/quet-ma', label: 'Quét sản phẩm', icon: FaCamera },
-  { path: '/tro-choi', label: 'Trò chơi', icon: FaGamepad },
-  { path: '/thong-ke', label: 'Thống kê', icon: FaChartBar },
-  { path: '/so-sanh', label: 'Cộng đồng', icon: FaUsers },
-  { path: '/doi-qua', label: 'Đổi quà', icon: FaGift },
+  ...USER_FEATURES.map((item) => ({
+    path: item.path,
+    label: item.label,
+    icon: ICONS[item.path] ?? FaLeaf,
+  })),
 ];
 
-// Thanh dưới trên mobile chỉ đủ chỗ cho 4 mục + nút menu
-const MOBILE_ITEMS = NAV_ITEMS.filter((item) =>
-  ['/', '/hanh-vi-xanh', '/tro-choi', '/doi-qua'].includes(item.path)
-);
-
-export default function Navigation({ onMenuClick }) {
+export default function Navigation() {
   const pathname = usePathname();
-  const { user } = useAppContext();
+  const { user, logout } = useAppContext();
 
   const points = user?.points ?? 0;
+  const diem = points.toLocaleString('vi-VN');
 
   return (
     <>
@@ -45,26 +47,28 @@ export default function Navigation({ onMenuClick }) {
               <FaLeaf className="text-white" size={19} />
             </span>
             <span className="text-xl font-extrabold tracking-tight text-ink">
-              Sống Xanh
+              {APP_NAME}
             </span>
           </Link>
 
-          {/* Thẻ điểm: cho học sinh thấy tiến độ ngay, không phải bấm vào đâu */}
-          <Link
-            href="/thong-ke"
-            className="sx-dark sx-tap block p-4 mb-6"
+          {/* Thẻ điểm: cho học sinh thấy tiến độ ngay. Không bấm được nữa vì
+              trang thống kê đã ẩn khỏi phần người dùng. */}
+          <div
+            className="sx-dark block p-4 mb-6"
             style={{ boxShadow: 'var(--shadow-lift)' }}
           >
             <p className="relative text-[11px] uppercase tracking-widest font-bold text-brand-bright/90">
               Điểm xanh của bạn
             </p>
-            <p className="relative sx-figure text-4xl mt-1.5 text-white">
-              {points.toLocaleString('vi-VN')}
-            </p>
+            <p className="relative sx-figure text-4xl mt-1.5 text-white">{diem}</p>
             <p className="relative text-xs mt-1.5 text-white/70 truncate">
               {user?.level || 'Người khởi đầu xanh'}
             </p>
-          </Link>
+          </div>
+
+          <p className="px-3.5 pb-2 text-[11px] uppercase tracking-widest font-bold text-ink-faint">
+            Nội dung chính
+          </p>
 
           <ul className="space-y-1">
             {NAV_ITEMS.map((item) => {
@@ -93,21 +97,63 @@ export default function Navigation({ onMenuClick }) {
           </ul>
         </div>
 
+        {/* Đăng xuất nằm cuối sidebar, thay cho menu "Tất cả menu" cũ */}
         <div className="mt-auto p-5 pt-0">
+          <div className="flex items-center gap-3 px-3.5 py-3 mb-2 rounded-xl bg-canvas">
+            <span className="w-9 h-9 rounded-lg bg-brand-wash text-brand flex items-center justify-center shrink-0">
+              <FaSeedling size={16} />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-bold text-ink truncate">
+                {user?.name || 'Học sinh'}
+              </span>
+              <span className="block text-xs text-ink-faint">{diem} điểm</span>
+            </span>
+          </div>
+
           <button
-            onClick={onMenuClick}
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-ink-soft hover:bg-canvas hover:text-ink font-semibold text-[15px] w-full transition-colors"
+            onClick={logout}
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-red-600 hover:bg-red-50 font-semibold text-[15px] w-full transition-colors"
           >
-            <FaBars size={17} className="shrink-0" />
-            <span>Tất cả menu</span>
+            <FaSignOutAlt size={17} className="shrink-0" />
+            <span>Đăng xuất</span>
           </button>
         </div>
       </nav>
 
+      {/* ---------------- Thanh trên (điện thoại) ----------------
+          Chứa tên ứng dụng, điểm và nút đăng xuất, để thanh dưới chỉ còn
+          4 mục điều hướng cho thoáng. */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-14 z-40 bg-paper/95 backdrop-blur border-b border-line">
+        <div className="h-full px-4 flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2 min-w-0">
+            <span className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center shrink-0">
+              <FaLeaf className="text-white" size={15} />
+            </span>
+            <span className="font-extrabold tracking-tight text-ink truncate">
+              {APP_NAME}
+            </span>
+          </Link>
+
+          <span className="ml-auto sx-chip bg-brand-wash text-brand shrink-0">
+            <FaSeedling size={11} />
+            {diem} điểm
+          </span>
+
+          <button
+            onClick={logout}
+            aria-label="Đăng xuất"
+            className="w-9 h-9 rounded-lg text-red-600 hover:bg-red-50 flex items-center justify-center shrink-0 transition-colors"
+          >
+            <FaSignOutAlt size={17} />
+          </button>
+        </div>
+      </header>
+
       {/* ---------------- Thanh dưới (điện thoại) ---------------- */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-paper border-t border-line z-40 pb-[env(safe-area-inset-bottom)]">
         <ul className="flex">
-          {MOBILE_ITEMS.map((item) => {
+          {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.path;
             return (
@@ -125,7 +171,7 @@ export default function Navigation({ onMenuClick }) {
                     <Icon size={18} />
                   </span>
                   <span
-                    className={`text-[11px] font-semibold ${
+                    className={`text-[11px] font-semibold text-center leading-tight px-0.5 ${
                       active ? 'text-brand' : 'text-ink-faint'
                     }`}
                   >
@@ -135,17 +181,6 @@ export default function Navigation({ onMenuClick }) {
               </li>
             );
           })}
-          <li className="flex-1">
-            <button
-              onClick={onMenuClick}
-              className="flex flex-col items-center gap-0.5 pt-2 pb-1.5 w-full"
-            >
-              <span className="flex items-center justify-center h-8 w-14 rounded-full text-ink-faint">
-                <FaBars size={18} />
-              </span>
-              <span className="text-[11px] font-semibold text-ink-faint">Menu</span>
-            </button>
-          </li>
         </ul>
       </nav>
     </>

@@ -1,5 +1,5 @@
 // File: prisma/seed-data.js
-// Nội dung mẫu cho ứng dụng Sống Xanh.
+// Nội dung mẫu cho ứng dụng Đánh Giá Xanh.
 // Số liệu được tra từ các nguồn công khai (ghi rõ trong từng bài viết)
 // và nên được đối chiếu lại với văn bản gốc trước khi dùng cho báo cáo.
 

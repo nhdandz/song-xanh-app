@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaLeaf, FaMedal, FaChartLine, FaUsers, FaArrowRight } from 'react-icons/fa';
+import { FaLeaf, FaCamera, FaGamepad, FaArrowRight } from 'react-icons/fa';
 import { useAppContext } from '@/context/AppContext';
+import { APP_NAME } from '@/lib/app-config';
 
 export default function Welcome() {
   const router = useRouter();
@@ -22,24 +23,24 @@ export default function Welcome() {
   // Các bước giới thiệu
   const steps = [
     {
-      title: 'Chào mừng đến với Sống Xanh!',
+      title: `Chào mừng đến với ${APP_NAME}!`,
       description: `Xin chào ${user?.name || 'bạn'}, cảm ơn bạn đã tham gia cùng chúng tôi trong hành trình bảo vệ môi trường. Hãy cùng khám phá những tính năng tuyệt vời của ứng dụng!`,
       icon: <FaLeaf className="text-green-500 text-6xl" />,
     },
     {
-      title: 'Ghi nhận hành vi xanh hằng ngày',
-      description: 'Ghi lại các hoạt động bảo vệ môi trường mỗi ngày để tích điểm xanh và theo dõi tiến độ của bạn.',
-      icon: <FaChartLine className="text-green-500 text-6xl" />,
+      title: 'Ghi nhận hành động xanh hằng ngày',
+      description: 'Ghi lại các việc bảo vệ môi trường bạn làm mỗi ngày để tích điểm xanh.',
+      icon: <FaLeaf className="text-green-500 text-6xl" />,
     },
     {
-      title: 'Đạt được huy hiệu',
-      description: 'Nhận các huy hiệu đặc biệt khi đạt đến các mốc điểm khác nhau. Khám phá và sưu tầm tất cả huy hiệu!',
-      icon: <FaMedal className="text-green-500 text-6xl" />,
+      title: 'Quét sản phẩm',
+      description: 'Quét mã vạch hoặc chụp ảnh sản phẩm để biết sản phẩm đó có thân thiện với môi trường không.',
+      icon: <FaCamera className="text-green-500 text-6xl" />,
     },
     {
-      title: 'Tham gia cộng đồng',
-      description: 'Kết nối với bạn bè, tham gia các nhóm và thử thách cùng nhau. Cùng nhau, chúng ta có thể tạo nên sự thay đổi lớn!',
-      icon: <FaUsers className="text-green-500 text-6xl" />,
+      title: 'Chơi trò chơi môi trường',
+      description: 'Câu đố môi trường, trồng cây và phân loại rác — vừa chơi vừa học, lại được tích điểm.',
+      icon: <FaGamepad className="text-green-500 text-6xl" />,
     },
   ];
   

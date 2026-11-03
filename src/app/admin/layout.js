@@ -19,6 +19,7 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { APP_NAME } from "@/lib/app-config";
 
 const NAV = [
   { href: "/admin", label: "Tổng quan", icon: Squares2X2Icon, exact: true },
@@ -106,12 +107,12 @@ export default function AdminLayout({ children }) {
       {/* ---------- Sidebar (máy tính) ---------- */}
       <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 bg-brand-dark z-40 p-5">
         <Link href="/admin" className="flex items-center gap-2.5 mb-7">
-          <span className="w-9 h-9 bg-brand-bright rounded-xl flex items-center justify-center shrink-0 font-extrabold text-brand-dark">
-            SX
+          <span className="w-9 h-9 bg-brand-bright rounded-xl flex items-center justify-center shrink-0 font-extrabold text-brand-dark text-sm">
+            ĐGX
           </span>
           <span className="min-w-0">
             <span className="block text-base font-extrabold text-white leading-tight">
-              Sống Xanh
+              {APP_NAME}
             </span>
             <span className="block text-[11px] uppercase tracking-widest font-bold text-brand-bright">
               Quản trị

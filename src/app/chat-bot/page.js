@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from "react";
+import { APP_NAME } from "@/lib/app-config";
 
 const STORAGE_PREFIX = "songoanh_chat_history";
 const MAX_SAVE = 100; // lưu tối đa 100 tin nhắn
@@ -241,7 +242,7 @@ export default function ChatBotPage() {
           </div>
 
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-ink">Sống Xanh — Trợ lý AI</h1>
+            <h1 className="text-2xl font-bold text-ink">{APP_NAME} — Trợ lý AI</h1>
           </div>
 
           <div className="flex items-center gap-2">

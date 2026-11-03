@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FaBarcode,
   FaCamera,
@@ -14,9 +14,10 @@ import {
   FaTimes,
   FaCheckCircle,
   FaTimesCircle,
-  FaInfoCircle,
   FaLightbulb,
-  FaMagic
+  FaMagic,
+  FaKeyboard,
+  FaSyncAlt
 } from 'react-icons/fa';
 import { compressImageToBase64 } from '@/lib/image';
 
@@ -68,16 +69,48 @@ const LOCAL_KEY = 'sx_scan_history_v1';
 export default function BarcodeScan() {
   const [viewMode, setViewMode] = useState('scan');
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchError, setSearchError] = useState('');
   const [scannedProduct, setScannedProduct] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
 
   const [cameras, setCameras] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [scanning, setScanning] = useState(false);
-  const [scannerAvailable, setScannerAvailable] = useState(true);
+  const [cameraError, setCameraError] = useState('');
   const codeReaderRef = useRef(null);
   const videoRef = useRef(null);
   const lastScanRef = useRef({ text: null, time: 0 });
+  // Bộ điều khiển do zxing trả về; đây mới là cách dừng quét đúng của
+  // @zxing/browser 0.1.x (BrowserMultiFormatReader không có hàm reset).
+  const controlsRef = useRef(null);
+  // Dùng ref song song với state để các hàm async không đọc phải giá trị cũ
+  const scanningRef = useRef(false);
+
+  // Tắt camera cho bằng được: dừng vòng quét của zxing rồi tắt nốt mọi
+  // track của luồng video. Thiếu bước này là đèn camera vẫn sáng sau khi
+  // đã quét xong.
+  const stopScanner = useCallback(async () => {
+    try {
+      controlsRef.current?.stop();
+    } catch (e) {
+      console.warn('Không dừng được vòng quét', e);
+    }
+    controlsRef.current = null;
+
+    try {
+      const video = videoRef.current;
+      const stream = video?.srcObject;
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+        video.srcObject = null;
+      }
+    } catch (e) {
+      console.warn('Không dọn được video', e);
+    }
+
+    scanningRef.current = false;
+    setScanning(false);
+  }, []);
 
   const [evaluating, setEvaluating] = useState(false);
   const [processingImage, setProcessingImage] = useState(false);
@@ -110,8 +143,10 @@ export default function BarcodeScan() {
       console.warn('Không thể đọc history', e);
       setScanHistory([]);
     }
+    // stopScanner là useCallback không phụ thuộc gì nên không đổi giữa
+    // các lần render; để nó trong deps cho đúng quy tắc hook.
     return () => stopScanner();
-  }, []);
+  }, [stopScanner]);
 
   useEffect(() => {
     try {
@@ -252,7 +287,7 @@ export default function BarcodeScan() {
       return;
     }
 
-    if (scanning) await stopScanner();
+    await stopScanner();
     await recognizeProductFromImage(file);
   };
 
@@ -260,6 +295,10 @@ export default function BarcodeScan() {
     const now = Date.now();
     if (lastScanRef.current.text === decodedText && now - lastScanRef.current.time < 2000) return;
     lastScanRef.current = { text: decodedText, time: now };
+
+    // Quét xong là tắt camera ngay, không để đèn camera sáng suốt lúc
+    // người dùng đang xem kết quả.
+    await stopScanner();
 
     const product = getProductByBarcode(decodedText);
 
@@ -289,136 +328,84 @@ export default function BarcodeScan() {
     }
   };
 
-  const prepareCameras = async () => {
-    try {
-      // Yêu cầu quyền truy cập camera
-      await navigator.mediaDevices.getUserMedia({ video: true });
 
-      // Lấy danh sách thiết bị
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+  const startScanner = async (deviceId = selectedCamera) => {
+    if (scanningRef.current) return;
 
-      if (videoDevices && videoDevices.length) {
-        setCameras(videoDevices);
-        setSelectedCamera(prev => prev || videoDevices[0].deviceId);
-        setScannerAvailable(true);
-      } else {
-        throw new Error('Không tìm thấy camera nào');
-      }
-    } catch (e) {
-      console.warn('Không thể lấy camera', e);
-      setScannerAvailable(false);
-      alert(`Không thể truy cập camera: ${e.message || 'Vui lòng cấp quyền truy cập camera'}`);
-    }
-  };
-
-  const startScanner = async () => {
-    if (scanning) return;
+    scanningRef.current = true;
+    setScanning(true);
+    setCameraError('');
 
     try {
-      // Lấy danh sách camera
-      let availableCameras = cameras;
-      if (availableCameras.length === 0) {
-        // Lấy camera trực tiếp thay vì dùng state
-        await navigator.mediaDevices.getUserMedia({ video: true });
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        availableCameras = devices.filter(device => device.kind === 'videoinput');
-
-        if (availableCameras.length > 0) {
-          setCameras(availableCameras);
-          if (!selectedCamera) {
-            setSelectedCamera(availableCameras[0].deviceId);
-          }
-        }
-      }
-
-      const cameraId = selectedCamera || (availableCameras[0] && availableCameras[0].deviceId);
-      if (!cameraId) {
-        throw new Error('Không tìm thấy camera nào. Vui lòng kiểm tra quyền truy cập camera.');
-      }
-
-      // Set scanning trước để render video element
-      setScanning(true);
-
-      // Đợi một chút để DOM được render
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Import ZXing library
       const { BrowserMultiFormatReader } = await import('@zxing/browser');
-
-      // Tạo reader instance
       if (!codeReaderRef.current) {
         codeReaderRef.current = new BrowserMultiFormatReader();
       }
 
-      // Lấy video element đã được render bởi React
+      // Thẻ video luôn nằm sẵn trong DOM nên không cần chờ render
       const video = videoRef.current;
-      if (!video) {
-        throw new Error('Video element không tồn tại');
-      }
+      if (!video) throw new Error('Không tìm thấy khung xem camera');
 
-      // Bắt đầu decode
-      await codeReaderRef.current.decodeFromVideoDevice(
-        cameraId,
+      // Chưa chọn camera cụ thể thì ưu tiên camera sau của điện thoại,
+      // nếu không trình duyệt hay mở nhầm camera trước.
+      const constraints = deviceId
+        ? { video: { deviceId: { exact: deviceId } } }
+        : { video: { facingMode: { ideal: 'environment' } } };
+
+      controlsRef.current = await codeReaderRef.current.decodeFromConstraints(
+        constraints,
         video,
-        (result, error) => {
-          if (result) {
-            onScanResult(result.getText());
-          }
-          // Không log error vì nó sẽ log liên tục khi không tìm thấy mã
+        (result) => {
+          if (result) onScanResult(result.getText());
         }
       );
 
-      setScannerAvailable(true);
+      // Chỉ sau khi được cấp quyền thì enumerateDevices mới có nhãn camera
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter((d) => d.kind === 'videoinput');
+        setCameras(videoDevices);
+        if (!deviceId && videoDevices.length) {
+          const dangDung = video.srcObject?.getVideoTracks?.()[0]?.getSettings?.().deviceId;
+          setSelectedCamera(dangDung || videoDevices[0].deviceId);
+        }
+      } catch (e) {
+        console.warn('Không liệt kê được camera', e);
+      }
     } catch (err) {
       console.error('Lỗi khi mở camera:', err);
-      setScannerAvailable(false);
-      setScanning(false);
-      alert(`Không thể mở camera — ${err?.message || String(err)}`);
-    }
-  };
-
-  const stopScanner = async () => {
-    try {
-      // Dừng ZXing reader
-      if (codeReaderRef.current) {
-        codeReaderRef.current.reset();
-      }
-
-      // Dọn dẹp video element
-      if (videoRef.current) {
-        const stream = videoRef.current.srcObject;
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-        }
-        videoRef.current.srcObject = null;
-      }
-    } catch (e) {
-      console.warn('Lỗi dừng scanner', e);
-    } finally {
-      // Set scanning = false để React tự xóa video element
-      setScanning(false);
+      await stopScanner();
+      setCameraError(
+        err?.name === 'NotAllowedError'
+          ? 'Trình duyệt chưa được cấp quyền dùng camera. Hãy bật quyền camera cho trang này rồi thử lại.'
+          : `Không mở được camera: ${err?.message || String(err)}`
+      );
     }
   };
 
   const handleCameraButton = async () => {
-    if (scanning) {
+    if (scanningRef.current) {
       await stopScanner();
     } else {
-      await prepareCameras();
       await startScanner();
     }
   };
 
+  const handleDoiCamera = async (deviceId) => {
+    setSelectedCamera(deviceId);
+    await stopScanner();
+    await startScanner(deviceId);
+  };
+
   const handleSearch = () => {
-    if (searchTerm.trim().length >= 6) {
-      const t = searchTerm.trim();
-      if (scanning) stopScanner();
-      onScanResult(t);
-      setSearchTerm('');
-    } else {
-      alert('Nhập ít nhất 6 ký tự mã vạch để tìm.');
+    const t = searchTerm.trim();
+    if (t.length < 6) {
+      setSearchError('Mã vạch phải có ít nhất 6 chữ số.');
+      return;
     }
+    setSearchError('');
+    onScanResult(t);
+    setSearchTerm('');
   };
 
   const handleFileChange = async (e) => {
@@ -453,7 +440,7 @@ export default function BarcodeScan() {
         imageBitmap.close?.();
 
         if (results && results.length > 0) {
-          if (scanning) await stopScanner();
+          await stopScanner();
           onScanResult(results[0].rawValue);
           e.target.value = '';
           setProcessingImage(false);
@@ -479,7 +466,7 @@ export default function BarcodeScan() {
           URL.revokeObjectURL(imageUrl);
 
           if (result) {
-            if (scanning) await stopScanner();
+            await stopScanner();
             onScanResult(result.getText());
             e.target.value = '';
             setProcessingImage(false);
@@ -537,186 +524,221 @@ export default function BarcodeScan() {
   };
 
   // ========== RENDER VIEWS ==========
-
   const renderScanView = () => (
-    <div className="space-y-6 pb-20">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-ink">Quét mã sản phẩm</h1>
-        <p className="text-ink-soft mt-1">Kiểm tra mức độ thân thiện với môi trường</p>
-      </div>
+    <div className="space-y-5">
+      {/* ---------- Tiêu đề ---------- */}
+      <header className="sx-enter">
+        <span className="sx-chip bg-sky-wash text-sky">
+          <FaBarcode size={11} />
+          Mua sắm xanh
+        </span>
+        <h1 className="text-2xl sm:text-3xl text-ink mt-2.5">Quét sản phẩm</h1>
+        <p className="text-ink-soft mt-1">
+          Xem sản phẩm thân thiện với môi trường tới đâu trước khi mua.
+        </p>
+      </header>
 
-      {/* Camera Scanner */}
-      <div className="bg-paper p-4 rounded-card">
-        <div className="border-2 border-dashed border-line rounded-lg overflow-hidden bg-gray-900">
-          <div id="reader" className={`w-full ${scanning ? 'min-h-[280px]' : 'h-48'} flex items-center justify-center relative`}>
-            {scanning ? (
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                style={{ minHeight: '280px' }}
-              />
-            ) : (
-              <div className="text-center p-6">
-                <FaCamera className="text-ink-faint text-4xl mx-auto mb-3" />
-                <p className="text-ink-faint text-sm">Nhấn nút bên dưới để quét</p>
+      {/* ---------- Cách 1: camera (cách chính) ---------- */}
+      <section className="sx-card sx-enter p-4 sm:p-5" style={{ animationDelay: '60ms' }}>
+        <div className="relative rounded-2xl overflow-hidden bg-ink aspect-[4/3] sm:aspect-[16/9]">
+          {/* Thẻ video luôn có trong DOM: trước đây chỉ render khi đang quét
+              nên lần mở camera thứ hai hay báo "không tìm thấy video". */}
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            className={`w-full h-full object-cover ${scanning ? '' : 'invisible'}`}
+          />
+
+          {!scanning && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+              <span className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-3">
+                <FaCamera className="text-white/80" size={22} />
+              </span>
+              <p className="text-white/85 font-bold">Hướng camera vào mã vạch</p>
+              <p className="text-white/50 text-sm mt-1 max-w-xs">
+                Giữ mã nằm gọn trong khung và đủ sáng, máy sẽ tự đọc.
+              </p>
+            </div>
+          )}
+
+          {scanning && (
+            <>
+              {/* Khung ngắm cho biết nên đặt mã vạch ở đâu */}
+              <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                <div
+                  className="w-4/5 h-2/5 rounded-xl border-2 border-brand-bright"
+                  style={{ boxShadow: '0 0 0 9999px rgba(0,0,0,0.35)' }}
+                />
               </div>
-            )}
-          </div>
+              <span className="absolute top-3 left-3 sx-chip bg-black/60 text-white">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                Đang quét…
+              </span>
+            </>
+          )}
         </div>
+
+        <button
+          onClick={handleCameraButton}
+          className={`sx-btn w-full mt-4 ${
+            scanning ? 'bg-red-500 text-white hover:bg-red-600' : 'sx-btn-primary'
+          }`}
+        >
+          {scanning ? <FaTimes /> : <FaCamera />}
+          {scanning ? 'Dừng camera' : 'Quét bằng camera'}
+        </button>
 
         {scanning && cameras.length > 1 && (
           <div className="mt-3 flex items-center gap-2">
+            <FaSyncAlt className="text-ink-faint shrink-0" size={13} />
             <select
               value={selectedCamera || ''}
-              onChange={async (e) => {
-                await stopScanner();
-                setSelectedCamera(e.target.value);
-                setTimeout(() => startScanner(), 100);
-              }}
-              className="flex-1 border rounded px-2 py-1.5 text-sm"
+              onChange={(e) => handleDoiCamera(e.target.value)}
+              className="flex-1 min-w-0 border border-line rounded-lg px-2.5 py-2 text-sm bg-paper text-ink-soft"
+              aria-label="Đổi camera"
             >
-              {cameras.map(c => (
-                <option key={c.deviceId} value={c.deviceId}>{c.label || `Camera ${c.deviceId.slice(0, 8)}...`}</option>
+              {cameras.map((c, i) => (
+                <option key={c.deviceId} value={c.deviceId}>
+                  {c.label || `Camera ${i + 1}`}
+                </option>
               ))}
             </select>
-            <button onClick={handleCameraButton} className="px-3 py-1.5 bg-red-500 text-white rounded text-sm">
-              <FaTimes />
-            </button>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3 mt-4">
-          {!scanning ? (
-            <button
-              onClick={handleCameraButton}
-              className="col-span-2 flex items-center justify-center gap-2 bg-brand text-white py-3 rounded-lg font-semibold hover:bg-brand"
-            >
-              <FaCamera />
-              Mở camera quét
-            </button>
-          ) : (
-            <button
-              onClick={handleCameraButton}
-              className="col-span-2 flex items-center justify-center gap-2 bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600"
-            >
-              <FaTimes />
-              Dừng camera
-            </button>
-          )}
+        {cameraError && (
+          <p
+            role="alert"
+            className="mt-3 p-3 rounded-xl bg-sun-wash text-sun text-sm font-medium"
+          >
+            {cameraError} Bạn vẫn có thể dùng ảnh hoặc nhập mã bên dưới.
+          </p>
+        )}
+      </section>
 
-          <label className={`col-span-2 ${processingImage ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
-            <div className="flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
+      {/* ---------- Cách 2 và 3: dùng ảnh ---------- */}
+      <section
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3 sx-enter"
+        style={{ animationDelay: '120ms' }}
+      >
+        <label className={processingImage ? 'cursor-not-allowed' : 'cursor-pointer'}>
+          <div
+            className={`sx-card sx-tap h-full p-4 flex items-start gap-3.5 ${
+              processingImage ? 'opacity-60' : ''
+            }`}
+          >
+            <span className="w-11 h-11 rounded-xl bg-sky-wash text-sky flex items-center justify-center shrink-0">
               {processingImage ? (
-                <>
-                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
-                    <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                  </svg>
-                  Đang xử lý ảnh...
-                </>
+                <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
+                  <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                </svg>
               ) : (
-                <>
-                  <FaImage />
-                  Chọn ảnh từ máy
-                </>
+                <FaImage size={18} />
               )}
-            </div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-              disabled={processingImage}
-            />
-          </label>
-
-          <label className={`col-span-2 ${recognizing ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
-            <div className="flex items-center justify-center gap-2 bg-grape text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-md">
-              {recognizing ? (
-                <>
-                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
-                    <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                  </svg>
-                  Đang nhận diện bằng AI...
-                </>
-              ) : (
-                <>
-                  <FaMagic />
-                  Nhận diện sản phẩm bằng ảnh (AI)
-                  <span className="ml-1 text-[10px] font-bold uppercase tracking-wider bg-white/25 px-1.5 py-0.5 rounded">
-                    Mới
-                  </span>
-                </>
-              )}
-            </div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleRecognizeFileChange}
-              className="hidden"
-              disabled={recognizing}
-            />
-          </label>
-        </div>
-
-        {!scannerAvailable && (
-          <div className="mt-3 p-3 bg-sun-wash border-l-4 border-sun text-sm text-sun">
-            <strong>Lưu ý:</strong> Không thể truy cập camera. Vui lòng kiểm tra quyền truy cập hoặc thử chọn ảnh từ máy.
+            </span>
+            <span className="min-w-0">
+              <span className="block font-bold text-ink leading-tight">
+                {processingImage ? 'Đang đọc ảnh…' : 'Ảnh có mã vạch'}
+              </span>
+              <span className="block text-xs text-ink-faint mt-0.5 leading-snug">
+                Chọn ảnh chụp sẵn, máy tìm mã vạch trong ảnh.
+              </span>
+            </span>
           </div>
-        )}
-      </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+            disabled={processingImage}
+          />
+        </label>
 
-      {/* Search Input */}
-      <div className="bg-paper p-4 rounded-card">
+        <label className={recognizing ? 'cursor-not-allowed' : 'cursor-pointer'}>
+          <div
+            className={`sx-card sx-tap h-full p-4 flex items-start gap-3.5 ${
+              recognizing ? 'opacity-60' : ''
+            }`}
+          >
+            <span className="w-11 h-11 rounded-xl bg-grape-wash text-grape flex items-center justify-center shrink-0">
+              {recognizing ? (
+                <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
+                  <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <FaMagic size={18} />
+              )}
+            </span>
+            <span className="min-w-0">
+              <span className="flex items-center gap-2">
+                <span className="font-bold text-ink leading-tight">
+                  {recognizing ? 'AI đang nhận diện…' : 'Ảnh sản phẩm'}
+                </span>
+                {!recognizing && <span className="sx-chip bg-grape-wash text-grape">AI</span>}
+              </span>
+              <span className="block text-xs text-ink-faint mt-0.5 leading-snug">
+                Sản phẩm không có mã vạch? Để AI nhìn bao bì rồi chấm điểm.
+              </span>
+            </span>
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleRecognizeFileChange}
+            className="hidden"
+            disabled={recognizing}
+          />
+        </label>
+      </section>
+
+      {/* ---------- Cách 4: gõ tay ---------- */}
+      <section className="sx-card sx-enter p-4" style={{ animationDelay: '180ms' }}>
+        <label
+          htmlFor="ma-vach-tay"
+          className="flex items-center gap-2 text-sm font-bold text-ink-soft mb-2.5"
+        >
+          <FaKeyboard className="text-ink-faint" size={14} />
+          Hoặc nhập dãy số dưới mã vạch
+        </label>
         <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+          <div className="relative flex-1 min-w-0">
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" size={13} />
             <input
+              id="ma-vach-tay"
               type="text"
-              placeholder="Nhập mã vạch thủ công..."
-              className="w-full pl-10 pr-3 py-2.5 border border-line rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              inputMode="numeric"
+              placeholder="Ví dụ: 8938507968047"
+              className="w-full pl-9 pr-3 py-2.5 border border-line rounded-xl bg-canvas text-ink focus:outline-none focus:ring-2 focus:ring-brand/40 focus:bg-paper"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             />
           </div>
-          <button
-            onClick={handleSearch}
-            className="px-5 py-2.5 bg-brand text-white rounded-lg font-semibold hover:bg-brand"
-          >
+          <button onClick={handleSearch} className="sx-btn sx-btn-outline shrink-0 px-5">
             Tìm
           </button>
         </div>
-      </div>
+        {searchError && (
+          <p role="alert" className="mt-2 text-sm text-red-600 font-medium">
+            {searchError}
+          </p>
+        )}
+      </section>
 
-      {/* Tips */}
-      <div className="bg-sky-wash p-4 rounded-xl border border-line">
-        <div className="flex items-start gap-3">
-          <FaLightbulb className="text-sky text-xl mt-0.5 flex-shrink-0" />
-          <div>
-            <h3 className="font-semibold text-sky mb-2">Mẹo mua sắm xanh</h3>
-            <ul className="text-sm text-sky space-y-1">
-              <li>• Chọn sản phẩm có điểm xanh cao (từ 8.0 trở lên)</li>
-              <li>• Ưu tiên bao bì có thể tái chế</li>
-              <li>• Giảm sử dụng sản phẩm nhựa dùng một lần</li>
-              <li>• Mang túi vải khi đi mua sắm</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent History */}
+      {/* ---------- Lịch sử quét ---------- */}
       {scanHistory.length > 0 && (
-        <div className="bg-paper p-4 rounded-card">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-ink-soft flex items-center gap-2">
-              <FaHistory className="text-ink-faint" />
+        <section className="sx-card sx-enter p-4 sm:p-5" style={{ animationDelay: '240ms' }}>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-bold text-ink flex items-center gap-2">
+              <FaHistory className="text-ink-faint" size={14} />
               Quét gần đây
             </h2>
             <button
               onClick={() => setViewMode('history')}
-              className="text-sm text-brand hover:text-brand"
+              className="text-sm font-bold text-brand hover:underline"
             >
               Xem tất cả
             </button>
@@ -726,31 +748,53 @@ export default function BarcodeScan() {
             {scanHistory.slice(0, 3).map((item, idx) => {
               const product = getProductFromHistory(item);
               return (
-                <div
+                <button
                   key={idx}
+                  type="button"
                   onClick={() => handleViewHistoryProduct(item)}
-                  className="flex items-center gap-3 p-3 bg-canvas rounded-lg hover:bg-gray-100 cursor-pointer"
+                  className="w-full flex items-center gap-3 p-3 bg-canvas rounded-xl hover:bg-brand-wash transition-colors text-left"
                 >
-                  <div className="w-10 h-10 bg-brand-wash rounded-lg flex items-center justify-center">
+                  <span className="w-10 h-10 bg-brand-wash rounded-lg flex items-center justify-center shrink-0">
                     <FaBarcode className="text-brand" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-ink truncate text-sm">
+                  </span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-semibold text-ink truncate text-sm">
                       {product?.name || item.name || 'Sản phẩm'}
-                    </h3>
-                    <p className="text-xs text-ink-faint">{item.timestamp}</p>
-                  </div>
+                    </span>
+                    <span className="block text-xs text-ink-faint">{item.timestamp}</span>
+                  </span>
                   {product && (
-                    <div className={`px-2 py-0.5 rounded text-xs font-semibold ${getScoreColor(product.greenScore)}`}>
+                    <span className={`font-extrabold text-sm shrink-0 ${getScoreColor(product.greenScore)}`}>
                       {product.greenScore.toFixed(1)}
-                    </div>
+                    </span>
                   )}
-                </div>
+                </button>
               );
             })}
           </div>
-        </div>
+        </section>
       )}
+
+      {/* ---------- Mẹo ---------- */}
+      <section
+        className="sx-card sx-enter p-4 sm:p-5 bg-sky-wash"
+        style={{ animationDelay: '300ms' }}
+      >
+        <div className="flex items-start gap-3">
+          <span className="w-10 h-10 rounded-xl bg-white/70 text-sky flex items-center justify-center shrink-0">
+            <FaLightbulb size={17} />
+          </span>
+          <div className="min-w-0">
+            <h2 className="font-bold text-sky">Mẹo mua sắm xanh</h2>
+            <ul className="text-sm text-sky/90 space-y-1 mt-1.5">
+              <li>• Chọn sản phẩm có điểm xanh từ 8.0 trở lên</li>
+              <li>• Ưu tiên bao bì có thể tái chế</li>
+              <li>• Giảm sản phẩm nhựa dùng một lần</li>
+              <li>• Mang túi vải khi đi mua sắm</li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
   );
 
@@ -761,7 +805,7 @@ export default function BarcodeScan() {
       <div className="space-y-6 pb-20">
         <div className="flex items-center mb-4">
           <button
-            onClick={() => { setViewMode('scan'); if (scanning) stopScanner(); }}
+            onClick={() => { setViewMode('scan'); stopScanner(); }}
             className="mr-3 text-ink-soft hover:text-ink"
           >
             <FaArrowLeft size={20} />
@@ -950,8 +994,8 @@ export default function BarcodeScan() {
 
         {/* Action */}
         <button
-          onClick={() => { setViewMode('scan'); if (scanning) stopScanner(); }}
-          className="w-full flex items-center justify-center gap-2 bg-brand text-white py-3 rounded-lg font-semibold hover:bg-brand"
+          onClick={() => { setViewMode('scan'); stopScanner(); }}
+          className="sx-btn sx-btn-primary w-full"
         >
           <FaBarcode />
           Quét sản phẩm khác
@@ -1033,7 +1077,7 @@ export default function BarcodeScan() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 pb-24 space-y-6">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 pb-24">
       {viewMode === 'result' && renderResultView()}
       {viewMode === 'history' && renderHistoryView()}
       {viewMode === 'scan' && renderScanView()}

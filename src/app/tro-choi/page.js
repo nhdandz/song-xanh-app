@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { FaGamepad, FaQuestionCircle, FaClock, FaTrophy, FaCheck, FaTimes, FaTree, FaRecycle, FaCity, FaBalanceScale } from 'react-icons/fa';
+import { FaGamepad, FaQuestionCircle, FaClock, FaTrophy, FaCheck, FaTimes, FaTree, FaRecycle } from 'react-icons/fa';
 import TreeGrowthGame from '@/components/TreeGrowthGame';
 import WasteSortingGame from '@/components/WasteSortingGame';
-import GreenCityGame from '@/components/GreenCityGame';
-import BehaviorSortGame from '@/components/BehaviorSortGame';
 
 // Dữ liệu mẫu cho câu hỏi
 const QUESTIONS = [
@@ -236,30 +234,6 @@ const GAMES = [
     comingSoon: false,
     tint: 'bg-sky-wash',
     ink: 'text-sky',
-  },
-  {
-    id: 4,
-    title: 'Xây dựng thành phố xanh',
-    description: 'Xây dựng một thành phố thân thiện với môi trường',
-    icon: <FaCity size={26} />,
-    points: 20,
-    timeLimit: '5 phút',
-    type: 'city',
-    comingSoon: false,
-    tint: 'bg-grape-wash',
-    ink: 'text-grape',
-  },
-  {
-    id: 5,
-    title: 'Phân loại hành vi',
-    description: 'Nhận biết hành vi tốt hay có hại với môi trường, hoặc kể việc bạn vừa làm để máy chấm',
-    icon: <FaBalanceScale size={26} />,
-    points: 10,
-    timeLimit: '3 phút',
-    type: 'behavior',
-    comingSoon: false,
-    tint: 'bg-coral-wash',
-    ink: 'text-coral',
   },
 ];
 
@@ -652,19 +626,6 @@ export default function Games() {
           onBack={handleBackToGames}
         />
       );
-    }
-
-    if (selectedGame.type === 'city') {
-      return (
-        <GreenCityGame
-          onComplete={handleTreeGameComplete}
-          onBack={handleBackToGames}
-        />
-      );
-    }
-
-    if (selectedGame.type === 'behavior') {
-      return <BehaviorSortGame onBack={handleBackToGames} />;
     }
 
     return null;

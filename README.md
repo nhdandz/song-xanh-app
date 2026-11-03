@@ -1,3 +1,17 @@
+# Đánh Giá Xanh
+
+Ứng dụng web giúp học sinh ghi nhận hành động xanh, quét sản phẩm và chơi trò chơi môi trường.
+
+Phần người dùng gồm 3 nội dung chính (ngoài đăng nhập/đăng ký):
+
+- **Hành động** (`/hanh-vi-xanh`) — ghi nhận việc tốt mỗi ngày, tích điểm xanh
+- **Quét sản phẩm** (`/quet-ma`) — quét mã vạch hoặc chụp ảnh để đánh giá sản phẩm
+- **Trò chơi** (`/tro-choi`) — câu đố môi trường, trồng cây, phân loại rác
+
+Các trang còn lại (thống kê, huy hiệu, cộng đồng, tin tức, đổi quà, …) đã ẩn khỏi
+phần người dùng — xem `HIDDEN_USER_PATHS` trong `src/lib/app-config.js` và
+`src/middleware.js`. Dữ liệu vẫn được quản lý trong khu quản trị `/admin`.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

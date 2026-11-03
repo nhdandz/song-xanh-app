@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaUser, FaLock, FaLeaf, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAppContext } from '@/context/AppContext';
+import { APP_NAME } from '@/lib/app-config';
 
-// Vài lý do ngắn để học sinh thấy đáng đăng nhập, đặt ở cột trái
+// Vài lý do ngắn để học sinh thấy đáng đăng nhập, đặt ở cột trái.
+// Đúng ba nội dung chính của ứng dụng.
 const PERKS = [
   { icon: '🌱', text: 'Ghi nhận hành động xanh mỗi ngày' },
+  { icon: '📷', text: 'Quét sản phẩm để biết có xanh không' },
   { icon: '🎮', text: 'Chơi game, học kiến thức môi trường' },
-  { icon: '🎁', text: 'Tích điểm đổi quà thật' },
 ];
 
 export default function Login() {
@@ -102,7 +104,7 @@ export default function Login() {
             <span className="w-10 h-10 bg-brand-bright rounded-xl flex items-center justify-center">
               <FaLeaf className="text-brand-dark" size={19} />
             </span>
-            <span className="text-xl font-extrabold text-white">Sống Xanh</span>
+            <span className="text-xl font-extrabold text-white">{APP_NAME}</span>
           </Link>
 
           <h2 className="text-4xl xl:text-5xl font-extrabold text-white leading-[1.12] tracking-tight">
@@ -151,7 +153,7 @@ export default function Login() {
                 <span className="w-8 h-8 bg-brand-bright rounded-lg flex items-center justify-center">
                   <FaLeaf className="text-brand-dark" size={15} />
                 </span>
-                <span className="font-extrabold text-white">Sống Xanh</span>
+                <span className="font-extrabold text-white">{APP_NAME}</span>
               </span>
               <p className="text-white font-extrabold text-lg leading-snug mt-3">
                 Mỗi hành động nhỏ,

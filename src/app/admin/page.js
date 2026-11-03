@@ -15,6 +15,7 @@ import {
   CircleStackIcon
 } from "@heroicons/react/24/outline";
 import { ADMIN_MODELS } from "@/lib/adminModels";
+import { APP_NAME } from "@/lib/app-config";
 
 export default function AdminPage() {
   const [stats, setStats] = useState({
@@ -148,7 +149,7 @@ export default function AdminPage() {
           <span className="sx-chip bg-white/15 text-brand-bright">Quản trị</span>
           <h1 className="text-2xl sm:text-4xl text-white mt-3">Bảng điều khiển</h1>
           <p className="text-white/70 mt-1.5 text-sm sm:text-base">
-            Quản lý nội dung và dữ liệu của ứng dụng Sống Xanh.
+            Quản lý nội dung và dữ liệu của ứng dụng {APP_NAME}.
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10">

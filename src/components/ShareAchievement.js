@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaShareAlt, FaTimes } from 'react-icons/fa';
 import { useAppContext } from '@/context/AppContext';
+import { APP_NAME } from '@/lib/app-config';
 
 export default function ShareAchievement({ onClose }) {
   const { user, points, getEarnedBadges } = useAppContext();
@@ -37,7 +38,7 @@ export default function ShareAchievement({ onClose }) {
       default:
         if (navigator.share) {
           navigator.share({
-            title: 'Thành tích Sống Xanh của tôi',
+            title: `Thành tích ${APP_NAME} của tôi`,
             text: message,
             url: shareUrl,
           });
