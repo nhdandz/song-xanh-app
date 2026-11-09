@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import AuthGuard from '@/components/AuthGuard';
 import { AppProvider } from '@/context/AppContext';
+import { APP_NAME } from '@/lib/app-config';
 
 // Những đường dẫn không hiện navigation (ví dụ đăng nhập/đăng ký)
 const noNavPaths = ['/dang-nhap', '/dang-ky'];
@@ -53,7 +54,7 @@ export default function AppShell({ children }) {
             >
               <div className="max-w-6xl mx-auto px-4 py-5">
                 <p className="text-center text-ink-faint text-xs sm:text-sm">
-                  © {new Date().getFullYear()} Ngọc Tú — Nhật Minh
+                  © {new Date().getFullYear()} {APP_NAME}
                 </p>
               </div>
             </footer>
